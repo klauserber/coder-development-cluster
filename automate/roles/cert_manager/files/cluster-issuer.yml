@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cluster-dns01-issuer
+spec:
+  acme:
+    email: k.erber@isium.de
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # server: https://acme-staging-v02.api.letsencrypt.org/directory
+    preferredChain: "ISRG Root X1"
+    privateKeySecretRef:
+      name: acme-dns01-issuer-account-key
+    solvers:
+    - dns01:
+        cloudDNS:
+          # The ID of the GCP project
+          project: isi-labs
+          # This is the secret used to access the service account
+          serviceAccountSecretRef:
+            name: clouddns-dns01-solver-svc-acct
+            key: google-cloud.json

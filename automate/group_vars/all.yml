@@ -1,0 +1,13 @@
+---
+# default domain
+domain_name: isium.de
+
+# default cluster name
+cluster_name: dev
+
+# default component state
+component_state: present
+
+cluster_public_domain: "{{ cluster_name }}.{{ domain_name }}"
+cluster_backup_dir: "{{ playbook_dir }}/backup_cluster/{{ cluster_name }}"
+kubeconfig: "{{ playbook_dir }}/../config/{{ cluster_name }}_kubeconfig"

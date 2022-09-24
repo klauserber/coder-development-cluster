@@ -1,0 +1,10 @@
+---
+- name: deploy
+  hosts: localhost
+  gather_facts: false
+  # roles:
+  #   - cert_manager
+  tasks:
+    - name: test vars
+      debug:
+        var: "ip_address"
