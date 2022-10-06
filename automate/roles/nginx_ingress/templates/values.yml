@@ -1,0 +1,13 @@
+controller:
+  ingressClassResource:
+    name: "{{ ingress_class }}"
+    enabled: true
+    default: {{ default_ingress }}
+    controllerValue: "k8s.io/ingress-nginx"
+  ingressClass: "{{ ingress_class }}"
+  extraArgs:
+    default-ssl-certificate: "nginx-ingress/ingress-isi-cert"
+
+  service:
+    type: LoadBalancer
+    loadBalancerIP: "{{ ip_address }}"

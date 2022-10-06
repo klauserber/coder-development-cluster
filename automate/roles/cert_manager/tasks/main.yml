@@ -24,7 +24,7 @@
     kubeconfig: "{{ kubeconfig }}"
     namespace: "{{ namespace }}"
     state: "{{ component_state }}"
-    definition: "{{ lookup('template', role_path + '/templates/google_secret.yml') | from_yaml }}"
+    definition: "{{ lookup('template', 'google_secret.yml') | from_yaml }}"
 
 - name: deploy cluster issuer
   kubernetes.core.k8s:

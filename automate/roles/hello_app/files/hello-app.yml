@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-app
+  labels:
+    app: hello-app
+    service: hello-app
+spec:
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+  selector:
+    app: hello-app
+# ---
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: hello-hello-app
+#   labels:
+#     account: hello-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-app-v1
+  labels:
+    app: hello-app
+    version: v1
+spec:
+  replicas: 3
+  # strategy:
+  #   type: Recreate
+  selector:
+    matchLabels:
+      app: hello-app
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: hello-app
+        version: v1
+    spec:
+      # serviceAccountName: hello-hello-app
+      containers:
+        - name: hello-app
+          image: docker.io/nginxdemos/hello
+          ports:
+            - containerPort: 80

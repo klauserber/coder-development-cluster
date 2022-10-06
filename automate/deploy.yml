@@ -2,9 +2,10 @@
 - name: deploy
   hosts: localhost
   gather_facts: false
-  # roles:
-  #   - cert_manager
-  tasks:
-    - name: test vars
-      debug:
-        var: "ip_address"
+  connection: local
+  vars:
+    google_credentials_path: "{{ playbook_dir }}/../config/google-cloud.json"
+  roles:
+    - cert_manager
+    - nginx_ingress
+    - hello_app

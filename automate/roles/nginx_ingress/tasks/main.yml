@@ -1,0 +1,112 @@
+---
+- name: namespace
+  kubernetes.core.k8s:
+    state: "{{ component_state }}"
+    kubeconfig: "{{ kubeconfig }}"
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ namespace }}"
+
+- name: backup dir for certs
+  stat:
+    path: "{{ cluster_backup_dir_certs }}"
+  register: backup_dir
+
+- name: restore cert resources
+  when:
+    - "backup_dir.stat.exists"
+    - "component_state == 'present'"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    apply: true
+    definition: "{{ lookup('file', cluster_backup_dir_certs + '/' + item.filename) | from_json }}"
+  loop: "{{ cluster_cert_resources }}"
+
+- name: google secret
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    definition: "{{ lookup('template', role_path + '/templates/google_secret.yml') | from_yaml }}"
+
+- name: deploy issuer
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    src: issuer.yml
+
+- name: certificate
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    definition: "{{ lookup('template', role_path + '/templates/cert.yml') | from_yaml }}"
+
+- name: wait for cert ready
+  when: "component_state == 'present'"
+  command: kubectl --kubeconfig {{ kubeconfig }} wait --for=condition=ready certificate cluster-cert --timeout=180s -n {{ namespace }}
+
+- name: backup dir
+  when: "component_state == 'present'"
+  file:
+    path: "{{ cluster_backup_dir_certs }}"
+    state: directory
+
+- name: backup cluster cert resources
+  when: "component_state == 'present'"
+  shell: |
+    kubectl --kubeconfig {{ kubeconfig }} get {{ item.kind }} {{ item.name }} -o json -n {{ namespace }} | jq --sort-keys \
+      'del(.metadata.annotations."kubectl.kubernetes.io/last-applied-configuration",
+      .metadata.annotations."control-plane.alpha.kubernetes.io/leader",
+      .metadata.uid,
+      .metadata.selfLink,
+      .metadata.resourceVersion,
+      .metadata.creationTimestamp,
+      .metadata.generation)' \
+      > {{ cluster_backup_dir_certs }}/{{ item.filename }}
+  loop: "{{ cluster_cert_resources }}"
+
+- name: Add chart repo
+  kubernetes.core.helm_repository:
+    name: k8s-nginx
+    repo_url: "https://kubernetes.github.io/ingress-nginx"
+
+# - name: process helm chart for internal ingress
+#   vars:
+#     http_node_port: 31080
+#     https_node_port: 31443
+#     default_ingress: true
+#     ingress_class: nginx-internal
+#   kubernetes.core.helm:
+#     chart_ref: k8s-nginx/ingress-nginx
+#     chart_version: "{{ nginx_controller_chart_version }}"
+#     create_namespace: true
+#     kubeconfig: "{{ kubeconfig }}"
+#     release_name: nginx-ingress-internal
+#     release_namespace: "{{ namespace }}"
+#     release_values: "{{ lookup('template', role_path + '/templates/values.yml') | from_yaml }}"
+#     update_repo_cache: true
+#     wait: true
+#     state: "{{ component_state }}"
+
+- name: process helm chart for public ingress
+  vars:
+    http_node_port: 30080
+    https_node_port: 30443
+    default_ingress: false
+    ingress_class: nginx-public
+  kubernetes.core.helm:
+    chart_ref: k8s-nginx/ingress-nginx
+    chart_version: "{{ nginx_controller_chart_version }}"
+    create_namespace: true
+    kubeconfig: "{{ kubeconfig }}"
+    release_name: nginx-ingress-public
+    release_namespace: "{{ namespace }}"
+    release_values: "{{ lookup('template', role_path + '/templates/values.yml') | from_yaml }}"
+    update_repo_cache: true
+    wait: true
+    state: "{{ component_state }}"

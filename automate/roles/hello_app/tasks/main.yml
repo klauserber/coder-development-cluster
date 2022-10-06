@@ -1,0 +1,31 @@
+---
+- name: app
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "default"
+    state: "{{ component_state }}"
+    src: hello-app.yml
+
+- name: public ingress
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "default"
+    state: "{{ component_state }}"
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: hello-public-ingress
+      spec:
+        ingressClassName: nginx-public
+        rules:
+          - host: hello.{{ cluster_public_domain }}
+            http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: hello-app
+                      port:
+                        number: 80

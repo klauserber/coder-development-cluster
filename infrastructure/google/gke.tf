@@ -11,29 +11,13 @@ resource "google_container_cluster" "primary" {
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
-  remove_default_node_pool = true
+  # remove_default_node_pool = true
   initial_node_count       = 1
   min_master_version       = data.google_container_engine_versions.stable.latest_master_version
+  node_version                  = data.google_container_engine_versions.stable.latest_node_version
 
   network    = google_compute_network.vpc.name
   subnetwork = google_compute_subnetwork.subnet.name
-}
-
-# Separately Managed Node Pool
-resource "google_container_node_pool" "primary_nodes" {
-  name     = "${google_container_cluster.primary.name}-node-pool"
-  location = var.cluster_location
-  cluster  = google_container_cluster.primary.name
-  # node_count = var.gke_num_nodes
-  version = data.google_container_engine_versions.stable.latest_node_version
-
-  autoscaling {
-    min_node_count = 1
-    max_node_count = 4
-    # location_policy = "ANY"
-  }
-
-  initial_node_count = 1
 
   node_config {
     oauth_scopes = [
@@ -45,7 +29,7 @@ resource "google_container_node_pool" "primary_nodes" {
       env = var.system_name
     }
 
-    preemptible  = true
+    preemptible  = var.preemptible
     machine_type = "n1-standard-1"
     disk_size_gb = 50
     tags         = ["gke-node", "${var.system_name}-gke"]
@@ -53,7 +37,44 @@ resource "google_container_node_pool" "primary_nodes" {
       disable-legacy-endpoints = "true"
     }
   }
+
 }
+
+# # Separately Managed Node Pool
+# resource "google_container_node_pool" "primary_nodes" {
+#   name     = "${google_container_cluster.primary.name}-node-pool"
+#   location = var.cluster_location
+#   cluster  = google_container_cluster.primary.name
+#   # node_count = var.gke_num_nodes
+#   version = data.google_container_engine_versions.stable.latest_node_version
+
+#   autoscaling {
+#     min_node_count = 1
+#     max_node_count = 4
+#     # location_policy = "ANY"
+#   }
+
+#   initial_node_count = 1
+
+#   node_config {
+#     oauth_scopes = [
+#       "https://www.googleapis.com/auth/logging.write",
+#       "https://www.googleapis.com/auth/monitoring",
+#     ]
+
+#     labels = {
+#       env = var.system_name
+#     }
+
+#     preemptible  = true
+#     machine_type = "n1-standard-1"
+#     disk_size_gb = 50
+#     tags         = ["gke-node", "${var.system_name}-gke"]
+#     metadata = {
+#       disable-legacy-endpoints = "true"
+#     }
+#   }
+# }
 
 # module "gke_auth" {
 #   source               = "terraform-google-modules/kubernetes-engine/google//modules/auth"
