@@ -8,6 +8,11 @@ variable "region" {
   default     = "europe-west3"
 }
 
+variable "bucket" {
+  description = "bucket to store the terraform state"
+  default     = "coder-storage-isium-de"
+}
+
 variable "cluster_location" {
   description = "Location (region or zone) of the cluster"
   default     = "europe-west3-c"

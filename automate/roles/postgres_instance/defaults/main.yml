@@ -1,0 +1,117 @@
+---
+### ########################################
+### METADATA
+### ########################################
+
+# REQUIRED: set the name of the team, will be used for prefixing the resources
+# pg_team_id: "my-team"
+
+# REQUIRED: set the name of the instances
+# pg_instance_name: "my-instance"
+
+# Configure the databases to create.
+# Database passwords can be found in the secrets named
+#   <user-name>.<pg_team_id>-<pg_instance_name>.credentials.postgresql.acid.zalan.do
+pg_dbs: []
+#   - user: "my-db"
+#     db_name: "my_db"
+
+# The password of the postgres user can be found in the secrets named
+#   postgres.<pg_team_id>-<pg_instance_name>.credentials.postgresql.acid.zalan.do
+
+# namespace in which to deploy the instance
+namespace: "postgres-instance"
+
+pg_version: "14"
+
+### ########################################
+### RESOURCES
+### ########################################
+# disk size, you can increase it later
+# reduction is not possible
+pg_disk_size: "1Gi"
+pg_storage_class: hcloud-volumes
+# Use 3 instances for production
+pg_instances: 1
+
+# k8s resources to use
+pg_resources:
+  requests:
+    cpu: "100m"
+    memory: "500Mi"
+  limits:
+    cpu: "2000m"
+    memory: "1000Mi"
+
+### ########################################
+### BACKUP
+### ########################################
+
+# perform backups of the instance to s3
+pg_backup: true
+
+# Retain days you may want to travel to the past
+pg_backup_retain: 14
+
+# The schedule to make base backups
+pg_backup_schedule: "0 1 * * *"
+
+# we are doing Continuous Archiving and Point-in-Time Recovery (PITR)
+# This value limits how old unarchived data can be. Lower values takes more temporary storage.
+# See more at: https://www.postgresql.org/docs/current/continuous-archiving.html
+pg_archive_timeout: 900
+
+# Provide a bucket for backups
+
+pg_s3_bucket: "postgres-isium-de"
+# pg_s3_access_key: ""
+# pg_s3_secret_key: ""
+
+pg_s3_region: "eu-central-2"
+pg_s3_endpoint: "https://s3.eu-central-2.wasabisys.com"
+
+### ########################################
+### RESTORE / CLONE
+### ########################################
+
+# restore the instance from s3 on startup
+pg_clone: true
+
+# time in the WAL archive to restore
+# if omitted the latest backup will be used
+# pg_clone_target_time: "2022-07-03T23:00:00+02:00"
+
+# increase this if there is a very big backup to restore
+pg_wait_timeout_seconds: 1800
+
+# Provide your own bucket for restore
+# if not set the backup values will be used
+pg_clone_s3_bucket: "{{ pg_s3_bucket }}"
+pg_clone_s3_access_key: "{{ pg_s3_access_key }}"
+pg_clone_s3_secret_key: "{{ pg_s3_secret_key }}"
+
+pg_clone_s3_region: "{{ pg_s3_region }}"
+pg_clone_s3_endpoint: "{{ pg_s3_endpoint }}"
+
+### ########################################
+### usally not to change - but you can
+### ########################################
+
+pg_backup_name: "main"
+
+pg_clone_scope: "{{ pg_team_id }}-{{ pg_instance_name }}"
+
+pg_backup_prefix: "{{ pg_bucket_backup_prefix | default(namespace + '/') }}"
+pg_backup_suffix: "{{ pg_bucket_backup_suffix | default('/' + pg_backup_name) }}"
+
+pg_clone_prefix: "{{ pg_clone_bucket_prefix | default(pg_backup_prefix) }}"
+pg_clone_suffix: "{{ pg_clone_bucket_suffix | default(pg_backup_suffix) }}"
+
+pg_backup_full_prefix: "spilo/{{ pg_backup_prefix }}{{ pg_team_id }}-{{ pg_instance_name }}{{ pg_backup_suffix }}"
+pg_clone_full_prefix: "spilo/{{ pg_clone_prefix }}{{ pg_clone_scope }}{{ pg_clone_suffix }}"
+
+pg_backup_full_path: "{{ pg_s3_bucket }}/{{ pg_backup_full_prefix }}"
+pg_clone_full_path: "{{ pg_clone_s3_bucket }}/{{ pg_clone_full_prefix }}"
+
+pg_s3_access_key: -
+pg_s3_secret_key: -

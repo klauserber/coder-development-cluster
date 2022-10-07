@@ -1,0 +1,30 @@
+---
+- name: "small development database instance"
+  hosts: "localhost"
+  gather_facts: false
+  vars:
+    provider: "ionos"
+    env_id: "000"
+    stage: "mgmt"
+    kubeconfig: "~/.kube/config"
+
+  roles:
+    - name: "infrastructure_configuration"
+    - name: "postgres_instance"
+      vars:
+        namespace: "default"
+        pg_team_id: "myteam"
+        pg_instance_name: "mydevdb-instance"
+        pg_version: "14"
+        pg_dbs:
+          - user: "mydb"
+            db_name: "mydb"
+        pg_disk_size: "5Gi"
+        pg_instances: 1
+        pg_resources:
+          requests:
+            cpu: "100m"
+            memory: "250Mi"
+          limits:
+            cpu: "1000m"
+            memory: "500Mi"

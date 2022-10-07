@@ -1,0 +1,17 @@
+---
+- name: "include postgres"
+  when: "component_state == 'present'"
+  ansible.builtin.include_tasks:
+    file: "{{ role_path }}/tasks/postgres_pre_tasks.yml"
+
+- name: "postgres resource"
+  kubernetes.core.k8s:
+    state: "{{ component_state }}"
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    definition: "{{ lookup('template', 'postgres.yml.j2') }}"
+
+- name: "include db_ready"
+  when: "component_state == 'present'"
+  ansible.builtin.include_tasks:
+    file: "{{ role_path }}/tasks/db_ready.yml"

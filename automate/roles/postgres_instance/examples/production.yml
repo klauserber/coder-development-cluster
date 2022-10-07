@@ -1,0 +1,33 @@
+---
+- name: "small development database instance"
+  hosts: "localhost"
+  gather_facts: false
+  vars:
+    provider: "ionos"
+    env_id: "000"
+    stage: "mgmt"
+    kubeconfig: "~/.kube/config"
+
+  roles:
+    - name: "infrastructure_configuration"
+    - name: "postgres_instance"
+      vars:
+        ionos_s3_dev_mode: true
+        namespace: "default"
+        pg_team_id: "myteam"
+        pg_instance_name: "myproddb-inst2"
+        pg_version: "14"
+        pg_dbs:
+          - user: "mydb"
+            db_name: "mydb"
+        pg_disk_size: "50Gi"
+        pg_instances: 3
+        pg_resources:
+          requests:
+            cpu: "500m"
+            memory: "500Mi"
+          limits:
+            cpu: "2000m"
+            memory: "2000Mi"
+        pg_backup: true
+        pg_clone: true

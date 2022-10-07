@@ -1,0 +1,30 @@
+---
+- name: "add postres operator Repo"
+  kubernetes.core.helm_repository:
+    name: "postgres-operator-charts"
+    repo_url: "https://opensource.zalando.com/postgres-operator/charts/postgres-operator"
+
+- name: "query newest version of {{ pg_operator_chart_ref }}"
+  ansible.builtin.shell:
+    cmd: "helm search repo {{ pg_operator_chart_ref }} --versions -o json | jq '.[0].version'"
+  register: "helm_query_pg"
+
+- name: "Print version info for helm-chart: {{ pg_operator_chart_ref }}"
+  ansible.builtin.debug:
+    msg: "Newest version is: {{ helm_query_pg.stdout }} we going to deploy version: {{ pg_operator_chart_version }}"
+
+# helm repo add postgres-operator-charts https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+# helm search repo postgres-operator-charts/postgres-operator --versions
+# ~ takes highest patch version: 1.8.1 -> 1.8.2
+# ^ takes highest minor version: 1.7.0 -> 1.8.2
+- name: "deploy postgres operator"
+  kubernetes.core.helm:
+    chart_ref: "{{ pg_operator_chart_ref }}"
+    chart_version: "{{ pg_operator_chart_version }}"
+    create_namespace: true
+    kubeconfig: "{{ kubeconfig }}"
+    release_name: "postres-operator"
+    release_namespace: "{{ pg_operator_namespace }}"
+    values:
+      configGeneral:
+        resync_period: "{{ pg_operator_resync_period }}"

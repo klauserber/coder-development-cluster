@@ -1,0 +1,13 @@
+---
+stages:
+  - ".pre"
+
+lint:
+  stage: ".pre"
+  tags:
+    - "Ansible"
+    - "YAML"
+  script:
+    - "source ~/venv/bin/activate"
+    - "pre-commit install"
+    - "pre-commit run --all-files --config ~/venv/.pre-commit-config.yaml"

@@ -1,0 +1,99 @@
+---
+apiVersion: "acid.zalan.do/v1"
+kind: "postgresql"
+
+metadata:
+  name: "{{ pg_team_id }}-{{ pg_instance_name }}"
+  namespace: "{{ namespace }}"
+  labels:
+    team: "{{ pg_team_id }}"
+
+spec:
+
+  env:
+    - name: "ALLOW_NOSSL"
+      value: "1"
+
+{% if pg_backup %}
+    - name: BACKUP_SCHEDULE
+      value: "{{ pg_backup_schedule }}"
+    - name: USE_WALG_BACKUP
+      value: "true"
+    - name: BACKUP_NUM_TO_RETAIN
+      value: "{{ pg_backup_retain }}"
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: "{{ pg_team_id }}-{{ pg_instance_name }}-s3-backup"
+          key: s3_access_key
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: "{{ pg_team_id }}-{{ pg_instance_name }}-s3-backup"
+          key: s3_secret_key
+    - name: AWS_ENDPOINT
+      value: {{ pg_s3_endpoint }}
+    - name: AWS_REGION
+      value: {{ pg_s3_region }}
+    - name: WALG_DISABLE_S3_SSE
+      value: "true"
+    - name: WAL_S3_BUCKET
+      value: {{ pg_s3_bucket }}
+    - name: WAL_BUCKET_SCOPE_PREFIX
+      value: "{{ pg_backup_prefix }}"
+    - name: WAL_BUCKET_SCOPE_SUFFIX
+      value: "{{ pg_backup_suffix }}"
+{% endif %}
+
+{% if pg_do_clone %}
+    - name: USE_WALG_RESTORE
+      value: "true"
+    - name: CLONE_METHOD
+      value: "CLONE_WITH_WALE"
+    - name: CLONE_AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: "{{ pg_team_id }}-{{ pg_instance_name }}-s3-clone"
+          key: s3_access_key
+    - name: CLONE_AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: "{{ pg_team_id }}-{{ pg_instance_name }}-s3-clone"
+          key: s3_secret_key
+    - name: CLONE_AWS_ENDPOINT
+      value: {{ pg_clone_s3_endpoint }}
+    - name: CLONE_AWS_REGION
+      value: {{ pg_clone_s3_region }}
+    - name: CLONE_WAL_S3_BUCKET
+      value: {{ pg_clone_s3_bucket }}
+    - name: CLONE_WAL_BUCKET_SCOPE_PREFIX
+      value: "{{ pg_clone_prefix }}"
+    - name: CLONE_WAL_BUCKET_SCOPE_SUFFIX
+      value: "{{ pg_clone_suffix }}"
+    - name: CLONE_TARGET_TIME
+      value: "{{ pg_clone_target_time | default('') }}"
+    - name: CLONE_SCOPE
+      value: "{{ pg_clone_scope }}"
+{% endif %}
+
+  teamId: "{{ pg_team_id }}"
+  postgresql:
+    version: "{{ pg_version }}"
+    parameters:
+      archive_timeout: "{{ pg_archive_timeout }}"
+
+  numberOfInstances: {{ pg_instances }}
+  volume:
+    size: "{{ pg_disk_size }}"
+    storageClass: "{{ pg_storage_class }}"
+  users:
+{% for db in pg_dbs %}
+    {{ db.user }}: []
+{% endfor %}
+  databases:
+{% for db in pg_dbs %}
+    {{ db.db_name }}: "{{ db.user }}"
+{% endfor %}
+  allowedSourceRanges:
+    # IP ranges to access your cluster go here
+  resources: {{ pg_resources }}
