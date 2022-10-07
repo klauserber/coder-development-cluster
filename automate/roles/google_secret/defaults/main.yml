@@ -1,0 +1,4 @@
+---
+# namespace: ""
+google_credentials_path: ""
+secret_name: "google-credentials-secret"

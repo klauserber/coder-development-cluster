@@ -18,5 +18,5 @@ ansible-playbook -i inventory \
   -e "cluster_name=${CLUSTER_NAME}" \
   -e "domain_name=${DOMAIN_NAME}" \
   -e "ip_address=${IP_ADDRESS}" \
-  -e "bucket_name=${BUCKET}" \
+  -e "bucket_name=${BUCKET_NAME}" \
   ${PLAYBOOK} "${@}"

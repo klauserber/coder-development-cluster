@@ -9,10 +9,29 @@ metadata:
     team: "{{ pg_team_id }}"
 
 spec:
+{% if pg_google_storage %}
+  additionalVolumes:
+    - name: "google-credentials"
+      volumeSource:
+        secret:
+          secretName: "google-credentials-secret"
+        # type: "Secret"
+        # secretName: "google-credentials-secret"
+      mountPath: "/etc/google-credentials"
+{% endif %}
 
   env:
     - name: "ALLOW_NOSSL"
       value: "1"
+
+{% if pg_google_storage %}
+    - name: "GOOGLE_APPLICATION_CREDENTIALS"
+      value: "/etc/google-credentials/google-cloud.json"
+    - name: WALE_S3_ENDPOINT
+      value: {{ pg_s3_endpoint }}
+    - name: WAL_GS_BUCKET
+      value: {{ pg_s3_bucket }}
+{% endif %}
 
 {% if pg_backup %}
     - name: BACKUP_SCHEDULE
@@ -21,6 +40,7 @@ spec:
       value: "true"
     - name: BACKUP_NUM_TO_RETAIN
       value: "{{ pg_backup_retain }}"
+{% if pg_aws_storage %}
     - name: AWS_ACCESS_KEY_ID
       valueFrom:
         secretKeyRef:
@@ -35,10 +55,11 @@ spec:
       value: {{ pg_s3_endpoint }}
     - name: AWS_REGION
       value: {{ pg_s3_region }}
-    - name: WALG_DISABLE_S3_SSE
-      value: "true"
     - name: WAL_S3_BUCKET
       value: {{ pg_s3_bucket }}
+{% endif %}
+    - name: WALG_DISABLE_S3_SSE
+      value: "true"
     - name: WAL_BUCKET_SCOPE_PREFIX
       value: "{{ pg_backup_prefix }}"
     - name: WAL_BUCKET_SCOPE_SUFFIX
@@ -48,8 +69,7 @@ spec:
 {% if pg_do_clone %}
     - name: USE_WALG_RESTORE
       value: "true"
-    - name: CLONE_METHOD
-      value: "CLONE_WITH_WALE"
+{% if pg_aws_storage %}
     - name: CLONE_AWS_ACCESS_KEY_ID
       valueFrom:
         secretKeyRef:
@@ -64,6 +84,7 @@ spec:
       value: {{ pg_clone_s3_endpoint }}
     - name: CLONE_AWS_REGION
       value: {{ pg_clone_s3_region }}
+{% endif %}
     - name: CLONE_WAL_S3_BUCKET
       value: {{ pg_clone_s3_bucket }}
     - name: CLONE_WAL_BUCKET_SCOPE_PREFIX
@@ -85,7 +106,10 @@ spec:
   numberOfInstances: {{ pg_instances }}
   volume:
     size: "{{ pg_disk_size }}"
+
+{% if pg_storage_class is defined %}
     storageClass: "{{ pg_storage_class }}"
+{% endif %}
   users:
 {% for db in pg_dbs %}
     {{ db.user }}: []

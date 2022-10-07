@@ -18,6 +18,7 @@ terraform -chdir=${SCRIPT_DIR}/infrastructure/google apply -lock=true \
   -var "system_name=${CLUSTER_NAME}" \
   -var "managed_zone=${MANAGED_ZONE}" \
   -var "domain_name=${DOMAIN_NAME}" \
+  -var "bucket=${BUCKET_NAME}" \
   -var "preemptible=${PREEMPTIBLE}"
 
 gcloud auth activate-service-account --project=${PROJECT_ID} --key-file=config/google-cloud.json

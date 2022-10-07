@@ -9,6 +9,11 @@
       metadata:
         name: "{{ namespace }}"
 
+- name: "google secret"
+  when: "pg_google_storage"
+  include_role:
+    name: "google_secret"
+
 - name: "query if the postgres cluster already exists"
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"
@@ -19,11 +24,13 @@
   register: "pg_query"
 
 - name: "do we deploy a new cluster?"
-  set_fact: 
+  set_fact:
     pg_new_cluster: "{{ (pg_query.resources | length) == 0 }}"
 
 - name: "s3 backup target secret"
-  when: "pg_backup"
+  when:
+    - pg_backup
+    - pg_aws_storage
   kubernetes.core.k8s:
     state: "{{ component_state }}"
     kubeconfig: "{{ kubeconfig }}"
@@ -36,10 +43,12 @@
       type: Opaque
       data:
         s3_access_key: "{{ pg_s3_access_key | b64encode }}"
-        s3_secret_key: "{{ pg_s3_secret_key | b64encode }}"    
+        s3_secret_key: "{{ pg_s3_secret_key | b64encode }}"
 
 - name: "s3 clone source secret"
-  when: "pg_clone"
+  when:
+    - pg_clone
+    - pg_aws_storage
   kubernetes.core.k8s:
     state: "{{ component_state }}"
     kubeconfig: "{{ kubeconfig }}"
@@ -66,7 +75,9 @@
   register: "pg_pod_query"
 
 - name: "update backup s3 access keys in running pods"
-  when: "pg_backup"
+  when:
+    - pg_backup
+    - pg_aws_storage
   kubernetes.core.k8s_cp:
     kubeconfig: "{{ kubeconfig }}"
     namespace: "{{ namespace }}"
@@ -78,7 +89,9 @@
     label: "{{ item.metadata.name }}"
 
 - name: "update backup s3 secret keys in running pods"
-  when: "pg_backup"
+  when:
+    - pg_backup
+    - pg_aws_storage
   kubernetes.core.k8s_cp:
     kubeconfig: "{{ kubeconfig }}"
     namespace: "{{ namespace }}"
@@ -90,7 +103,9 @@
     label: "{{ item.metadata.name }}"
 
 - name: "check if clone source is present"
-  when: "pg_clone"
+  when:
+    - pg_clone
+    - pg_aws_storage
   amazon.aws.aws_s3:
     s3_url: "{{ pg_clone_s3_endpoint }}"
     aws_access_key: "{{ pg_clone_s3_access_key }}"
@@ -105,15 +120,30 @@
   delay: 5
 
 - name: "set source exists fact"
+  when:
+    - pg_clone
+    - pg_aws_storage
   ansible.builtin.set_fact:
     pg_clone_source_exists: "{{ false if not pg_clone else s3_clone_target_list.s3_keys | length > 0 }}"
 
 - name: "clone only if clone source is present"
-  ansible.builtin.set_fact: 
+  when:
+    - pg_clone
+    - pg_aws_storage
+  ansible.builtin.set_fact:
     pg_do_clone: "{{ pg_clone and pg_clone_source_exists }}"
 
+- name: "clone only if clone source is present"
+  when:
+    - pg_clone
+    - pg_google_storage
+  ansible.builtin.set_fact:
+    pg_do_clone: "{{ pg_clone }}"
+
 - name: "check if backup target is present"
-  when: "pg_backup"
+  when:
+    - pg_backup
+    - pg_aws_storage
   amazon.aws.aws_s3:
     s3_url: "{{ pg_s3_endpoint }}"
     aws_access_key: "{{ pg_s3_access_key }}"
@@ -125,10 +155,15 @@
   register: "s3_backup_target_list"
 
 - name: "set backup exists fact"
+  when:
+    - pg_backup
+    - pg_aws_storage
   ansible.builtin.set_fact:
     pg_backup_target_exists: "{{ false if not pg_backup else s3_backup_target_list.s3_keys | length > 0 }}"
 
 - name: "stop if we are going to overwrite an existing backup with a new db cluster"
+  when:
+    - pg_aws_storage
   ansible.builtin.assert:
     # we can go on when:
     #  - we are not creating an new cluster

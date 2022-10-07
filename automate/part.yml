@@ -6,4 +6,17 @@
   vars:
     google_credentials_path: "{{ playbook_dir }}/../config/google-cloud.json"
   roles:
-    - hello_app
+    - name: postgres_instance
+      vars:
+        namespace: pg-test
+        pg_team_id: "main"
+        pg_instance_name: "test-db"
+        pg_disk_size: "1Gi"
+        pg_instances: 1
+        pg_backup: true
+        pg_clone: false
+        pg_google_storage: true
+        pg_dbs:
+          - user: "mydb"
+            db_name: "mydb"
+
