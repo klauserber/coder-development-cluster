@@ -1,0 +1,50 @@
+---
+- name: get client {{ item_client.clientId }}
+  uri:
+    url: "https://{{ keycloak_hostname }}/admin/realms/{{ realm_name }}/clients?clientId={{ item_client.clientId }}"
+    method: GET
+    headers:
+      Authorization: "bearer {{ token }}"
+    status_code: [ 200 ]
+  register: get_result
+
+- debug:
+    var: get_result
+
+- assert:
+    that:
+      - get_result.json | length < 2
+    msg: "more clients for {{ item_client.clientId }} found"
+
+- name: create client {{ item_client.clientId }}
+  when: get_result.json | length == 0
+  uri:
+    url: "https://{{ keycloak_hostname }}/admin/realms/{{ realm_name }}/clients"
+    method: POST
+    body_format: json
+    headers:
+      Authorization: "bearer {{ token }}"
+    status_code: [ 201 ]
+    body: "{{ item_client }}"
+  register: result
+
+- debug:
+    var: result
+  when: get_result.json | length == 0
+
+- name: update client {{ item_client.clientId }}
+  when: get_result.json | length == 1
+  uri:
+    url: "https://{{ keycloak_hostname }}/admin/realms/{{ realm_name }}/clients/{{ get_result.json[0].id }}"
+    method: PUT
+    body_format: json
+    headers:
+      Authorization: "bearer {{ token }}"
+    status_code: [ 204 ]
+    body: "{{ item_client }}"
+  register: update_result
+
+- debug:
+    var: update_result
+  when: get_result.json | length == 1
+

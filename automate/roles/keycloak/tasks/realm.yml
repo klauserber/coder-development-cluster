@@ -1,0 +1,38 @@
+---
+- name: update realm {{ item.realm_data.realm }}
+  uri:
+    url: "https://{{ keycloak_hostname }}/admin/realms/{{ item.realm_data.realm }}"
+    method: PUT
+    body_format: json
+    headers:
+      Authorization: "bearer {{ token }}"
+    status_code: [ 204, 404 ]
+    body: "{{ item.realm_data }}"
+  register: update_result
+
+- debug:
+    var: update_result
+
+- name: create realm {{ item.realm_data.realm }}
+  when: update_result.status == 404
+  uri:
+    url: "https://{{ keycloak_hostname }}/admin/realms"
+    method: POST
+    body_format: json
+    headers:
+      Authorization: "bearer {{ token }}"
+    status_code: [ 201 ]
+    body: "{{ item.realm_data }}"
+  register: result
+
+- debug:
+    var: result
+  when: update_result.status == 404
+
+- name: clients
+  vars:
+    realm_name: "{{ item.realm_data.realm }}"
+  include_tasks: "{{ role_path }}/tasks/client.yml"
+  loop: "{{ item.clients }}"
+  loop_control:
+    loop_var: item_client

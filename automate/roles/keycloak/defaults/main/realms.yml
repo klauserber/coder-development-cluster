@@ -1,0 +1,34 @@
+---
+keycloak_realms:
+  - realm_data:
+      realm: "workshops-de"
+      enabled: true
+      registrationAllowed: true
+      registrationEmailAsUsername: true
+      editUsernameAllowed: true
+      resetPasswordAllowed: true
+      rememberMe: true
+      verifyEmail: true
+      bruteForceProtected: true
+
+      smtpServer:
+        password: "{{ keycloak_smtp_password }}"
+        replyToDisplayName: "workshops.de"
+        starttls: "true"
+        auth: "true"
+        port: "587"
+        host: "server35.webgo24.de"
+        replyTo: "info@isium.de"
+        from: "info@isium.de"
+        fromDisplayName: "workshops.de"
+        ssl: "false"
+        user: "k.erber@isium.de"
+
+    clients:
+      - clientId: "coder"
+        rootUrl: "https://coder.{{ cluster_public_domain }}"
+        adminUrl: "https://coder.{{ cluster_public_domain }}"
+        directAccessGrantsEnabled: true
+        redirectUris:
+          - "https://coder.{{ cluster_public_domain }}/*"
+        secret: "{{ coder_client_secret }}"

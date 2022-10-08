@@ -1,0 +1,21 @@
+---
+- name: api login
+  uri:
+    url: "https://{{ keycloak_hostname }}/realms/master/protocol/openid-connect/token"
+    method: POST
+    body_format: form-urlencoded
+    status_code: [ 200 ]
+    body:
+      username: "admin"
+      password: "{{ keycloak_admin_password }}"
+      client_id: "admin-cli"
+      grant_type: "password"
+  register: result
+
+- name: set token fact
+  set_fact:
+    token: "{{ result.json.access_token }}"
+
+- name: realms
+  include_tasks: "{{ role_path }}/tasks/realm.yml"
+  loop: "{{ keycloak_realms }}"

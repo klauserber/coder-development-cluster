@@ -1,0 +1,5 @@
+---
+keycloak_chart_version: 10.1.4
+keycloak_db_hostname: main-keycloak-db
+namespace: keycloak
+keycloak_hostname: keycloak.{{ cluster_public_domain }}
