@@ -8,4 +8,5 @@
   roles:
     - cert_manager
     - nginx_ingress
+    - postgres_base
     - hello_app

@@ -1,0 +1,35 @@
+---
+- name: "google secret"
+  include_role:
+    name: "google_secret"
+
+- name: "query running postgres pods"
+  when: "pg_backup"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    api_version: "v1"
+    kind: "Pod"
+    label_selectors:
+      - "cluster-name = {{ pg_team_id }}-{{ pg_instance_name }}"
+  register: "pg_pod_query"
+
+- name: "check if clone source is present"
+  when: pg_clone
+  shell: "gcloud storage ls gs://{{ pg_clone_full_path }} || true"
+  register: "s3_clone_target_list"
+
+- name: "set source exists fact"
+  when: pg_clone
+  ansible.builtin.set_fact:
+    pg_clone_source_exists: "{{ s3_clone_target_list.stdout_lines | length > 0 }}"
+
+- name: "check if backup target is present"
+  when: pg_backup
+  shell: "gcloud storage ls gs://{{ pg_backup_full_path }} || true"
+  register: "s3_backup_target_list"
+
+- name: "set backup exists fact"
+  when: pg_backup
+  ansible.builtin.set_fact:
+    pg_backup_target_exists: "{{ s3_backup_target_list.stdout_lines | length > 0 }}"

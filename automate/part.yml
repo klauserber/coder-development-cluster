@@ -14,9 +14,9 @@
         pg_disk_size: "1Gi"
         pg_instances: 1
         pg_backup: true
-        pg_clone: false
-        pg_google_storage: true
+        pg_clone: true
+        pg_storage_provider: gs
+        pg_bucket_backup_prefix: "{{ cluster_name }}/"
         pg_dbs:
           - user: "mydb"
             db_name: "mydb"
-

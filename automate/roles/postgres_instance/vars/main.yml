@@ -1,2 +1,4 @@
 ---
 pg_do_clone: false
+pg_gs_storage: "{{ pg_storage_provider == 'gs' }}"
+pg_s3_storage: "{{ pg_storage_provider == 's3' }}"

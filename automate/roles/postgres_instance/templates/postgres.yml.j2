@@ -9,29 +9,18 @@ metadata:
     team: "{{ pg_team_id }}"
 
 spec:
-{% if pg_google_storage %}
+{% if pg_gs_storage %}
   additionalVolumes:
     - name: "google-credentials"
       volumeSource:
         secret:
           secretName: "google-credentials-secret"
-        # type: "Secret"
-        # secretName: "google-credentials-secret"
       mountPath: "/etc/google-credentials"
 {% endif %}
 
   env:
     - name: "ALLOW_NOSSL"
       value: "1"
-
-{% if pg_google_storage %}
-    - name: "GOOGLE_APPLICATION_CREDENTIALS"
-      value: "/etc/google-credentials/google-cloud.json"
-    - name: WALE_S3_ENDPOINT
-      value: {{ pg_s3_endpoint }}
-    - name: WAL_GS_BUCKET
-      value: {{ pg_s3_bucket }}
-{% endif %}
 
 {% if pg_backup %}
     - name: BACKUP_SCHEDULE
@@ -40,7 +29,12 @@ spec:
       value: "true"
     - name: BACKUP_NUM_TO_RETAIN
       value: "{{ pg_backup_retain }}"
-{% if pg_aws_storage %}
+{% if pg_gs_storage %}
+    - name: "GOOGLE_APPLICATION_CREDENTIALS"
+      value: "/etc/google-credentials/google-cloud.json"
+    - name: WAL_GS_BUCKET
+      value: {{ pg_storage_bucket }}
+{% elif pg_s3_storage %}
     - name: AWS_ACCESS_KEY_ID
       valueFrom:
         secretKeyRef:
@@ -56,7 +50,7 @@ spec:
     - name: AWS_REGION
       value: {{ pg_s3_region }}
     - name: WAL_S3_BUCKET
-      value: {{ pg_s3_bucket }}
+      value: {{ pg_storage_bucket }}
 {% endif %}
     - name: WALG_DISABLE_S3_SSE
       value: "true"
@@ -69,7 +63,16 @@ spec:
 {% if pg_do_clone %}
     - name: USE_WALG_RESTORE
       value: "true"
-{% if pg_aws_storage %}
+    - name: CLONE_METHOD
+      value: "CLONE_WITH_WALE"
+{% if pg_gs_storage %}
+    - name: CLONE_GOOGLE_APPLICATION_CREDENTIALS
+      value: "/etc/google-credentials/google-cloud.json"
+    - name: CLONE_WAL_GS_BUCKET
+      value: {{ pg_clone_storage_bucket }}
+    - name: CLONE_USE_WALG_RESTORE
+      value: "true"
+{% elif pg_s3_storage %}
     - name: CLONE_AWS_ACCESS_KEY_ID
       valueFrom:
         secretKeyRef:
@@ -84,9 +87,9 @@ spec:
       value: {{ pg_clone_s3_endpoint }}
     - name: CLONE_AWS_REGION
       value: {{ pg_clone_s3_region }}
-{% endif %}
     - name: CLONE_WAL_S3_BUCKET
-      value: {{ pg_clone_s3_bucket }}
+      value: {{ pg_clone_storage_bucket }}
+{% endif %}
     - name: CLONE_WAL_BUCKET_SCOPE_PREFIX
       value: "{{ pg_clone_prefix }}"
     - name: CLONE_WAL_BUCKET_SCOPE_SUFFIX

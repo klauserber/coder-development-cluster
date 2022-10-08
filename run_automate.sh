@@ -19,4 +19,6 @@ ansible-playbook -i inventory \
   -e "domain_name=${DOMAIN_NAME}" \
   -e "ip_address=${IP_ADDRESS}" \
   -e "bucket_name=${BUCKET_NAME}" \
+  -e "storage_provider=${STORAGE_PROVIDER}" \
+  -e "google_project_id=${PROJECT_ID}" \
   ${PLAYBOOK} "${@}"

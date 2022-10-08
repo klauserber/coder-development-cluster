@@ -48,10 +48,7 @@ pg_resources:
 ### BACKUP
 ### ########################################
 
-# Use google storage for backup
-pg_google_storage: false
-# Use AWS storage for backup
-pg_aws_storage: false
+pg_storage_provider: "none"
 
 # perform backups of the instance to s3
 pg_backup: true
@@ -69,15 +66,12 @@ pg_archive_timeout: 900
 
 # Provide a bucket for backups
 
-pg_s3_bucket: "{{ bucket_name }}"
+pg_storage_bucket: "{{ bucket_name }}"
 # pg_s3_access_key: ""
 # pg_s3_secret_key: ""
 
 pg_s3_region: "eu-central-2"
-# pg_s3_endpoint: "https://s3.eu-central-2.wasabisys.com"
-
-pg_s3_endpoint: "https://storage.googleapis.com"
-
+pg_s3_endpoint: "https://s3.eu-central-2.wasabisys.com"
 
 ### ########################################
 ### RESTORE / CLONE
@@ -95,7 +89,7 @@ pg_wait_timeout_seconds: 1800
 
 # Provide your own bucket for restore
 # if not set the backup values will be used
-pg_clone_s3_bucket: "{{ pg_s3_bucket }}"
+pg_clone_storage_bucket: "{{ pg_storage_bucket }}"
 pg_clone_s3_access_key: "{{ pg_s3_access_key }}"
 pg_clone_s3_secret_key: "{{ pg_s3_secret_key }}"
 
@@ -119,5 +113,5 @@ pg_clone_suffix: "{{ pg_clone_bucket_suffix | default(pg_backup_suffix) }}"
 pg_backup_full_prefix: "spilo/{{ pg_backup_prefix }}{{ pg_team_id }}-{{ pg_instance_name }}{{ pg_backup_suffix }}"
 pg_clone_full_prefix: "spilo/{{ pg_clone_prefix }}{{ pg_clone_scope }}{{ pg_clone_suffix }}"
 
-pg_backup_full_path: "{{ pg_s3_bucket }}/{{ pg_backup_full_prefix }}"
-pg_clone_full_path: "{{ pg_clone_s3_bucket }}/{{ pg_clone_full_prefix }}"
+pg_backup_full_path: "{{ pg_storage_bucket }}/{{ pg_backup_full_prefix }}"
+pg_clone_full_path: "{{ pg_clone_storage_bucket }}/{{ pg_clone_full_prefix }}"
