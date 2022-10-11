@@ -1,0 +1,34 @@
+---
+coder:
+  image:
+    tag: {{ coder_image_version }}
+
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 250Mi
+
+  env:
+    - name: CODER_PG_CONNECTION_URL
+      valueFrom:
+        secretKeyRef:
+          name: coder-db-url
+          key: db_url
+    - name: CODER_ADDRESS
+      value: 0.0.0.0:8080
+    - name: CODER_ACCESS_URL
+      value: "https://{{ coder_access_host }}"
+    - name: CODER_OIDC_ISSUER_URL
+      value: "{{ coder_oidc_issuer_url }}"
+    - name: CODER_OIDC_CLIENT_ID
+      value: "{{ coder_oidc_client_id }}"
+    - name: CODER_OIDC_CLIENT_SECRET
+      value: "{{ coder_client_secret }}"
+    - name: CODER_WILDCARD_ACCESS_URL
+      value: "https://*.coder.{{ cluster_public_domain }}"
+
+  service:
+    enable: true
+    type: ClusterIP

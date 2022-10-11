@@ -13,7 +13,7 @@
     - name: "postgres_instance"
       vars:
         ionos_s3_dev_mode: true
-        namespace: "default"
+        pg_namespace: "default"
         pg_team_id: "myteam"
         pg_instance_name: "myproddb-inst2"
         pg_version: "14"

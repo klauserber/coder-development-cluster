@@ -5,14 +5,14 @@
     kubeconfig: "{{ kubeconfig }}"
     definition:
       apiVersion: "v1"
-      kind: "Namespace"
+      kind: "namespace"
       metadata:
-        name: "{{ namespace }}"
+        name: "{{ pg_namespace }}"
 
 - name: "query if the postgres cluster already exists"
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ pg_namespace }}"
     api_version: "acid.zalan.do/v1"
     kind: "postgresql"
     name: "{{ pg_team_id }}-{{ pg_instance_name }}"

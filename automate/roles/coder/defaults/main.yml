@@ -1,0 +1,17 @@
+---
+namespace: coder
+coder_image_version: v0.9.7
+
+coder_pg_dbname: coder
+coder_pg_user: coder
+
+coder_admin_email: "k.erber@erber-freelance.de"
+coder_organization: "{{ keycloak_realm_name }}"
+coder_admin_username: "admin"
+
+coder_db_hostname: main-coder-db
+coder_access_host: "coder.{{ cluster_public_domain }}"
+coder_oidc_issuer_url: "https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}"
+coder_oidc_client_id: "coder"
+
+coder_ingress_class: nginx-public

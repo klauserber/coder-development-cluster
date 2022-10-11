@@ -1,7 +1,7 @@
 ---
 keycloak_realms:
   - realm_data:
-      realm: "workshops-de"
+      realm: "{{ keycloak_realm_name }}"
       enabled: true
       registrationAllowed: true
       registrationEmailAsUsername: true
@@ -12,17 +12,17 @@ keycloak_realms:
       bruteForceProtected: true
 
       smtpServer:
+        user: "{{ smtp.user }}"
         password: "{{ keycloak_smtp_password }}"
-        replyToDisplayName: "workshops.de"
-        starttls: "true"
+        replyToDisplayName: "{{ keycloak_realm_name }}"
+        starttls: "{{ smtp.starttls }}"
         auth: "true"
-        port: "587"
-        host: "server35.webgo24.de"
-        replyTo: "info@isium.de"
-        from: "info@isium.de"
-        fromDisplayName: "workshops.de"
-        ssl: "false"
-        user: "k.erber@isium.de"
+        port: "{{ smtp.port }}"
+        host: "{{ smtp.host }}"
+        replyTo: "{{ smtp.replyTo }}"
+        from: "{{ smtp.from }}"
+        fromDisplayName: "{{ keycloak_realm_name }}"
+        ssl: "{{ smtp.ssl }}"
 
     clients:
       - clientId: "coder"

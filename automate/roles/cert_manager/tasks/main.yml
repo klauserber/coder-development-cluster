@@ -1,5 +1,4 @@
 ---
-
 - name: Add chart repo
   kubernetes.core.helm_repository:
     name: jetstack
@@ -19,15 +18,15 @@
     wait: true
     state: "{{ component_state }}"
 
-- name: google secret
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
-    state: "{{ component_state }}"
-    definition: "{{ lookup('template', 'google_secret.yml') | from_yaml }}"
+# - name: google secret
+#   kubernetes.core.k8s:
+#     kubeconfig: "{{ kubeconfig }}"
+#     namespace: "{{ namespace }}"
+#     state: "{{ component_state }}"
+#     definition: "{{ lookup('template', 'google_secret.yml') | from_yaml }}"
 
-- name: deploy cluster issuer
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    state: "{{ component_state }}"
-    src: cluster-issuer.yml
+# - name: deploy cluster issuer
+#   kubernetes.core.k8s:
+#     kubeconfig: "{{ kubeconfig }}"
+#     state: "{{ component_state }}"
+#     src: cluster-issuer.yml

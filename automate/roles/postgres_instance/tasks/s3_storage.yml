@@ -1,20 +1,10 @@
 ---
-- name: "namespace"
-  kubernetes.core.k8s:
-    state: "present"
-    kubeconfig: "{{ kubeconfig }}"
-    definition:
-      apiVersion: "v1"
-      kind: "Namespace"
-      metadata:
-        name: "{{ namespace }}"
-
 - name: "s3 backup target secret"
   when: pg_backup
   kubernetes.core.k8s:
     state: "{{ component_state }}"
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ pg_namespace }}"
     definition:
       apiVersion: v1
       kind: Secret
@@ -30,7 +20,7 @@
   kubernetes.core.k8s:
     state: "{{ component_state }}"
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ pg_namespace }}"
     definition:
       apiVersion: v1
       kind: Secret
@@ -45,7 +35,7 @@
   when: "pg_backup"
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ pg_namespace }}"
     api_version: "v1"
     kind: "Pod"
     label_selectors:
@@ -56,7 +46,7 @@
   when: pg_backup
   kubernetes.core.k8s_cp:
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ pg_namespace }}"
     remote_path: "/home/postgres/etc/wal-e.d/env/AWS_ACCESS_KEY_ID"
     content: "{{ pg_s3_access_key }}"
     pod: "{{ item.metadata.name }}"
@@ -68,7 +58,7 @@
   when: pg_backup
   kubernetes.core.k8s_cp:
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ pg_namespace }}"
     remote_path: "/home/postgres/etc/wal-e.d/env/AWS_SECRET_ACCESS_KEY"
     content: "{{ pg_s3_secret_key }}"
     pod: "{{ item.metadata.name }}"

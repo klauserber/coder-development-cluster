@@ -6,7 +6,7 @@ INSTANCE=${3}
 PORT=${4:-5432}
 
 if [[ -z ${INSTANCE} ]]; then
-    echo "      USAGE: ./pg_connect.sh <namespace> <instance-name> <team_id> [port]"
+    echo "      USAGE: ./pg_connect.sh <pg_namespace> <instance-name> <team_id> [port]"
     exit -1
 fi
 
@@ -15,7 +15,7 @@ PGMASTER=$(kubectl -n ${NS} get pods -o jsonpath={.items..metadata.name} -l appl
 PASSWORD=$(kubectl -n ${NS} get secret postgres.${TEAM_ID}-${INSTANCE}.credentials.postgresql.acid.zalan.do -o 'jsonpath={.data.password}' | base64 -d)
 
 echo "port forward the postgres port with:
-namespace:              ${NS}
+pg_namespace:              ${NS}
 instance name:          ${INSTANCE}
 team_id:                ${TEAM_ID}
 localhost port:         ${PORT}

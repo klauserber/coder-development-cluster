@@ -2,7 +2,7 @@
 - name: "wait for all pods are present"
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ pg_namespace }}"
     api_version: "v1"
     kind: "Pod"
     label_selectors:
@@ -15,5 +15,5 @@
 - name: "wait for postgres pods to become ready"
   when: "component_state == 'present'"
   changed_when: false
-  command: "kubectl --kubeconfig {{ kubeconfig }} -n {{ namespace }}
+  command: "kubectl --kubeconfig {{ kubeconfig }} -n {{ pg_namespace }}
     wait --for=condition=ready --timeout={{ pg_wait_timeout_seconds }}s -l cluster-name={{ pg_team_id }}-{{ pg_instance_name }} pod"

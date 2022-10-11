@@ -8,7 +8,7 @@
   kubernetes.core.k8s:
     state: "{{ component_state }}"
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ pg_namespace }}"
     definition: "{{ lookup('template', 'postgres.yml.j2') }}"
 
 - name: "include db_ready"

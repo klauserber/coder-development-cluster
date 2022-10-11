@@ -1,18 +1,10 @@
 ---
-- name: "google secret"
-  include_role:
-    name: "google_secret"
-
-- name: "query running postgres pods"
-  when: "pg_backup"
-  kubernetes.core.k8s_info:
+- name: google secret
+  kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
-    api_version: "v1"
-    kind: "Pod"
-    label_selectors:
-      - "cluster-name = {{ pg_team_id }}-{{ pg_instance_name }}"
-  register: "pg_pod_query"
+    namespace: "{{ pg_namespace }}"
+    state: "{{ component_state }}"
+    definition: "{{ lookup('template', 'google_secret.yml.j2') | from_yaml }}"
 
 - name: "check if clone source is present"
   when: pg_clone

@@ -1,0 +1,53 @@
+---
+- name: query db password
+  shell: "kubectl --kubeconfig {{ kubeconfig }} -n {{ namespace }}
+    get secret {{ coder_pg_user }}.{{ coder_db_hostname }}.credentials.postgresql.acid.zalan.do
+    -o 'jsonpath={.data.password}' | base64 -d"
+  register: "coder_pg_password"
+
+- name: db url secret
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ component_state }}"
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: coder-db-url
+        namespace: "{{ namespace }}"
+      type: Opaque
+      stringData:
+        db_url: "postgres://coder:{{ coder_pg_password.stdout }}@{{ coder_db_hostname }}:5432/coder?sslmode=disable"
+
+- name: helm
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig }}"
+    name: coder
+    namespace: "{{ namespace }}"
+    chart_ref: "{{ role_path }}/helm"
+    state: "{{ component_state }}"
+    wait: true
+    values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"
+  register: helm_result
+
+- name: coder additional deployments
+  k8s:
+    namespace: "{{ namespace }}"
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ component_state }}"
+    definition: "{{ lookup('template', 'coder.yml.j2') | from_yaml_all }}"
+
+- name: wait
+  when:
+    - helm_result.changed
+    - component_state == "present"
+  wait_for:
+    port: 443
+    host: "{{ coder_access_host }}"
+    timeout: 90
+    delay: 10
+    sleep: 3
+
+- name: setup
+  when: component_state == "present"
+  include_tasks: setup.yml

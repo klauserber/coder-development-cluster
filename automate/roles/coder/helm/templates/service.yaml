@@ -1,0 +1,20 @@
+{{- if .Values.coder.service.enable }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coder
+  labels:
+    {{- include "coder.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.coder.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.coder.service.type }}
+  ports:
+    - name: {{ include "coder.portName" . | quote }}
+      port: {{ include "coder.servicePort" . }}
+      targetPort: {{ include "coder.portName" . | quote }}
+      protocol: TCP
+  selector:
+    {{- include "coder.selectorLabels" . | nindent 4 }}
+{{- end }}

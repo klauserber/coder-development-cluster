@@ -1,0 +1,48 @@
+{
+  "apiVersion": "cert-manager.io/v1",
+  "kind": "Issuer",
+  "metadata": {
+    "annotations": {},
+    "name": "cert-issuer",
+    "namespace": "nginx-ingress"
+  },
+  "spec": {
+    "acme": {
+      "email": "k.erber@isium.de",
+      "preferredChain": "ISRG Root X1",
+      "privateKeySecretRef": {
+        "name": "acme-dns01-issuer-account-key"
+      },
+      "server": "https://acme-v02.api.letsencrypt.org/directory",
+      "solvers": [
+        {
+          "dns01": {
+            "cloudDNS": {
+              "project": "isi-labs",
+              "serviceAccountSecretRef": {
+                "key": "google-cloud.json",
+                "name": "clouddns-dns01-solver-svc-acct"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "status": {
+    "acme": {
+      "lastRegisteredEmail": "k.erber@isium.de",
+      "uri": "https://acme-v02.api.letsencrypt.org/acme/acct/762892236"
+    },
+    "conditions": [
+      {
+        "lastTransitionTime": "2022-10-11T05:34:58Z",
+        "message": "The ACME account was registered with the ACME server",
+        "observedGeneration": 1,
+        "reason": "ACMEAccountRegistered",
+        "status": "True",
+        "type": "Ready"
+      }
+    ]
+  }
+}

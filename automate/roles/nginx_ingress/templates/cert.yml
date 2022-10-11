@@ -6,6 +6,7 @@ spec:
   secretName: ingress-isi-cert
   dnsNames:
     - "*.{{ cluster_public_domain }}"
+    - "*.coder.{{ cluster_public_domain }}"
   issuerRef:
     name: cert-issuer
     kind: Issuer

@@ -12,9 +12,9 @@ resource "google_container_cluster" "primary" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   # remove_default_node_pool = true
-  initial_node_count       = 1
-  min_master_version       = data.google_container_engine_versions.stable.latest_master_version
-  node_version                  = data.google_container_engine_versions.stable.latest_node_version
+  initial_node_count = 1
+  min_master_version = data.google_container_engine_versions.stable.latest_master_version
+  node_version       = data.google_container_engine_versions.stable.latest_node_version
 
   network    = google_compute_network.vpc.name
   subnetwork = google_compute_subnetwork.subnet.name
@@ -30,7 +30,7 @@ resource "google_container_cluster" "primary" {
     }
 
     preemptible  = var.preemptible
-    machine_type = "n1-standard-1"
+    machine_type = var.machine_type
     disk_size_gb = 50
     tags         = ["gke-node", "${var.system_name}-gke"]
     metadata = {
@@ -40,55 +40,41 @@ resource "google_container_cluster" "primary" {
 
 }
 
-# # Separately Managed Node Pool
-# resource "google_container_node_pool" "primary_nodes" {
-#   name     = "${google_container_cluster.primary.name}-node-pool"
-#   location = var.cluster_location
-#   cluster  = google_container_cluster.primary.name
-#   # node_count = var.gke_num_nodes
-#   version = data.google_container_engine_versions.stable.latest_node_version
+# Separately Managed Node Pool
+resource "google_container_node_pool" "secondary_nodes" {
+  name     = "${google_container_cluster.primary.name}-node-pool"
+  location = var.cluster_location
+  cluster  = google_container_cluster.primary.name
+  # node_count = var.gke_num_nodes
+  version = data.google_container_engine_versions.stable.latest_node_version
 
-#   autoscaling {
-#     min_node_count = 1
-#     max_node_count = 4
-#     # location_policy = "ANY"
-#   }
+  autoscaling {
+    min_node_count = var.min_node_count
+    max_node_count = var.max_node_count
+    # location_policy = "ANY"
+  }
 
-#   initial_node_count = 1
+  initial_node_count = 0
 
-#   node_config {
-#     oauth_scopes = [
-#       "https://www.googleapis.com/auth/logging.write",
-#       "https://www.googleapis.com/auth/monitoring",
-#     ]
+  node_config {
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
 
-#     labels = {
-#       env = var.system_name
-#     }
+    labels = {
+      env = var.system_name
+    }
 
-#     preemptible  = true
-#     machine_type = "n1-standard-1"
-#     disk_size_gb = 50
-#     tags         = ["gke-node", "${var.system_name}-gke"]
-#     metadata = {
-#       disable-legacy-endpoints = "true"
-#     }
-#   }
-# }
-
-# module "gke_auth" {
-#   source               = "terraform-google-modules/kubernetes-engine/google//modules/auth"
-
-#   project_id           = var.project_id
-#   cluster_name         = "${var.system_name}-gke"
-#   location             = var.cluster_location
-#   use_private_endpoint = false
-# }
-
-# resource "local_file" "kubeconfig" {
-#   content  = module.gke_auth.kubeconfig_raw
-#   filename = "${path.module}/../../config/${var.system_name}_kubeconfig"
-# }
+    preemptible  = var.preemptible
+    machine_type = var.machine_type
+    disk_size_gb = 50
+    tags         = ["gke-node", "${var.system_name}-gke"]
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
+  }
+}
 
 # # Kubernetes provider
 # # The Terraform Kubernetes Provider configuration below is used as a learning reference only.

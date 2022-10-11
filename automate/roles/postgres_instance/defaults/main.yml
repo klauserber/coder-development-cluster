@@ -19,8 +19,8 @@ pg_dbs: []
 # The password of the postgres user can be found in the secrets named
 #   postgres.<pg_team_id>-<pg_instance_name>.credentials.postgresql.acid.zalan.do
 
-# namespace in which to deploy the instance
-namespace: "postgres-instance"
+# pg_namespace in which to deploy the instance
+pg_namespace: "postgres-instance"
 
 pg_version: "14"
 
@@ -104,7 +104,7 @@ pg_backup_name: "main"
 
 pg_clone_scope: "{{ pg_team_id }}-{{ pg_instance_name }}"
 
-pg_backup_prefix: "{{ pg_bucket_backup_prefix | default(namespace + '/') }}"
+pg_backup_prefix: "{{ pg_bucket_backup_prefix | default(pg_namespace + '/') }}"
 pg_backup_suffix: "{{ pg_bucket_backup_suffix | default('/' + pg_backup_name) }}"
 
 pg_clone_prefix: "{{ pg_clone_bucket_prefix | default(pg_backup_prefix) }}"

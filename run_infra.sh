@@ -18,6 +18,9 @@ terraform -chdir=${SCRIPT_DIR}/infrastructure/${INFRASTRUCTURE_PROVIDER} apply \
   -var "system_name=${CLUSTER_NAME}" \
   -var "managed_zone=${MANAGED_ZONE}" \
   -var "domain_name=${DOMAIN_NAME}" \
+  -var "machine_type=${MACHINE_TYPE}" \
+  -var "min_node_count=${MIN_NODE_COUNT}" \
+  -var "max_node_count=${MAX_NODE_COUNT}" \
   -var "preemptible=${PREEMPTIBLE}"
 
 gcloud auth activate-service-account --project=${PROJECT_ID} --key-file=config/google-cloud.json

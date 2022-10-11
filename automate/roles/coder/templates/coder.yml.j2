@@ -1,0 +1,48 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ namespace }}-cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: coder
+    namespace: {{ namespace }}
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: coder
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
+spec:
+  ingressClassName: {{ coder_ingress_class }}
+  tls:
+    - hosts:
+        - {{ coder_access_host }}
+        - "*.{{ coder_access_host }}"
+  rules:
+    - host: {{ coder_access_host }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: coder
+                port:
+                  number: 80
+    - host: "*.{{ coder_access_host }}"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: coder
+                port:
+                  number: 80

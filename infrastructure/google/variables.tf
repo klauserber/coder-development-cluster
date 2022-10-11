@@ -52,3 +52,18 @@ variable "preemptible" {
   type        = bool
   description = "number of gke nodes"
 }
+
+variable "machine_type" {
+  default     = "n1-standard-1"
+  description = "machine type"
+}
+
+variable "min_node_count" {
+  default     = 0
+  description = "minimum number of nodes on secondary node pool"
+}
+
+variable "max_node_count" {
+  default     = 4
+  description = "maximum number of nodes on secondary node pool"
+}

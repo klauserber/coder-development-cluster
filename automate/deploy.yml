@@ -3,10 +3,39 @@
   hosts: localhost
   gather_facts: false
   connection: local
-  vars:
-    google_credentials_path: "{{ playbook_dir }}/../config/google-cloud.json"
+  vars_files:
+    - "{{ config_dir }}/app_config.yml"
   roles:
-    - cert_manager
-    - nginx_ingress
-    - postgres_base
-    - hello_app
+    - role: cert_manager
+    - role: nginx_ingress
+    - role: postgres_base
+    - role: postgres_instance
+      vars:
+        pg_namespace: keycloak
+        pg_team_id: "main"
+        pg_instance_name: "keycloak-db"
+        pg_disk_size: "1Gi"
+        pg_instances: 1
+        pg_backup: true
+        pg_clone: true
+        pg_storage_provider: gs
+        pg_bucket_backup_prefix: "{{ cluster_name }}/"
+        pg_dbs:
+          - user: "keycloak"
+            db_name: "keycloak"
+    - role: keycloak
+    - role: postgres_instance
+      vars:
+        pg_namespace: coder
+        pg_team_id: "main"
+        pg_instance_name: "coder-db"
+        pg_disk_size: "5Gi"
+        pg_instances: 1
+        pg_backup: true
+        pg_clone: true
+        pg_storage_provider: gs
+        pg_bucket_backup_prefix: "{{ cluster_name }}/"
+        pg_dbs:
+          - user: "coder"
+            db_name: "coder"
+    - role: coder

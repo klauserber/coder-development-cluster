@@ -1,0 +1,42 @@
+---
+- name: setup admin user
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/users/first"
+    method: POST
+    body_format: json
+    status_code: [ 200, 201, 409 ]
+    body:
+      email: "{{ coder_admin_email }}"
+      organization: "{{ coder_organization }}"
+      password: "{{ coder_admin_password }}"
+      username: "{{ coder_admin_username }}"
+  register: result
+
+- name: api login
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/users/login"
+    method: POST
+    body_format: json
+    status_code: [ 201 ]
+    body:
+      email: "{{ coder_admin_email }}"
+      password: "{{ coder_admin_password }}"
+  register: result
+
+- name: set token fact
+  set_fact:
+    token: "{{ result.json.session_token }}"
+
+- name: coder login
+  command: "coder login https://{{ coder_access_host }} --token {{ token }}"
+  changed_when: false
+
+- name: push template
+  command: "coder template push -d {{ role_path }}/coder_templates/devbox -y"
+  ignore_errors: true
+  register: result
+
+- name: create template
+  when: "result.rc != 0"
+  command: "coder template create -d {{ role_path }}/coder_templates/devbox -y"
+

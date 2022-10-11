@@ -4,7 +4,7 @@ kind: "postgresql"
 
 metadata:
   name: "{{ pg_team_id }}-{{ pg_instance_name }}"
-  namespace: "{{ namespace }}"
+  pg_namespace: "{{ pg_namespace }}"
   labels:
     team: "{{ pg_team_id }}"
 

@@ -30,7 +30,7 @@ Klaus Erber <k.erber@erber-freelance.de>
 
 ### Connect to the database inside the cluster
 
-The database will be accessible at the service end point `<pg_team_id>-<pg_instance_name>:5432`. To access the database from another namespace include the namespace from the database instance in the hostname: `<pg_team_id>-<pg_instance_name>.<namespace of the the instance>:5432`
+The database will be accessible at the service end point `<pg_team_id>-<pg_instance_name>:5432`. To access the database from another pg_namespace include the pg_namespace from the database instance in the hostname: `<pg_team_id>-<pg_instance_name>.<pg_namespace of the the instance>:5432`
 
 The password for the postgres user to manage the database instance is stored in the secret: `postgres.<pg_team_id>-<pg_instance_name>.credentials.postgresql.acid.zalan.do`
 
@@ -43,13 +43,13 @@ Follow this documentation: https://postgres-operator.readthedocs.io/en/latest/us
 Or use the the script `connect_pg.sh`:
 
 ```bash
-USAGE: ./pg_connect.sh <namespace> <instance-name> <team_id> [port]
+USAGE: ./pg_connect.sh <pg_namespace> <instance-name> <team_id> [port]
 ```
 
 ```bash
-./connect_pg.sh default myteam myproddb-instance 
+./connect_pg.sh default myteam myproddb-instance
 port forward the postgres port with:
-namespace:              default
+pg_namespace:              default
 instance name:          myproddb-instance
 team_id:                myteam
 localhost port:         5432

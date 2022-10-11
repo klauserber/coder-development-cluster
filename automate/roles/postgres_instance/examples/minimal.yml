@@ -12,7 +12,7 @@
     - name: "infrastructure_configuration"
     - name: "postgres_instance"
       vars:
-        namespace: "default"
+        pg_namespace: "default"
         pg_team_id: "myteam"
         pg_instance_name: "mydevdb-instance"
         pg_version: "14"

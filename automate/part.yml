@@ -1,28 +1,10 @@
 ---
-- name: deploy
+- name: part
   hosts: localhost
   gather_facts: false
   connection: local
   vars_files:
     - "{{ config_dir }}/app_config.yml"
-
   roles:
-    - name: postgres_instance
-      vars:
-        namespace: keycloak
-        pg_team_id: "main"
-        pg_instance_name: "keycloak-db"
-        pg_disk_size: "5Gi"
-        pg_instances: 1
-        pg_backup: true
-        pg_clone: true
-        pg_storage_provider: gs
-        pg_bucket_backup_prefix: "{{ cluster_name }}/"
-        pg_dbs:
-          - user: "keycloak"
-            db_name: "keycloak"
-    - name: keycloak
-
-  # tasks:
-  #   - debug:
-  #       var: "coder_client_secret"
+    - role: nginx_ingress
+    # - role: coder
