@@ -6,5 +6,4 @@
   vars_files:
     - "{{ config_dir }}/app_config.yml"
   roles:
-    - role: nginx_ingress
-    # - role: coder
+    - role: coder
