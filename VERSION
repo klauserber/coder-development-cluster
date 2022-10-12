@@ -1,0 +1,3 @@
+VERSION=1.0.0
+REGISTRY_NAME=isi006
+IMAGE_NAME=coder-development-cluster
