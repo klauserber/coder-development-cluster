@@ -3,13 +3,13 @@ cluster_backup_dir_certs: "{{ cluster_backup_dir }}/certs"
 
 cluster_cert_resources:
   - name: ingress-isi-cert
-    filename: ingress-isi-cert-encrypted.json
+    filename: ingress-isi-cert.json
     kind: secret
   - name: cluster-cert
     filename: cluster-cert.json
     kind: certificate
   - name: acme-dns01-issuer-account-key
-    filename: acme-dns01-issuer-account-key-encrypted.json
+    filename: acme-dns01-issuer-account-key.json
     kind: secret
   - name: cert-issuer
     filename: cert-issuer.json

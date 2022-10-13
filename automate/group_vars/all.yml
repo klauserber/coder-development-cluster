@@ -9,9 +9,9 @@ cluster_name: dev
 component_state: present
 
 cluster_public_domain: "{{ cluster_name }}.{{ domain_name }}"
-cluster_backup_dir: "{{ playbook_dir }}/backup_cluster/{{ cluster_name }}"
 kubeconfig: "{{ playbook_dir }}/../config/{{ cluster_name }}_kubeconfig"
 
 config_dir: "{{ playbook_dir }}/../config"
+cluster_backup_dir: "{{ config_dir }}/cache/{{ cluster_name }}"
 
 google_credentials_path: "{{ config_dir }}/google-cloud.json"

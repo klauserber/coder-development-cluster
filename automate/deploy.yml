@@ -8,8 +8,6 @@
   roles:
     - role: cert_manager
     - role: nginx_ingress
-      vars:
-        cluster_backup_dir: "{{ config_dir }}/cache"
     - role: postgres_base
     - role: postgres_instance
       vars:
