@@ -3,9 +3,9 @@ FROM ubuntu:22.04
 ARG TARGETARCH
 ARG TARGETOS=linux
 
-RUN set -e; \
-    apt-get update && DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin" apt-get install -y \
-      software-properties-common curl
+# RUN set -e; \
+#     apt-get update && DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin" apt-get install -y \
+#       software-properties-common curl
       # ; \
 #     add-apt-repository --yes --update ppa:ansible/ansible; \
 #     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list; \
@@ -55,12 +55,12 @@ RUN set -e; \
 #   chmod +x /usr/local/bin/helm; \
 #   rm -rf ${TARGETOS}-${TARGETARCH} helm.tar.gz
 
-ARG CODER_VERSION=0.9.9
-RUN  set -e; \
-  cd /tmp; \
-  curl -sSL -o coder.deb -C - https://github.com/coder/coder/releases/download/v${CODER_VERSION}/coder_${CODER_VERSION}_${TARGETOS}_${TARGETARCH}.deb; \
-  dpkg --force-confdef --force-confold -i coder.deb; \
-  rm -rf coder.deb
+# ARG CODER_VERSION=0.9.9
+# RUN  set -e; \
+#   cd /tmp; \
+#   curl -sSL -o coder.deb -C - https://github.com/coder/coder/releases/download/v${CODER_VERSION}/coder_${CODER_VERSION}_${TARGETOS}_${TARGETARCH}.deb; \
+#   dpkg --force-confdef --force-confold -i coder.deb; \
+#   rm -rf coder.deb
 
 COPY automate /app/automate
 COPY infrastructure /app/infrastructure
