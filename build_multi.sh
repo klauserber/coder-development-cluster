@@ -13,7 +13,7 @@ docker buildx build \
   -t ${REGISTRY_NAME}/${IMAGE_NAME}:latest \
   --build-arg IMAGE_NAME=${IMAGE_NAME} \
   --build-arg IMAGE_VERSION=${VERSION} \
-  --push \
   --platform=linux/arm64,linux/amd64 "${@}"
 
+  # --push \
   # --no-cache --pull \
