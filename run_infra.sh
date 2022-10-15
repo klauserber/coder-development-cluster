@@ -11,9 +11,7 @@ terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
     -backend-config="bucket=${BUCKET_NAME}" \
     -backend-config="prefix=tf-state/${CLUSTER_NAME}" \
 
-# -auto-approve
-
-terraform -chdir=${SCRIPT_DIR}/infrastructure/${INFRASTRUCTURE_PROVIDER} apply \
+terraform -chdir=${SCRIPT_DIR}/infrastructure/${INFRASTRUCTURE_PROVIDER} apply -auto-approve \
   -var "project_id=${PROJECT_ID}" \
   -var "region=${REGION}" \
   -var "cluster_location=${CLUSTER_LOCATION}" \
