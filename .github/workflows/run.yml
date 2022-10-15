@@ -1,0 +1,23 @@
+# from: https://dev.to/cloudx/multi-arch-docker-images-the-easy-way-with-github-actions-4k54
+
+name: Run
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+    push:
+      branches:
+        - 'main'
+      tags:
+        - '*.*.*'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container:
+      image: isi006/coder-development-cluster:0.9.0
+      env:
+        RUN_ENV: "${RUN_ENV}"
+    steps:
+      - name: runtest
+        run: 'echo ENV -> $RUN_ENV'
