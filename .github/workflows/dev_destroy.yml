@@ -1,6 +1,6 @@
 # from: https://dev.to/cloudx/multi-arch-docker-images-the-easy-way-with-github-actions-4k54
 
-name: dev_run
+name: dev_destroy
 
 # Controls when the workflow will run
 on:
