@@ -19,8 +19,8 @@ ${SCRIPT_DIR}/secrets_get.sh ${CLUSTER_NAME}
 
 export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-cloud.json
 
-terraform -chdir=${SCRIPT_DIR}/infrastructure/google init -auto-approve \
+terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
     -backend-config="bucket=${BUCKET_NAME}" \
     -backend-config="prefix=tf-state/${CLUSTER_NAME}" \
 
-terraform -chdir=${SCRIPT_DIR}/infrastructure/google destroy
+terraform -chdir=${SCRIPT_DIR}/infrastructure/google destroy -auto-approve
