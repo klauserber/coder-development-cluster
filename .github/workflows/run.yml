@@ -20,4 +20,5 @@ jobs:
         RUN_ENV: "${RUN_ENV}"
     steps:
       - name: runtest
-        run: 'echo ENV -> $RUN_ENV'
+        run: "ls"
+        shell: bash
