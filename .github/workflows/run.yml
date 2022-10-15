@@ -22,5 +22,5 @@ jobs:
         run: "mkdir -p config && echo ${GOOGLE_CLOUD} > config/google-cloud.json"
         shell: bash
       - name: runtest
-        run: "docker run -v $(pwd)/config:/app/config --entrypoint=gcloud isi006/coder-development-cluster:0.9.0 activate-service-account --key-file=config/google-cloud.json"
+        run: "docker run -v $(pwd)/config:/app/config --entrypoint=gcloud isi006/coder-development-cluster:0.9.0 auth activate-service-account --key-file=config/google-cloud.json"
         shell: bash
