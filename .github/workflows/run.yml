@@ -11,12 +11,15 @@ on:
       tags:
         - '*.*.*'
 
+env:
+  GOOGLE_CLOUD: ${{ secrets.GOOGLE_CLOUD }}
+
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - name: credentials
-        run: "mkdir -p config && echo ${{ secrets.GOOGLE_CLOUD }} > config/google_cloud.json"
+        run: "mkdir -p config && echo ${GOOGLE_CLOUD} > config/google-cloud.json"
         shell: bash
       - name: test
         run: "ls -l config"
