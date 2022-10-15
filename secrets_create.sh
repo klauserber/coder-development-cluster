@@ -9,8 +9,6 @@ if [ -z "${CLUSTER_NAME}" ]; then
   exit 1
 fi
 
-gcloud auth activate-service-account --key-file=config/google-cloud.json
-
 gcloud secrets delete ${CLUSTER_NAME}_env --quiet 2> /dev/null || true
 gcloud secrets create ${CLUSTER_NAME}_env --data-file=${SCRIPT_DIR}/config/env
 

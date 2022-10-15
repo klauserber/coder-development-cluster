@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-# ./build.sh
-
-. ./VERSION
+REGISTRY_NAME=isi006
+IMAGE_NAME=coder-development-cluster
 
 ENTRYPOINT=${1:-/app/run.sh}
 

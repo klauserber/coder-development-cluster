@@ -11,14 +11,15 @@ function chown_on_exit() {
 
 trap chown_on_exit ERR INT
 
-CLUSTER_NAME=${1-${CLUSTER_NAME}}
+GCLOUD_PROJECT=${1:-${GCLOUD_PROJECT}}
+CLUSTER_NAME=${2:-${CLUSTER_NAME}}
 
-if [ -z "${CLUSTER_NAME}" ]; then
-  echo "Usage: $0 <cluster-name>"
+if [ -z "${CLUSTER_NAME}" ] || [ -z "${GCLOUD_PROJECT}" ]; then
+  echo "Usage: $0 <GCLOUD_PROJECT> <CLUSTER_NAME>"
   exit 1
 fi
 
-gcloud auth activate-service-account --key-file=config/google-cloud.json
+${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
 
 ${SCRIPT_DIR}/secrets_get.sh ${CLUSTER_NAME}
 

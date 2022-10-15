@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GOOGLE_CLOUD: ${{ secrets.GOOGLE_CLOUD }}
+      GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
+      CLUSTER_NAME: dev
     environment:
       name: dev
       url: https://coder.dev.gke.isium.de
@@ -24,5 +26,5 @@ jobs:
         run: "mkdir -p config && echo ${GOOGLE_CLOUD} > config/google-cloud.json"
         shell: bash
       - name: run
-        run: "docker run -v $(pwd)/config:/app/config isi006/coder-development-cluster:latest dev"
+        run: "docker run -v $(pwd)/config:/app/config isi006/coder-development-cluster:latest ${GCLOUD_PROJECT} ${CLUSTER_NAME}"
         shell: bash

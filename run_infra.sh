@@ -23,7 +23,6 @@ terraform -chdir=${SCRIPT_DIR}/infrastructure/${INFRASTRUCTURE_PROVIDER} apply -
   -var "max_node_count=${MAX_NODE_COUNT}" \
   -var "preemptible=${PREEMPTIBLE}"
 
-gcloud auth activate-service-account --project=${PROJECT_ID} --key-file=config/google-cloud.json
 export KUBECONFIG=${SCRIPT_DIR}/config/${CLUSTER_NAME}_kubeconfig
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 gcloud container clusters get-credentials --zone ${CLUSTER_LOCATION} --project ${PROJECT_ID} ${CLUSTER_NAME}-gke

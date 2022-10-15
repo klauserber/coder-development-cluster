@@ -9,8 +9,6 @@ if [ -z "${CLUSTER_NAME}" ]; then
   exit 1
 fi
 
-gcloud auth activate-service-account --key-file=config/google-cloud.json
-
 gcp-get-secret --name ${CLUSTER_NAME}_env > ${SCRIPT_DIR}/config/env
 gcp-get-secret --name ${CLUSTER_NAME}_app_config > ${SCRIPT_DIR}/config/app_config.yml
 
