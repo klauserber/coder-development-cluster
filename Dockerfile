@@ -61,6 +61,8 @@ RUN  set -e; \
   dpkg --force-confdef --force-confold -i coder.deb; \
   rm -rf coder.deb
 
+COPY --from=binxio/gcp-get-secret:v0.4.6 /gcp-get-secret /usr/local/bin/
+
 COPY automate /app/automate
 COPY infrastructure /app/infrastructure
 COPY run* /app/
