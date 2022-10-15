@@ -14,11 +14,7 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    container:
-      image: isi006/coder-development-cluster:0.9.0
-      env:
-        RUN_ENV: "${RUN_ENV}"
     steps:
       - name: runtest
-        run: "ls"
+        run: "docker run --entrypoint=ls isi006/coder-development-cluster:0.9.0"
         shell: bash
