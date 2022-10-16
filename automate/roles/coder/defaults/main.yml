@@ -15,3 +15,23 @@ coder_oidc_issuer_url: "https://keycloak.{{ cluster_public_domain }}/realms/{{ k
 coder_oidc_client_id: "coder"
 
 coder_ingress_class: nginx-public
+
+coder_storage_class: standard-rwo
+coder_restic_password_prefix: eeG8Bo9hiekex9ie
+coder_restic_repo_prefix: "gs://{{ bucket_name }}/coder"
+coder_aws_default_region: eu-central-1
+coder_aws_access_key: NONE
+coder_aws_secret_key: NONE
+
+coder_devbox_workspace_templates: []
+  # - name: "Docker-Kubernetes"
+  #   devbox_image: isi006/code-server-devbox:latest
+  #   homedir_disk_size: 10Gi
+  #   devbox_mem_limit: 4000
+  #   docker_service: true
+  #   docker_mem_limit: 2000
+  #   openvpn_service: false
+  #   backup_service: true
+  #   backup_mem_limit: 2000
+  #   backup_cron: "15 * * * *"
+  #   restic_forget_args: "--keep-last 12 --keep-daily 7 --keep-weekly 4 --keep-monthly 3 --keep-yearly 100 --prune"

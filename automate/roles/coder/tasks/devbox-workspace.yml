@@ -1,0 +1,16 @@
+---
+- name: coder template param file
+  template:
+    src: "params-devbox.yml.j2"
+    dest: "{{ role_path }}/tmp/params-{{ item.name }}.yml"
+    mode: 0600
+
+- name: push template
+  command: "coder template push '{{ item.name }}' --parameter-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
+  ignore_errors: true
+  register: result
+
+- name: create template
+  when: "result.rc != 0"
+  command: "coder template create '{{ item.name }}' --parameter-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
+

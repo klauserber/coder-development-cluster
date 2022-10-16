@@ -16,10 +16,16 @@ resource "kubernetes_namespace" "home-ns" {
   }
 }
 
+resource "kubernetes_namespace" "work-ns" {
+  metadata {
+    name = "${var.workspaces_namespace_prefix}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}-work"
+  }
+}
+
 resource "kubernetes_role_binding" "role_binding" {
   metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}-namespace-admin"
-    namespace = kubernetes_namespace.home-ns.metadata.0.name
+    name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}-namespace-work-admin"
+    namespace = kubernetes_namespace.work-ns.metadata.0.name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -98,6 +104,10 @@ resource "kubernetes_stateful_set" "main" {
           env {
             name  = "DOCKER_HOST"
             value = "tcp://localhost:2375"
+          }
+          env {
+            name  = "WORK_NAMESPACE"
+            value = kubernetes_namespace.work-ns.metadata.0.name
           }
           port {
             container_port = 13337

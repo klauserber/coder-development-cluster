@@ -1,0 +1,18 @@
+
+storage_class: "{{ coder_storage_class }}"
+restic_password_prefix: "{{ coder_restic_password_prefix }}"
+restic_repo_prefix: "{{ coder_restic_repo_prefix }}"
+aws_default_region: "{{ coder_aws_default_region }}"
+aws_access_key: "{{ coder_aws_access_key }}"
+aws_secret_key: "{{ coder_aws_secret_key }}"
+
+devbox_image: "{{ item.devbox_image}}"
+homedir_disk_size: "{{ item.homedir_disk_size }}"
+devbox_mem_limit: "{{ item.devbox_mem_limit }}"
+docker_service: "{{ item.docker_service }}"
+docker_mem_limit: "{{ item.docker_mem_limit }}"
+openvpn_service: "{{ item.openvpn_service }}"
+backup_service: "{{ item.backup_service }}"
+backup_mem_limit: "{{ item.backup_mem_limit }}"
+backup_cron: "{{ item.backup_cron }}"
+restic_forget_args: "{{ item.restic_forget_args }}"

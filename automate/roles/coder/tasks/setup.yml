@@ -31,12 +31,6 @@
   command: "coder login https://{{ coder_access_host }} --token {{ token }}"
   changed_when: false
 
-- name: push template
-  command: "coder template push -d {{ role_path }}/coder_templates/devbox -y"
-  ignore_errors: true
-  register: result
-
-- name: create template
-  when: "result.rc != 0"
-  command: "coder template create -d {{ role_path }}/coder_templates/devbox -y"
-
+- name: devbox workspaces
+  include_tasks: "devbox-workspace.yml"
+  loop: "{{ coder_devbox_workspace_templates }}"
