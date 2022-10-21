@@ -1,0 +1,9 @@
+---
+- name: terraform variables
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars_files:
+    - "{{ config_dir }}/app_config.yml"
+  roles:
+    - role: tf_vars
