@@ -10,21 +10,22 @@ resource "coder_agent" "devbox" {
   EOF
 }
 
-resource "kubernetes_namespace" "home-ns" {
+resource "kubernetes_namespace" "work-ns" {
   metadata {
-    name = "${var.workspaces_namespace_prefix}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    name = "${var.workspaces_namespace}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
   }
 }
 
-resource "kubernetes_namespace" "work-ns" {
+resource "kubernetes_service_account" "coder" {
   metadata {
-    name = "${var.workspaces_namespace_prefix}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}-work"
+    name      = "coder"
+    namespace = kubernetes_namespace.work-ns.metadata.0.name
   }
 }
 
 resource "kubernetes_role_binding" "role_binding" {
   metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}-namespace-work-admin"
+    name      = "coder-namespace-admin"
     namespace = kubernetes_namespace.work-ns.metadata.0.name
   }
   role_ref {
@@ -34,8 +35,8 @@ resource "kubernetes_role_binding" "role_binding" {
   }
   subject {
     kind      = "ServiceAccount"
-    name      = "default"
-    namespace = kubernetes_namespace.home-ns.metadata.0.name
+    name      = "coder"
+    namespace = kubernetes_namespace.work-ns.metadata.0.name
   }
 }
 
@@ -43,7 +44,7 @@ resource "kubernetes_stateful_set" "main" {
   count = data.coder_workspace.me.start_count
   metadata {
     name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
-    namespace = kubernetes_namespace.home-ns.metadata.0.name
+    namespace = var.workspaces_namespace
   }
   spec {
     replicas = 1
@@ -81,6 +82,17 @@ resource "kubernetes_stateful_set" "main" {
         }
       }
       spec {
+        service_account_name = "coder"
+        dynamic "volume" {
+          for_each = toset( var.restic_storage_type == "gs" ? ["1"] : [])
+          content {
+            name = "google-credentials-secret"
+
+            secret {
+              secret_name = "google-credentials-secret"
+            }
+          }
+        }
         init_container {
           name    = "init-chmod-data"
           image   = "busybox:latest"
@@ -175,6 +187,10 @@ resource "kubernetes_stateful_set" "main" {
               value = var.aws_default_region
             }
             env {
+              name  = "GOOGLE_APPLICATION_CREDENTIALS"
+              value = "/etc/gcloud/google-cloud.json"
+            }
+            env {
               name  = "RESTIC_REPOSITORY"
               value = "${var.restic_repo_prefix}/coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
             }
@@ -192,7 +208,7 @@ resource "kubernetes_stateful_set" "main" {
             }
             env {
               name  = "RESTIC_HOST"
-              value = "${var.workspaces_namespace_prefix}-coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+              value = "${var.workspaces_namespace}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
             }
             resources {
               limits = {
@@ -206,6 +222,13 @@ resource "kubernetes_stateful_set" "main" {
             volume_mount {
               mount_path = "/data"
               name       = "data"
+            }
+            dynamic "volume_mount" {
+              for_each = toset( var.restic_storage_type == "gs" ? ["1"] : [])
+              content {
+                mount_path = "/etc/gcloud"
+                name       = "google-credentials-secret"
+              }
             }
           }
         }

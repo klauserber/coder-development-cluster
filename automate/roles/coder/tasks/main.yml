@@ -19,6 +19,14 @@
       stringData:
         db_url: "postgres://coder:{{ coder_pg_password.stdout }}@{{ coder_db_hostname }}:5432/coder?sslmode=disable"
 
+- name: google secret
+  when: google_credentials_path is defined
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    definition: "{{ lookup('template', 'google_secret.yml.j2') | from_yaml }}"
+
 - name: helm
   kubernetes.core.helm:
     kubeconfig: "{{ kubeconfig }}"

@@ -1,4 +1,7 @@
 
+use_kubeconfig: false
+workspaces_namespace: "coder"
+
 storage_class: "{{ coder_storage_class }}"
 restic_password_prefix: "{{ coder_restic_password_prefix }}"
 restic_repo_prefix: "{{ coder_restic_repo_prefix }}"
@@ -9,10 +12,11 @@ aws_secret_key: "{{ coder_aws_secret_key }}"
 devbox_image: "{{ item.devbox_image}}"
 homedir_disk_size: "{{ item.homedir_disk_size }}"
 devbox_mem_limit: "{{ item.devbox_mem_limit }}"
-docker_service: "{{ item.docker_service }}"
+docker_service: {{ 'true' if item.docker_service else 'false' }}
 docker_mem_limit: "{{ item.docker_mem_limit }}"
-openvpn_service: "{{ item.openvpn_service }}"
-backup_service: "{{ item.backup_service }}"
+openvpn_service: {{ 'true' if item.openvpn_service else 'false' }}
+backup_service: {{ 'true' if item.backup_service else 'false' }}
 backup_mem_limit: "{{ item.backup_mem_limit }}"
 backup_cron: "{{ item.backup_cron }}"
 restic_forget_args: "{{ item.restic_forget_args }}"
+restic_storage_type: "gs"

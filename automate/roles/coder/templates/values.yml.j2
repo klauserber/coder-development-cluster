@@ -27,34 +27,19 @@ coder:
     - name: CODER_OIDC_CLIENT_SECRET
       value: "{{ coder_client_secret }}"
     - name: CODER_WILDCARD_ACCESS_URL
-      value: "https://*.coder.{{ cluster_public_domain }}"
+      value: "*.{{ coder_access_host }}"
 
   service:
     enable: true
     type: ClusterIP
 
-  # coder.ingress -- The Ingress object to expose for Coder.
   ingress:
-    # coder.ingress.enable -- Whether to create the Ingress object. If using an
-    # Ingress, we recommend not specifying coder.tls.secretNames as the Ingress
-    # will handle TLS termination.
     enable: true
-    # coder.ingress.className -- The name of the Ingress class to use.
     className: "nginx-public"
-    # coder.ingress.host -- The hostname to match on.
     host: "{{ coder_access_host }}"
-    # coder.ingress.wildcardHost -- The wildcard hostname to match on. Should be
-    # in the form "*.example.com". Optional if not using applications over
-    # subdomains.
     wildcardHost: "*.{{ coder_access_host }}"
-    # coder.ingress.annotations -- The ingress annotations.
     annotations: {}
-    # coder.ingress.tls -- The TLS configuration to use for the Ingress.
     tls:
-      # coder.ingress.tls.enable -- Whether to enable TLS on the Ingress.
       enable: true
-      # coder.ingress.tls.secretName -- The name of the TLS secret to use.
       secretName: ""
-      # coder.ingress.tls.wildcardSecretName -- The name of the TLS secret to
-      # use for the wildcard host.
       wildcardSecretName: ""

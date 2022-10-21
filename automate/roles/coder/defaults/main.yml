@@ -1,6 +1,6 @@
 ---
 namespace: coder
-coder_image_version: v0.9.9
+coder_image_version: v0.10.2
 
 coder_pg_dbname: coder
 coder_pg_user: coder
@@ -18,7 +18,7 @@ coder_ingress_class: nginx-public
 
 coder_storage_class: standard-rwo
 coder_restic_password_prefix: eeG8Bo9hiekex9ie
-coder_restic_repo_prefix: "gs://{{ bucket_name }}/coder"
+coder_restic_repo_prefix: "gs:{{ bucket_name }}://coder/{{ cluster_name }}"
 coder_aws_default_region: eu-central-1
 coder_aws_access_key: NONE
 coder_aws_secret_key: NONE
