@@ -15,6 +15,8 @@ ${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
 
 ${SCRIPT_DIR}/secrets_get.sh ${CLUSTER_NAME}
 
+./run_automate.sh tf_vars.yml
+
 . ${SCRIPT_DIR}/config/env
 
 export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-cloud.json
