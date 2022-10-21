@@ -13,7 +13,7 @@ keycloak_realms:
 
       smtpServer:
         user: "{{ smtp.user }}"
-        password: "{{ keycloak_smtp_password }}"
+        password: "{{ smtp.password }}"
         replyToDisplayName: "{{ keycloak_realm_name }}"
         starttls: "{{ smtp.starttls }}"
         auth: "true"
