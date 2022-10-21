@@ -7,8 +7,9 @@ resource "google_compute_network" "vpc" {
 
 # Subnet
 resource "google_compute_subnetwork" "subnet" {
-  name          = "${var.system_name}-subnet"
-  region        = var.region
-  network       = google_compute_network.vpc.name
-  ip_cidr_range = "10.55.0.0/24"
+  name                     = "${var.system_name}-subnet"
+  region                   = var.region
+  network                  = google_compute_network.vpc.name
+  private_ip_google_access = true
+  ip_cidr_range            = "10.55.0.0/24"
 }

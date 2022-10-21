@@ -51,7 +51,7 @@ resource "google_container_node_pool" "secondary_nodes" {
   autoscaling {
     min_node_count = var.min_node_count
     max_node_count = var.max_node_count
-    # location_policy = "ANY"
+    location_policy = "ANY"
   }
 
   initial_node_count = 0
