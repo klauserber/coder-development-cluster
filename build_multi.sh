@@ -5,14 +5,14 @@
 # docker buildx create --name multiarch --driver docker-container --use
 # docker buildx inspect --bootstrap
 
-. ./VERSION
+REGISTRY_NAME=isi006
+IMAGE_NAME=coder-development-cluster
 
 docker buildx build \
   . \
   -t ${REGISTRY_NAME}/${IMAGE_NAME}:${VERSION} \
   -t ${REGISTRY_NAME}/${IMAGE_NAME}:latest \
   --build-arg IMAGE_NAME=${IMAGE_NAME} \
-  --build-arg IMAGE_VERSION=${VERSION} \
   --platform=linux/arm64,linux/amd64 "${@}"
 
   # --push \
