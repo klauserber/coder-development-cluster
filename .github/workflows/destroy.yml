@@ -1,4 +1,4 @@
-name: dev_destroy
+name: destroy
 
 # Controls when the workflow will run
 on:
