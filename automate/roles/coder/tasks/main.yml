@@ -27,6 +27,26 @@
     state: "{{ component_state }}"
     definition: "{{ lookup('template', 'google_secret.yml.j2') | from_yaml }}"
 
+- name: storage class
+  when: infrastructure_provider == "google"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    definition:
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: immediate-rwo
+      allowVolumeExpansion: true
+      allowedTopologies: []
+      mountOptions: []
+      parameters:
+        type: pd-balanced
+      provisioner: pd.csi.storage.gke.io
+      reclaimPolicy: Delete
+      volumeBindingMode: Immediate
+
 - name: helm
   kubernetes.core.helm:
     kubeconfig: "{{ kubeconfig }}"

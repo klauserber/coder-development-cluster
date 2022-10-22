@@ -16,7 +16,7 @@ coder_oidc_client_id: "coder"
 
 coder_ingress_class: nginx-public
 
-coder_storage_class: standard-rwo
+coder_storage_class: immediate-rwo
 coder_restic_password_prefix: eeG8Bo9hiekex9ie
 coder_restic_repo_prefix: "gs:{{ bucket_name }}://coder/{{ cluster_name }}"
 coder_aws_default_region: eu-central-1
