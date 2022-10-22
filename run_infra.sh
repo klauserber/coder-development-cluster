@@ -3,7 +3,7 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-./run_automate.sh tf_vars.yml
+ansible-playbook -i inventory ${SCRIPT_DIR}/automate/tf_vars.yml
 
 . ${SCRIPT_DIR}/config/env
 

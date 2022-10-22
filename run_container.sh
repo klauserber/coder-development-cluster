@@ -9,4 +9,4 @@ docker run -it \
   -v $(pwd)/config:/app/config \
   --rm \
   --entrypoint=${ENTRYPOINT} \
-  ${REGISTRY_NAME}/${IMAGE_NAME}:latest
+  ${REGISTRY_NAME}/${IMAGE_NAME}:latest ${@:2}
