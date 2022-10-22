@@ -14,4 +14,4 @@ export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-cloud.json
 IP_ADDRESS=$(terraform -chdir=${SCRIPT_DIR}/infrastructure/google output -raw ip_address)
 
 cd ${SCRIPT_DIR}/automate
-ansible-playbook -i inventory ${PLAYBOOK} "${@}"
+ansible-playbook -i inventory ${PLAYBOOK} -e ip_address=${IP_ADDRESS} "${@}"
