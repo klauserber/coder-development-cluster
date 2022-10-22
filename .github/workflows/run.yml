@@ -1,10 +1,13 @@
-# from: https://dev.to/cloudx/multi-arch-docker-images-the-easy-way-with-github-actions-4k54
-
-name: dev_run
+name: run
 
 # Controls when the workflow will run
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Name of the cluster/environment to run'
+        required: true
+        default: 'dev'
     push:
       branches:
         - 'main'
@@ -17,10 +20,10 @@ jobs:
     env:
       GOOGLE_CLOUD: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
       GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
-      CLUSTER_NAME: dev
+      CLUSTER_NAME: ${{ github.event.inputs.cluster_name }}
     environment:
-      name: dev
-      url: https://coder.dev.gke.isium.de
+      name: ${{ github.event.inputs.cluster_name }}
+      url: https://coder.${{ github.event.inputs.cluster_name }}.gke.isium.de
     steps:
       - name: credentials
         run: "mkdir -p config && echo ${GOOGLE_CLOUD} > config/google-cloud.json"
