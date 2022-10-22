@@ -1,11 +1,11 @@
-name: run
+name: dev_destroy
 
 # Controls when the workflow will run
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Name of the cluster/environment to run'
+        description: 'Name of the cluster/environment to destroy'
         required: true
         default: 'dev'
     push:
@@ -23,11 +23,10 @@ jobs:
       CLUSTER_NAME: ${{ github.event.inputs.cluster_name }}
     environment:
       name: ${{ github.event.inputs.cluster_name }}
-      url: https://coder.${{ github.event.inputs.cluster_name }}.gke.isium.de
     steps:
       - name: credentials
         run: "mkdir -p config && echo ${GOOGLE_CLOUD_CREDENTIALS} > config/google-cloud.json"
         shell: bash
       - name: run
-        run: "docker run -v $(pwd)/config:/app/config isi006/coder-development-cluster:latest ${GCLOUD_PROJECT} ${CLUSTER_NAME}"
+        run: "docker run -v $(pwd)/config:/app/config --entrypoint /app/run_destroy.sh isi006/coder-development-cluster:latest ${GCLOUD_PROJECT} ${CLUSTER_NAME}"
         shell: bash
