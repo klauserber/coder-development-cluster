@@ -8,6 +8,14 @@ on:
         description: 'Name of the cluster/environment to destroy'
         required: true
         default: 'dev'
+      uninstall_apps:
+        description: 'Uninstall the applications before destroying the cluster'
+        type: choice
+        options:
+          - "true"
+          - "false"
+        required: true
+        default: "true"
     push:
       branches:
         - 'main'
@@ -21,6 +29,7 @@ jobs:
       GOOGLE_CLOUD_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
       GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
       CLUSTER_NAME: ${{ github.event.inputs.environment }}
+      UNINSTALL_APPS: ${{ github.event.inputs.uninstall_apps }}
     environment:
       name: ${{ github.event.inputs.environment }}
     steps:
@@ -28,5 +37,5 @@ jobs:
         run: "mkdir -p config && echo ${GOOGLE_CLOUD_CREDENTIALS} > config/google-cloud.json"
         shell: bash
       - name: run
-        run: "docker run -v $(pwd)/config:/app/config --entrypoint /app/run_destroy.sh isi006/coder-development-cluster:latest ${GCLOUD_PROJECT} ${CLUSTER_NAME}"
+        run: "docker run -v $(pwd)/config:/app/config --entrypoint /app/run_destroy.sh isi006/coder-development-cluster:latest ${GCLOUD_PROJECT} ${CLUSTER_NAME} ${UNINSTALL_APPS}"
         shell: bash
