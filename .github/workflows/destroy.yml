@@ -20,9 +20,9 @@ jobs:
     env:
       GOOGLE_CLOUD_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
       GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
-      CLUSTER_NAME: ${{ github.event.inputs.cluster_name }}
+      CLUSTER_NAME: ${{ github.event.inputs.environment }}
     environment:
-      name: ${{ github.event.inputs.cluster_name }}
+      name: ${{ github.event.inputs.environment }}
     steps:
       - name: credentials
         run: "mkdir -p config && echo ${GOOGLE_CLOUD_CREDENTIALS} > config/google-cloud.json"

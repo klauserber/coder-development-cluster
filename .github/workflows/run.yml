@@ -20,10 +20,10 @@ jobs:
     env:
       GOOGLE_CLOUD_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
       GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
-      CLUSTER_NAME: ${{ github.event.inputs.cluster_name }}
+      CLUSTER_NAME: ${{ github.event.inputs.environment }}
     environment:
-      name: ${{ github.event.inputs.cluster_name }}
-      url: https://coder.${{ github.event.inputs.cluster_name }}.gke.isium.de
+      name: ${{ github.event.inputs.environment }}
+      url: https://coder.${{ github.event.inputs.environment }}.gke.isium.de
     steps:
       - name: credentials
         run: "mkdir -p config && echo ${GOOGLE_CLOUD_CREDENTIALS} > config/google-cloud.json"
