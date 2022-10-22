@@ -54,7 +54,7 @@ RUN set -e; \
   chmod +x /usr/local/bin/helm; \
   rm -rf ${TARGETOS}-${TARGETARCH} helm.tar.gz
 
-ARG CODER_VERSION=0.9.9
+ARG CODER_VERSION=0.10.2
 RUN  set -e; \
   cd /tmp; \
   curl -sSL -o coder.deb -C - https://github.com/coder/coder/releases/download/v${CODER_VERSION}/coder_${CODER_VERSION}_${TARGETOS}_${TARGETARCH}.deb; \
