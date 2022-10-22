@@ -40,6 +40,22 @@ resource "kubernetes_role_binding" "role_binding" {
   }
 }
 
+resource "kubernetes_persistent_volume_claim" "pvc" {
+  metadata {
+    name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    namespace = var.workspaces_namespace
+  }
+  spec {
+    access_modes = ["ReadWriteOnce"]
+    resources {
+      requests = {
+        storage = var.homedir_disk_size
+      }
+    }
+    storage_class_name = var.storage_class
+  }
+}
+
 resource "kubernetes_stateful_set" "main" {
   count = data.coder_workspace.me.start_count
   metadata {
@@ -54,22 +70,6 @@ resource "kubernetes_stateful_set" "main" {
         app = "coder"
         owner = "${data.coder_workspace.me.owner}"
         workspace = "${data.coder_workspace.me.name}"
-      }
-    }
-
-    volume_claim_template {
-      metadata {
-        name = "data"
-      }
-      spec {
-        access_modes       = ["ReadWriteOnce"]
-        storage_class_name = var.storage_class
-
-        resources {
-          requests = {
-            storage = var.homedir_disk_size
-          }
-        }
       }
     }
 
@@ -91,6 +91,12 @@ resource "kubernetes_stateful_set" "main" {
             secret {
               secret_name = "google-credentials-secret"
             }
+          }
+        }
+        volume {
+          name = "data"
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.pvc.metadata.0.name
           }
         }
         init_container {
