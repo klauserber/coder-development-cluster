@@ -38,3 +38,5 @@
         pg_dbs:
           - user: "keycloak"
             db_name: "keycloak"
+    - role: coder
+    - role: nginx_ingress

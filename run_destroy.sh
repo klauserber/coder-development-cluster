@@ -23,9 +23,9 @@ ansible-playbook -i inventory ${SCRIPT_DIR}/automate/tf_vars.yml
 
 export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-cloud.json
 
-${SCRIPT_DIR}/get_kubeconfig.sh
 
 if [[ ! ${UNINSTALL_APPS} == "false" ]]; then
+  ${SCRIPT_DIR}/get_kubeconfig.sh
   ansible-playbook -i inventory ${SCRIPT_DIR}/automate/destroy.yml
 fi
 

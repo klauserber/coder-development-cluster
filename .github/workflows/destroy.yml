@@ -23,7 +23,7 @@ on:
         - '*.*.*'
 
 jobs:
-  run:
+  destroy:
     runs-on: ubuntu-latest
     env:
       GOOGLE_CLOUD_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
