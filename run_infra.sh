@@ -16,6 +16,6 @@ terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
 terraform -chdir=${SCRIPT_DIR}/infrastructure/${INFRASTRUCTURE_PROVIDER} apply -auto-approve \
   -var-file="${SCRIPT_DIR}/config/variables.tfvars" \
 
-export KUBECONFIG=${SCRIPT_DIR}/config/${CLUSTER_NAME}_kubeconfig
-export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-gcloud container clusters get-credentials --zone ${CLUSTER_LOCATION} --project ${PROJECT_ID} ${CLUSTER_NAME}-gke
+${SCRIPT_DIR}/get_kubeconfig.sh
+
+gcloud container clusters update dev-gke --zone ${CLUSTER_LOCATION} --enable-identity-service
