@@ -16,15 +16,20 @@ ${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
 
 ${SCRIPT_DIR}/secrets_get.sh ${CLUSTER_NAME}
 
-if [[ ! ${UNINSTALL_APPS} == "false" ]]; then
-  ansible-playbook -i inventory ${SCRIPT_DIR}/automate/destroy.yml
-fi
 
 ansible-playbook -i inventory ${SCRIPT_DIR}/automate/tf_vars.yml
 
 . ${SCRIPT_DIR}/config/env
 
 export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-cloud.json
+
+export KUBECONFIG=${SCRIPT_DIR}/config/${CLUSTER_NAME}_kubeconfig
+export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+gcloud container clusters get-credentials --zone ${CLUSTER_LOCATION} --project ${PROJECT_ID} ${CLUSTER_NAME}-gke
+
+if [[ ! ${UNINSTALL_APPS} == "false" ]]; then
+  ansible-playbook -i inventory ${SCRIPT_DIR}/automate/destroy.yml
+fi
 
 terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
     -backend-config="bucket=${BUCKET_NAME}" \
