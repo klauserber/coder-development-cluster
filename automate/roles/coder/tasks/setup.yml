@@ -1,4 +1,14 @@
 ---
+- name: parse kubeconfig
+  set_fact:
+    kubeconfig_parsed: "{{ lookup('file', kubeconfig) | from_yaml }}"
+
+- name: set cluster facts
+  set_fact:
+    coder_k8s_ca_cert: "{{ kubeconfig_parsed.clusters[0].cluster['certificate-authority-data'] }}"
+    coder_k8s_server: "{{ kubeconfig_parsed.clusters[0].cluster.server }}"
+    coder_k8s_cluster_name: "{{ kubeconfig_parsed.clusters[0].name }}"
+
 - name: setup admin user
   uri:
     url: "https://{{ coder_access_host }}/api/v2/users/first"

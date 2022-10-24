@@ -124,3 +124,18 @@ variable "restic_storage_type" {
   type      = string
   sensitive   = true
 }
+
+variable "k8s_server" {
+  type      = string
+  sensitive   = true
+}
+
+variable "k8s_ca_cert" {
+  type      = string
+  sensitive   = true
+}
+
+variable "k8s_cluster_name" {
+  type      = string
+  sensitive   = true
+}
