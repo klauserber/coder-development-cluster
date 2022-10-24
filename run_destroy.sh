@@ -23,14 +23,14 @@ ansible-playbook -i inventory ${SCRIPT_DIR}/automate/tf_vars.yml
 
 export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-cloud.json
 
-
-if [[ ! ${UNINSTALL_APPS} == "false" ]]; then
-  ${SCRIPT_DIR}/get_kubeconfig.sh
-  ansible-playbook -i inventory ${SCRIPT_DIR}/automate/destroy.yml
-fi
-
 terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
     -backend-config="bucket=${BUCKET_NAME}" \
     -backend-config="prefix=tf-state/${CLUSTER_NAME}" \
+
+if [[ ! ${UNINSTALL_APPS} == "false" ]]; then
+  ${SCRIPT_DIR}/get_kubeconfig.sh
+  IP_ADDRESS=$(terraform -chdir=${SCRIPT_DIR}/infrastructure/google output -raw ip_address)
+  ansible-playbook -i inventory ${SCRIPT_DIR}/automate/destroy.yml -e ip_address=${IP_ADDRESS}
+fi
 
 terraform -chdir=${SCRIPT_DIR}/infrastructure/google destroy -auto-approve
