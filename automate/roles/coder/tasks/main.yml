@@ -76,6 +76,44 @@
     delay: 10
     sleep: 3
 
+- name: nodes viewer cluster role
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: coder-nodes-viewer
+      rules:
+      - apiGroups:
+        - ""
+        resources:
+        - "nodes"
+        verbs:
+        - get
+        - list
+        - watch
+
+- name: nodes admin cluster role
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: coder-nodes-admin
+      rules:
+      - apiGroups:
+        - ""
+        resources:
+        - "nodes"
+        verbs:
+        - "*"
+
 - name: setup
   when: component_state == "present"
   include_tasks: setup.yml

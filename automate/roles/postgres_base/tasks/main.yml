@@ -25,6 +25,26 @@
     kubeconfig: "{{ kubeconfig }}"
     release_name: "postres-operator"
     release_namespace: "{{ pg_operator_namespace }}"
+    state: "{{ component_state }}"
     values:
       configGeneral:
         resync_period: "{{ pg_operator_resync_period }}"
+
+- name: "cluster role"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ component_state }}"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: zalando-postgres-viewer
+      rules:
+        - apiGroups:
+            - acid.zalan.do
+          resources:
+            - "*"
+          verbs:
+            - get
+            - list
+            - watch

@@ -1,4 +1,9 @@
 
+locals {
+  k8s_username = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+  is_admin = (data.coder_workspace.me.owner == "admin")
+}
+
 data "coder_workspace" "me" {}
 
 resource "coder_agent" "devbox" {
@@ -10,20 +15,15 @@ resource "coder_agent" "devbox" {
   EOF
 }
 
+
 resource "kubernetes_namespace" "work-ns" {
   metadata {
     name = "${var.workspaces_namespace}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
   }
 }
 
-resource "kubernetes_service_account" "coder" {
-  metadata {
-    name      = "coder"
-    namespace = kubernetes_namespace.work-ns.metadata.0.name
-  }
-}
-
-resource "kubernetes_role_binding" "role_binding" {
+resource "kubernetes_role_binding" "namespace_admin" {
+  count = local.is_admin ? 0 : 1
   metadata {
     name      = "coder-namespace-admin"
     namespace = kubernetes_namespace.work-ns.metadata.0.name
@@ -34,8 +34,92 @@ resource "kubernetes_role_binding" "role_binding" {
     name      = "admin"
   }
   subject {
-    kind      = "ServiceAccount"
-    name      = "coder"
+    kind      = "User"
+    name      = local.k8s_username
+    namespace = kubernetes_namespace.work-ns.metadata.0.name
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "cluster_admin" {
+  count = local.is_admin ? 1 : 0
+  metadata {
+    name      = "coder-namespace-admin"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "admin"
+  }
+  subject {
+    kind      = "User"
+    name      = local.k8s_username
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "cluster_viewer" {
+  count = local.is_admin ? 0 : 1
+  metadata {
+    name      = "coder-${data.coder_workspace.me.owner}-cluster-viewer"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "view"
+  }
+  subject {
+    kind      = "User"
+    name      = local.k8s_username
+    namespace = kubernetes_namespace.work-ns.metadata.0.name
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "zalando_pg_viewer" {
+  count = local.is_admin ? 0 : 1
+  metadata {
+    name      = "coder-${data.coder_workspace.me.owner}-zalando-pg-viewer"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "zalando-postgres-viewer"
+  }
+  subject {
+    kind      = "User"
+    name      = local.k8s_username
+    namespace = kubernetes_namespace.work-ns.metadata.0.name
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "nodes_viewer" {
+  count = local.is_admin ? 0 : 1
+  metadata {
+    name      = "coder-${data.coder_workspace.me.owner}-nodes-viewer"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "coder-nodes-viewer"
+  }
+  subject {
+    kind      = "User"
+    name      = local.k8s_username
+    namespace = kubernetes_namespace.work-ns.metadata.0.name
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "nodes_admin" {
+  count = local.is_admin ? 1 : 0
+  metadata {
+    name      = "coder-${data.coder_workspace.me.owner}-nodes-viewer"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "coder-nodes-admin"
+  }
+  subject {
+    kind      = "User"
+    name      = local.k8s_username
     namespace = kubernetes_namespace.work-ns.metadata.0.name
   }
 }
@@ -72,7 +156,7 @@ resource "kubernetes_job" "config" {
 
           env {
             name  = "K8S_USER"
-            value = data.coder_workspace.me.owner
+            value = local.k8s_username
           }
           env {
             name  = "K8S_CA_CERT"
@@ -88,7 +172,19 @@ resource "kubernetes_job" "config" {
           }
           env {
             name  = "K8S_TARGET_NAMESPACE"
+            value = var.workspaces_namespace
+          }
+          env {
+            name  = "K8S_TARGET_SECRET"
+            value = "${local.k8s_username}-kubeconfig"
+          }
+          env {
+            name  = "K8S_DEFAULT_NAMESPACE"
             value = kubernetes_namespace.work-ns.metadata.0.name
+          }
+          env {
+            name  = "CERT_EXPIRATION_SECONDS"
+            value = var.cert_expiration_seconds
           }
         }
         restart_policy = "Never"
@@ -100,6 +196,9 @@ resource "kubernetes_job" "config" {
 }
 
 resource "kubernetes_stateful_set" "main" {
+  depends_on = [
+    kubernetes_job.config
+  ]
   count = data.coder_workspace.me.start_count
   metadata {
     name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
@@ -125,7 +224,6 @@ resource "kubernetes_stateful_set" "main" {
         }
       }
       spec {
-        service_account_name = "coder"
         dynamic "volume" {
           for_each = toset( var.restic_storage_type == "gs" ? ["1"] : [])
           content {
@@ -139,7 +237,7 @@ resource "kubernetes_stateful_set" "main" {
         volume {
           name = "k8s-config"
           secret {
-            secret_name = "${data.coder_workspace.me.owner}-config"
+            secret_name = "${local.k8s_username}-kubeconfig"
           }
         }
         volume {
@@ -172,10 +270,10 @@ resource "kubernetes_stateful_set" "main" {
             name  = "DOCKER_HOST"
             value = "tcp://localhost:2375"
           }
-          env {
-            name  = "WORK_NAMESPACE"
-            value = kubernetes_namespace.work-ns.metadata.0.name
-          }
+          # env {
+          #   name  = "WORK_NAMESPACE"
+          #   value = kubernetes_namespace.work-ns.metadata.0.name
+          # }
           port {
             container_port = 13337
           }
@@ -191,6 +289,11 @@ resource "kubernetes_stateful_set" "main" {
           volume_mount {
             mount_path = "/home/coder"
             name       = "data"
+          }
+          volume_mount {
+            mount_path = "/home/coder/.kube/config"
+            name       = "k8s-config"
+            sub_path   = "config"
           }
         }
         dynamic "container" {

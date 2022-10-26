@@ -1,6 +1,6 @@
 
 use_kubeconfig: false
-workspaces_namespace: "coder"
+workspaces_namespace: "{{ namespace }}"
 
 storage_class: "{{ coder_storage_class }}"
 restic_password_prefix: "{{ coder_restic_password_prefix }}"
@@ -11,6 +11,7 @@ aws_secret_key: "{{ coder_aws_secret_key }}"
 k8s_server: "{{ coder_k8s_server }}"
 k8s_ca_cert: "{{ coder_k8s_ca_cert }}"
 k8s_cluster_name: "{{ coder_k8s_cluster_name }}"
+cert_expiration_seconds: "{{ coder_cert_expiration_seconds }}"
 
 devbox_image: "{{ item.devbox_image}}"
 homedir_disk_size: "{{ item.homedir_disk_size }}"

@@ -139,3 +139,8 @@ variable "k8s_cluster_name" {
   type      = string
   sensitive   = true
 }
+
+variable "cert_expiration_seconds" {
+  type      = number
+  sensitive = true
+}
