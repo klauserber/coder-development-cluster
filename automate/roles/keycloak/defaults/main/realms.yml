@@ -10,6 +10,10 @@ keycloak_realms:
       rememberMe: true
       verifyEmail: true
       bruteForceProtected: true
+      ssoSessionIdleTimeout: 43200  # 12 hours
+      ssoSessionIdleTimeoutRememberMe: 864000  # 10 days
+      ssoSessionMaxLifespan: 43200  # 12 hours
+      ssoSessionMaxLifespanRememberMe: 864000  # 10 days
 
       smtpServer:
         user: "{{ smtp.user }}"
