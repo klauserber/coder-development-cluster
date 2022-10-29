@@ -1,20 +1,10 @@
 #!/usr/bin/env bash
-set -e
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-if [ -f ${SCRIPT_DIR}/config/env ]; then
-  . ${SCRIPT_DIR}/config/env
-fi
+. ${SCRIPT_DIR}/script_init.inc.sh
 
-GCLOUD_PROJECT=${1:-${GCLOUD_PROJECT}}
-CLUSTER_NAME=${2:-${CLUSTER_NAME}}
 UNINSTALL_APPS=${3:-true}
 
-if [ -z "${CLUSTER_NAME}" ] || [ -z "${GCLOUD_PROJECT}" ]; then
-  echo "Usage: $0 <GCLOUD_PROJECT> <CLUSTER_NAME> [UNINSTALL_APPS 'true' or 'false' default 'true']"
-  exit 1
-fi
 
 ${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
 

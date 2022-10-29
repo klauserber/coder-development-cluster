@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 function chown_on_exit() {
@@ -11,17 +10,7 @@ function chown_on_exit() {
 
 trap chown_on_exit ERR INT
 
-if [ -f ${SCRIPT_DIR}/config/env ]; then
-  . ${SCRIPT_DIR}/config/env
-fi
-
-GCLOUD_PROJECT=${1:-${GCLOUD_PROJECT}}
-CLUSTER_NAME=${2:-${CLUSTER_NAME}}
-
-if [ -z "${CLUSTER_NAME}" ] || [ -z "${GCLOUD_PROJECT}" ]; then
-  echo "Usage: $0 <GCLOUD_PROJECT> <CLUSTER_NAME>"
-  exit 1
-fi
+. ${SCRIPT_DIR}/script_init.inc.sh
 
 ${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
 
