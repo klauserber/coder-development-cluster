@@ -43,12 +43,12 @@ resource "kubernetes_role_binding" "namespace_admin" {
 resource "kubernetes_cluster_role_binding" "cluster_admin" {
   count = local.is_admin ? 1 : 0
   metadata {
-    name      = "coder-namespace-admin"
+    name      = "coder-cluster-admin"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "admin"
+    name      = "cluster-admin"
   }
   subject {
     kind      = "User"
@@ -73,49 +73,15 @@ resource "kubernetes_cluster_role_binding" "cluster_viewer" {
   }
 }
 
-resource "kubernetes_cluster_role_binding" "zalando_pg_viewer" {
+resource "kubernetes_cluster_role_binding" "coder_developer" {
   count = local.is_admin ? 0 : 1
   metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-zalando-pg-viewer"
+    name      = "coder-${data.coder_workspace.me.owner}-coder-developer"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "zalando-postgres-viewer"
-  }
-  subject {
-    kind      = "User"
-    name      = local.k8s_username
-    namespace = kubernetes_namespace.work-ns.metadata.0.name
-  }
-}
-
-resource "kubernetes_cluster_role_binding" "nodes_viewer" {
-  count = local.is_admin ? 0 : 1
-  metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-nodes-viewer"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "coder-nodes-viewer"
-  }
-  subject {
-    kind      = "User"
-    name      = local.k8s_username
-    namespace = kubernetes_namespace.work-ns.metadata.0.name
-  }
-}
-
-resource "kubernetes_cluster_role_binding" "nodes_admin" {
-  count = local.is_admin ? 1 : 0
-  metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-nodes-viewer"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "coder-nodes-admin"
+    name      = "coder-developer"
   }
   subject {
     kind      = "User"
@@ -249,10 +215,23 @@ resource "kubernetes_stateful_set" "main" {
         init_container {
           name    = "init-chmod-data"
           image   = "busybox:latest"
-          command = [ "sh" , "-c", "chown -R 1000:1000 /home/coder"]
+          command = [ "sh" , "-c" ]
+          args = [
+            <<EOT
+            chown -R 1000:1000 /home/coder;
+            mkdir -p /home/coder/.kube;
+            cp /kubeconfig/config /home/coder/.kube/config;
+            chown 1000:1000 /home/coder/.kube/config;
+            chmod 400 /home/coder/.kube/config;
+            EOT
+          ]
           volume_mount {
             mount_path = "/home/coder"
             name       = "data"
+          }
+          volume_mount {
+            mount_path = "/kubeconfig"
+            name       = "k8s-config"
           }
         }
         container {
@@ -270,10 +249,6 @@ resource "kubernetes_stateful_set" "main" {
             name  = "DOCKER_HOST"
             value = "tcp://localhost:2375"
           }
-          # env {
-          #   name  = "WORK_NAMESPACE"
-          #   value = kubernetes_namespace.work-ns.metadata.0.name
-          # }
           port {
             container_port = 13337
           }
@@ -289,11 +264,6 @@ resource "kubernetes_stateful_set" "main" {
           volume_mount {
             mount_path = "/home/coder"
             name       = "data"
-          }
-          volume_mount {
-            mount_path = "/home/coder/.kube/config"
-            name       = "k8s-config"
-            sub_path   = "config"
           }
         }
         dynamic "container" {

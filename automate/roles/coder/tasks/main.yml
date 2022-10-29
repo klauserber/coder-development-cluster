@@ -76,7 +76,7 @@
     delay: 10
     sleep: 3
 
-- name: nodes viewer cluster role
+- name: developer cluster role
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     namespace: "{{ namespace }}"
@@ -85,7 +85,7 @@
       apiVersion: rbac.authorization.k8s.io/v1
       kind: ClusterRole
       metadata:
-        name: coder-nodes-viewer
+        name: coder-developer
       rules:
       - apiGroups:
         - ""
@@ -95,24 +95,29 @@
         - get
         - list
         - watch
-
-- name: nodes admin cluster role
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
-    state: "{{ component_state }}"
-    definition:
-      apiVersion: rbac.authorization.k8s.io/v1
-      kind: ClusterRole
-      metadata:
-        name: coder-nodes-admin
-      rules:
       - apiGroups:
-        - ""
+        - "metrics.k8s.io"
         resources:
-        - "nodes"
+        - "*"
         verbs:
         - "*"
+      - apiGroups:
+        - "rbac.authorization.k8s.io"
+        resources:
+        - "*"
+        verbs:
+        - get
+        - list
+        - watch
+      - apiGroups:
+        - "acid.zalan.do"
+        resources:
+        - "*"
+        verbs:
+        - get
+        - list
+        - watch
+
 
 - name: setup
   when: component_state == "present"
