@@ -1,4 +1,47 @@
 ---
+- name: get arch
+  shell: uname -m
+  register: arch
+
+- name: set arch var
+  set_fact:
+    system_arch: "{{ arch.stdout }}"
+
+- name: set arch amd64
+  when: system_arch == "x86_64"
+  set_fact:
+    system_arch: amd64
+
+- name: set arch arm64
+  when: system_arch == "aarch64"
+  set_fact:
+    system_arch: arm64
+
+- name: dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ install_dir }}"
+    - "{{ bin_dir }}"
+
+- name: get coder client version {{ coder_version }}
+  get_url:
+    url: "https://github.com/coder/coder/releases/download/v{{ coder_version }}/coder_{{ coder_version }}_linux_{{ system_arch }}.deb"
+    dest: "{{ install_dir }}/coder.deb"
+
+- name: extract binary
+  shell: |
+    dpkg -x {{ install_dir }}/coder.deb {{ install_dir }}
+    mv {{ install_dir }}/usr/bin/coder {{ bin_dir }}/coder
+    rm -rf {{ install_dir }}/usr
+    rm -rf {{ install_dir }}/DEBIAN
+
+- name: delete install dir
+  file:
+    path: "{{ install_dir }}"
+    state: absent
+
 - name: parse kubeconfig
   set_fact:
     kubeconfig_parsed: "{{ lookup('file', kubeconfig) | from_yaml }}"
@@ -38,7 +81,7 @@
     token: "{{ result.json.session_token }}"
 
 - name: coder login
-  command: "coder login https://{{ coder_access_host }} --token {{ token }}"
+  command: "{{ bin_dir }}/coder login https://{{ coder_access_host }} --token {{ token }}"
   changed_when: false
 
 - name: devbox workspaces

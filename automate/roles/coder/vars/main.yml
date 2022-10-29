@@ -1,0 +1,3 @@
+---
+install_dir: "{{ role_path }}/install"
+bin_dir: "{{ role_path }}/bin"
