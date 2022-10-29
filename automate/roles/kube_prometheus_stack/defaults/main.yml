@@ -1,0 +1,4 @@
+---
+namespace: monitoring
+prometheus_stack_chart_version: 41.7.0
+prometheus_stack_release_name: prometheus-stack

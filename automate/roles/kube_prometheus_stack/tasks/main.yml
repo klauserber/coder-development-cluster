@@ -1,0 +1,19 @@
+---
+- name: Add chart repo
+  kubernetes.core.helm_repository:
+    name: prometheus-community
+    repo_url: "https://prometheus-community.github.io/helm-charts"
+
+- name: helm chart
+  kubernetes.core.helm:
+    chart_ref: prometheus-community/kube-prometheus-stack
+    chart_version: "{{ prometheus_stack_chart_version }}"
+    # chart_ref: "{{ role_path }}/helm-charts/charts/kube-prometheus-stack"
+    kubeconfig: "{{ kubeconfig }}"
+    release_name: "{{ prometheus_stack_release_name }}"
+    release_namespace: "{{ namespace }}"
+    create_namespace: true
+    update_repo_cache: true
+    wait: true
+    state: "{{ component_state }}"
+    values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"

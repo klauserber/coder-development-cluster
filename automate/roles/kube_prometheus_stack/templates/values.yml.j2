@@ -1,0 +1,92 @@
+---
+alertmanager:
+  enabled: false
+
+
+grafana:
+  adminPassword: "{{ grafana_password }}"
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 250Mi
+
+  ingress:
+    enabled: true
+
+    annotations:
+      nginx.org/websocket-services: {{ prometheus_stack_release_name }}-grafana
+      kubernetes.io/ingress.class: nginx-public
+
+    hosts:
+      - grafana.{{ cluster_public_domain }}
+
+    paths:
+      - /
+
+    # tls:
+    #   - hosts:
+    #       - grafana.{{ cluster_public_domain }}
+
+prometheusOperator:
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 500Mi
+    requests:
+      cpu: 25m
+      memory: 100Mi
+
+prometheus:
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx-public
+
+    hosts:
+      - prometheus.{{ cluster_public_domain }}
+
+    paths:
+      - /
+
+    pathType: Prefix
+
+    # tls:
+    #   - hosts:
+    #       - prometheus.{{ cluster_public_domain }}
+
+  prometheusSpec:
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 3000Mi
+      requests:
+        cpu: 100m
+        memory: 2000Mi
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+coreDns:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeControllerManager:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
