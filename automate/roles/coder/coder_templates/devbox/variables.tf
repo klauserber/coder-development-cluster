@@ -1,3 +1,14 @@
+
+variable "restic_password_suffix" {
+  type        = string
+  sensitive   = true
+  default     = "default"
+  description = <<-EOF
+  Password to encrypt the backups. You provide the suffix of the password and we hold the prefix.
+  EOF
+}
+
+
 variable "use_kubeconfig" {
   type        = bool
   sensitive   = true
@@ -17,8 +28,8 @@ variable "workspaces_namespace" {
 }
 
 variable "storage_class" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "devmode" {
@@ -28,42 +39,42 @@ variable "devmode" {
 }
 
 variable "aws_default_region" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "restic_repo_prefix" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "aws_access_key" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "aws_secret_key" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "restic_password_prefix" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "devbox_image" {
   type      = string
-  sensitive   = true
+  sensitive = true
 }
 
 variable "homedir_disk_size" {
   type      = string
-  sensitive   = true
+  sensitive = true
 }
 
 variable "devbox_mem_limit" {
-  type      = number
+  type        = number
   sensitive   = true
   description = <<-EOF
   RAM limit in MB for the main container.
@@ -71,7 +82,7 @@ variable "devbox_mem_limit" {
 }
 
 variable "docker_service" {
-  type      = bool
+  type        = bool
   sensitive   = true
   description = <<-EOF
   Start a Docker-in-Docker sidecar container to be to use the Docker CLI.
@@ -79,7 +90,7 @@ variable "docker_service" {
 }
 
 variable "docker_mem_limit" {
-  type      = number
+  type        = number
   sensitive   = true
   description = <<-EOF
   RAM limit in MB for the docker container.
@@ -87,7 +98,7 @@ variable "docker_mem_limit" {
 }
 
 variable "openvpn_service" {
-  type      = bool
+  type        = bool
   sensitive   = true
   description = <<-EOF
   Start a openvpn sidecar to connect the pod to a vpn.
@@ -95,7 +106,7 @@ variable "openvpn_service" {
 }
 
 variable "backup_service" {
-  type      = bool
+  type        = bool
   sensitive   = true
   description = <<-EOF
   Start a restic sidecar container for backups.
@@ -103,7 +114,7 @@ variable "backup_service" {
 }
 
 variable "backup_mem_limit" {
-  type      = number
+  type        = number
   sensitive   = true
   description = <<-EOF
   RAM limit in MB for the backup container.
@@ -112,32 +123,32 @@ variable "backup_mem_limit" {
 
 variable "backup_cron" {
   type      = string
-  sensitive   = true
+  sensitive = true
 }
 
 variable "restic_forget_args" {
   type      = string
-  sensitive   = true
+  sensitive = true
 }
 
 variable "restic_storage_type" {
   type      = string
-  sensitive   = true
+  sensitive = true
 }
 
 variable "k8s_server" {
   type      = string
-  sensitive   = true
+  sensitive = true
 }
 
 variable "k8s_ca_cert" {
   type      = string
-  sensitive   = true
+  sensitive = true
 }
 
 variable "k8s_cluster_name" {
   type      = string
-  sensitive   = true
+  sensitive = true
 }
 
 variable "cert_expiration_seconds" {
