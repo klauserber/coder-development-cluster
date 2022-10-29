@@ -3,6 +3,10 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+if [ -f ${SCRIPT_DIR}/config/env ]; then
+  . ${SCRIPT_DIR}/config/env
+fi
+
 GCLOUD_PROJECT=${1:-${GCLOUD_PROJECT}}
 CLUSTER_NAME=${2:-${CLUSTER_NAME}}
 UNINSTALL_APPS=${3:-true}
@@ -14,12 +18,10 @@ fi
 
 ${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
 
-${SCRIPT_DIR}/secrets_get.sh ${CLUSTER_NAME}
+${SCRIPT_DIR}/secrets_get.sh ${GCLOUD_PROJECT} ${CLUSTER_NAME}
 
 
 ansible-playbook -i inventory ${SCRIPT_DIR}/automate/tf_vars.yml
-
-. ${SCRIPT_DIR}/config/env
 
 export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-cloud.json
 

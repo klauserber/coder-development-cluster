@@ -10,3 +10,8 @@ if [ -z "${GCLOUD_PROJECT}" ]; then
 fi
 
 gcloud auth activate-service-account --project ${GCLOUD_PROJECT} --key-file=config/google-cloud.json
+
+echo "active service account with:"
+echo ""
+echo "    gcloud auth activate-service-account --project ${GCLOUD_PROJECT} --key-file=config/google-cloud.json"
+echo ""

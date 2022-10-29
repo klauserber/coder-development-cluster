@@ -11,6 +11,10 @@ function chown_on_exit() {
 
 trap chown_on_exit ERR INT
 
+if [ -f ${SCRIPT_DIR}/config/env ]; then
+  . ${SCRIPT_DIR}/config/env
+fi
+
 GCLOUD_PROJECT=${1:-${GCLOUD_PROJECT}}
 CLUSTER_NAME=${2:-${CLUSTER_NAME}}
 
@@ -21,7 +25,7 @@ fi
 
 ${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
 
-${SCRIPT_DIR}/secrets_get.sh ${CLUSTER_NAME}
+${SCRIPT_DIR}/secrets_get.sh ${GCLOUD_PROJECT} ${CLUSTER_NAME}
 
 ${SCRIPT_DIR}/run_infra.sh
 ${SCRIPT_DIR}/run_automate.sh
