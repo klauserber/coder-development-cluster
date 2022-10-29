@@ -4,7 +4,7 @@ metadata:
   name: cert-issuer
 spec:
   acme:
-    email: k.erber@isium.de
+    email: {{ acme_email }}
     server: https://acme-v02.api.letsencrypt.org/directory
     # server: https://acme-staging-v02.api.letsencrypt.org/directory
     preferredChain: "ISRG Root X1"
@@ -14,7 +14,7 @@ spec:
     - dns01:
         cloudDNS:
           # The ID of the GCP project
-          project: isi-labs
+          project: {{ project_id }}
           # This is the secret used to access the service account
           serviceAccountSecretRef:
             name: clouddns-dns01-solver-svc-acct

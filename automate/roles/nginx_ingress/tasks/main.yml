@@ -1,7 +1,7 @@
 ---
 - name: namespace
   kubernetes.core.k8s:
-    state: "{{ component_state }}"
+    state: "present"
     kubeconfig: "{{ kubeconfig }}"
     definition:
       apiVersion: v1
@@ -30,21 +30,24 @@
     kubeconfig: "{{ kubeconfig }}"
     namespace: "{{ namespace }}"
     state: "{{ component_state }}"
-    definition: "{{ lookup('template', role_path + '/templates/google_secret.yml') | from_yaml }}"
+    definition: "{{ lookup('template', 'google_secret.yml.j2') | from_yaml }}"
+
+- debug:
+    var: project_id
 
 - name: deploy issuer
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     namespace: "{{ namespace }}"
     state: "{{ component_state }}"
-    src: issuer.yml
+    definition: "{{ lookup('template', 'issuer.yml.j2') | from_yaml }}"
 
 - name: certificate
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     namespace: "{{ namespace }}"
     state: "{{ component_state }}"
-    definition: "{{ lookup('template', role_path + '/templates/cert.yml') | from_yaml }}"
+    definition: "{{ lookup('template', 'cert.yml.j2') | from_yaml }}"
 
 - name: wait for cert ready
   when: "component_state == 'present'"
