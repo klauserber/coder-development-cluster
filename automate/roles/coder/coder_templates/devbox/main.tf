@@ -43,7 +43,7 @@ resource "kubernetes_role_binding" "namespace_admin" {
 resource "kubernetes_cluster_role_binding" "cluster_admin" {
   count = local.is_admin ? 1 : 0
   metadata {
-    name      = "coder-cluster-admin"
+    name      = "coder-${data.coder_workspace.me.owner}-cluster-admin"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -212,6 +212,73 @@ resource "kubernetes_stateful_set" "main" {
             claim_name = kubernetes_persistent_volume_claim.pvc.metadata.0.name
           }
         }
+        dynamic "init_container" {
+          for_each = toset( var.backup_service ? ["1"] : [])
+          content {
+            name    = "restic-restore"
+            image   = "isi006/restic-kubernetes:2.0.0"
+            env {
+              name  = "RESTIC_RESTORE"
+              value = "1"
+            }
+            env {
+              name  = "AWS_ACCESS_KEY_ID"
+              value = var.aws_access_key
+            }
+            env {
+              name  = "AWS_SECRET_ACCESS_KEY"
+              value = var.aws_secret_key
+            }
+            env {
+              name  = "AWS_DEFAULT_REGION"
+              value = var.aws_default_region
+            }
+            env {
+              name  = "GOOGLE_APPLICATION_CREDENTIALS"
+              value = "/etc/gcloud/google-cloud.json"
+            }
+            env {
+              name  = "RESTIC_REPOSITORY"
+              value = "${var.restic_repo_prefix}/coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+            }
+            env {
+              name  = "RESTIC_PASSWORD"
+              value = "${var.restic_password_prefix}-${var.restic_password_suffix}"
+            }
+            env {
+              name  = "BACKUP_CRON"
+              value = var.backup_cron
+            }
+            env {
+              name  = "RESTIC_FORGET_ARGS"
+              value = var.restic_forget_args
+            }
+            env {
+              name  = "RESTIC_HOST"
+              value = "${var.workspaces_namespace}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+            }
+            resources {
+              limits = {
+                memory = "${var.backup_mem_limit}M"
+              }
+              requests = {
+                memory = "${var.backup_mem_limit * 0.25}M"
+                cpu = "250m"
+              }
+            }
+            volume_mount {
+              mount_path = "/data"
+              name       = "data"
+            }
+            dynamic "volume_mount" {
+              for_each = toset( var.restic_storage_type == "gs" ? ["1"] : [])
+              content {
+                mount_path = "/etc/gcloud"
+                name       = "google-credentials-secret"
+              }
+            }
+          }
+        }
         init_container {
           name    = "init-chmod-data"
           image   = "busybox:latest"
@@ -301,7 +368,7 @@ resource "kubernetes_stateful_set" "main" {
           for_each = toset( var.backup_service ? ["1"] : [])
           content {
             name    = "restic-backup"
-            image   = "isi006/restic-kubernetes:1.1.1"
+            image   = "isi006/restic-kubernetes:2.0.0"
             env {
               name  = "AWS_ACCESS_KEY_ID"
               value = var.aws_access_key
