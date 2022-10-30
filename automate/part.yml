@@ -6,4 +6,4 @@
   vars_files:
     - "{{ config_dir }}/app_config.yml"
   roles:
-    - role: kube_prometheus_stack
+    - role: coder

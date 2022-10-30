@@ -8,6 +8,7 @@
   vars:
     component_state: absent
   roles:
+    - role: kube_prometheus_stack
     - role: coder
     - role: postgres_instance
       vars:

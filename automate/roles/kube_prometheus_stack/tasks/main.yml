@@ -1,4 +1,8 @@
 ---
+# - template:
+#     src: values.yml.j2
+#     dest: "{{ role_path }}/values.yml"
+
 - name: Add chart repo
   kubernetes.core.helm_repository:
     name: prometheus-community
