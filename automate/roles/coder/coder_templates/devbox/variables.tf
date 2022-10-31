@@ -32,6 +32,11 @@ variable "storage_class" {
   sensitive = true
 }
 
+variable "cluster_name" {
+  type      = string
+  sensitive = true
+}
+
 variable "devmode" {
   type      = bool
   sensitive = true

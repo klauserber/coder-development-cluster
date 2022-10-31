@@ -110,6 +110,13 @@
         - list
         - watch
       - apiGroups:
+        - "rbac.authorization.k8s.io"
+        resources:
+        - "Role"
+        - "RoleBinding"
+        verbs:
+        - "*"
+      - apiGroups:
         - "acid.zalan.do"
         resources:
         - "*"
@@ -123,7 +130,61 @@
         - "*"
         verbs:
         - "*"
+      - apiGroups:
+        - certificates.k8s.io
+        resources:
+        - certificatesigningrequests
+        verbs:
+        - create
+        - get
+        - list
+        - watch
+        - delete
+      - apiGroups:
+        - ""
+        attributeRestrictions: null
+        resources:
+        - users
+        verbs:
+        - impersonate
 
+- name: developer cluster role binding
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: coder-developer
+      subjects:
+        - kind: Group
+          name: coder-developer
+          apiGroup: rbac.authorization.k8s.io
+      roleRef:
+        kind: ClusterRole
+        name: coder-developer
+        apiGroup: rbac.authorization.k8s.io
+
+- name: developer cluster view role binding
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    state: "{{ component_state }}"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: coder-developer-cluster-view
+      subjects:
+        - kind: Group
+          name: coder-developer
+          apiGroup: rbac.authorization.k8s.io
+      roleRef:
+        kind: ClusterRole
+        name: view
+        apiGroup: rbac.authorization.k8s.io
 
 - name: setup
   when: component_state == "present"

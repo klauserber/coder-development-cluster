@@ -56,40 +56,6 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
   }
 }
 
-resource "kubernetes_cluster_role_binding" "cluster_viewer" {
-  count = local.is_admin ? 0 : 1
-  metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-cluster-viewer"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "view"
-  }
-  subject {
-    kind      = "User"
-    name      = local.k8s_username
-    namespace = kubernetes_namespace.work-ns.metadata.0.name
-  }
-}
-
-resource "kubernetes_cluster_role_binding" "coder_developer" {
-  count = local.is_admin ? 0 : 1
-  metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-coder-developer"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "coder-developer"
-  }
-  subject {
-    kind      = "User"
-    name      = local.k8s_username
-    namespace = kubernetes_namespace.work-ns.metadata.0.name
-  }
-}
-
 resource "kubernetes_persistent_volume_claim" "pvc" {
   metadata {
     name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
@@ -151,6 +117,10 @@ resource "kubernetes_job" "config" {
           env {
             name  = "CERT_EXPIRATION_SECONDS"
             value = var.cert_expiration_seconds
+          }
+          env {
+            name  = "ADD_SUBJECT_CONFIG"
+            value = "/O=coder-developer"
           }
         }
         restart_policy = "Never"
@@ -315,6 +285,14 @@ resource "kubernetes_stateful_set" "main" {
           env {
             name  = "DOCKER_HOST"
             value = "tcp://localhost:2375"
+          }
+          env {
+            name  = "CLUSTER_NAME"
+            value = var.cluster_name
+          }
+          env {
+            name  = "CODER_USERNAME"
+            value = local.k8s_username
           }
           port {
             container_port = 13337

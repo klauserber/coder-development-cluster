@@ -3,6 +3,7 @@ use_kubeconfig: false
 workspaces_namespace: "{{ namespace }}"
 
 storage_class: "{{ coder_storage_class }}"
+cluster_name: "{{ cluster_name }}"
 restic_password_prefix: "{{ coder_restic_password_prefix }}"
 restic_repo_prefix: "{{ coder_restic_repo_prefix }}"
 aws_default_region: "{{ coder_aws_default_region }}"
