@@ -6,6 +6,9 @@ alertmanager:
 grafana:
   adminPassword: "{{ grafana_password }}"
   defaultDashboardsTimezone: "europe/berlin"
+  sidecar:
+    dashboards:
+      searchNamespace: [ "ALL" ]
 
   resources:
     limits:
@@ -62,6 +65,8 @@ prometheus:
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
     resources:
       limits:
         memory: 2000Mi
