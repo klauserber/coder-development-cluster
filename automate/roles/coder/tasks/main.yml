@@ -147,6 +147,30 @@
         - users
         verbs:
         - impersonate
+      - apiGroups:
+          - ""
+        resources:
+          - persistentvolumes
+        verbs:
+          - get
+          - list
+          - watch
+      - apiGroups:
+          - "storage.k8s.io"
+        resources:
+          - storageclasses
+        verbs:
+          - get
+          - list
+          - watch
+      - apiGroups:
+          - "networking.k8s.io"
+        resources:
+          - ingressclasses
+        verbs:
+          - get
+          - list
+          - watch
 
 - name: developer cluster role binding
   kubernetes.core.k8s:
