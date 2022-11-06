@@ -1,0 +1,4 @@
+---
+namespace: "pgadmin"
+pg_admin_chart_version: "1.13.6"
+pg_admin_chart_ref: "runix/pgadmin4"

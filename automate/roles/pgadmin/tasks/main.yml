@@ -1,0 +1,42 @@
+---
+- name: "add pgadmin repo"
+  kubernetes.core.helm_repository:
+    name: "runix"
+    repo_url: "https://helm.runix.net/"
+
+- name: "query newest version of {{ pg_admin_chart_ref }}"
+  ansible.builtin.shell:
+    cmd: "helm search repo {{ pg_admin_chart_ref }} --versions -o json | jq '.[0].version'"
+  register: "helm_query_pg_admin"
+
+- name: "Print version info for helm-chart: {{ pg_admin_chart_ref }}"
+  ansible.builtin.debug:
+    msg: "Newest version is: {{ helm_query_pg_admin.stdout }} we going to deploy version: {{ pg_admin_chart_version }}"
+
+- name: "pgadmin"
+  kubernetes.core.helm:
+    chart_ref: "{{ pg_admin_chart_ref }}"
+    chart_version: "{{ pg_admin_chart_version }}"
+    create_namespace: true
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ component_state }}"
+    release_name: "pgadmin"
+    release_namespace: "{{ namespace }}"
+    values:
+      ingress:
+        enabled: true
+        ingressClassName: nginx-public
+        hosts:
+          - host: pgadmin.{{ cluster_public_domain }}
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - pgadmin.{{ cluster_public_domain }}
+      env:
+        email: "{{ pg_admin_user_email }}"
+        password: "{{ pg_admin_password }}"
+
+      persistentVolume:
+        size: 1Gi
