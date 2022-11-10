@@ -1,0 +1,16 @@
+---
+- name: environment info
+  pause:
+    seconds: 3
+    prompt: |
+      ==============================================================================================================
+      ENVIRONMENT INFO
+
+      Cluster name            : {{ cluster_name }}
+      User interface          : https://coder.{{ cluster_public_domain }}
+      User account management : https://keycloak.{{ cluster_public_domain }}/realms/workshops-de/account
+      User administration     : https://keycloak.{{ cluster_public_domain }}
+      Grafana                 : https://grafana.{{ cluster_public_domain }}
+      Prometheus              : https://prometheus.{{ cluster_public_domain }}
+
+      ==============================================================================================================

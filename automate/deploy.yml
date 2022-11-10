@@ -40,3 +40,4 @@
             db_name: "coder"
     - role: coder
     - role: kube_prometheus_stack
+    - role: env_info
