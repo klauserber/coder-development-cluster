@@ -32,9 +32,6 @@
     state: "{{ component_state }}"
     definition: "{{ lookup('template', 'google_secret.yml.j2') | from_yaml }}"
 
-- debug:
-    var: project_id
-
 - name: deploy issuer
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
