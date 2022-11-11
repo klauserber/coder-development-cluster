@@ -16,6 +16,14 @@ on:
           - "false"
         required: true
         default: "true"
+      remove_backups:
+        description: 'Remove all home dir and DB backups from the bucket to get a clean system on the next start'
+        type: choice
+        options:
+          - ""
+          - "true"
+          - "false"
+        required: true
     push:
       branches:
         - 'main'
@@ -30,6 +38,7 @@ jobs:
       GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
       CLUSTER_NAME: ${{ github.event.inputs.environment }}
       UNINSTALL_APPS: ${{ github.event.inputs.uninstall_apps }}
+      REMOVE_BACKUPS: ${{ github.event.inputs.remove_backups }}
     environment:
       name: ${{ github.event.inputs.environment }}
     steps:
@@ -37,5 +46,5 @@ jobs:
         run: "mkdir -p config && echo ${GOOGLE_CLOUD_CREDENTIALS} > config/google-cloud.json"
         shell: bash
       - name: run
-        run: "docker run -v $(pwd)/config:/app/config --entrypoint /app/run_destroy.sh isi006/coder-development-cluster:latest ${GCLOUD_PROJECT} ${CLUSTER_NAME} ${UNINSTALL_APPS}"
+        run: "docker run -v $(pwd)/config:/app/config --entrypoint /app/run_destroy.sh isi006/coder-development-cluster:latest ${GCLOUD_PROJECT} ${CLUSTER_NAME} ${UNINSTALL_APPS} ${REMOVE_BACKUPS}"
         shell: bash

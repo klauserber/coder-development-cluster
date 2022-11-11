@@ -4,6 +4,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . ${SCRIPT_DIR}/script_init.inc.sh
 
 UNINSTALL_APPS=${3:-true}
+REMOVE_BACKUPS=${4:-false}
 
 
 ${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
@@ -28,3 +29,7 @@ if [[ ! ${UNINSTALL_APPS} == "false" ]]; then
 fi
 
 terraform -chdir=${SCRIPT_DIR}/infrastructure/google destroy -auto-approve
+
+if [[ ${REMOVE_BACKUPS} == "true" ]]; then
+  ansible-playbook -i inventory ${SCRIPT_DIR}/automate/remove_backups.yml
+fi

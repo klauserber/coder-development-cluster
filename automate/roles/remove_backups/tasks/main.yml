@@ -1,0 +1,8 @@
+---
+- name: remove home dir backups for {{ cluster_name }}
+  shell: gcloud storage rm -r gs://{{ bucket_name }}/coder/{{ cluster_name }}
+  ignore_errors: true
+
+- name: remove db backups for {{ cluster_name }}
+  shell: gcloud storage rm -r gs://{{ bucket_name }}/spilo/{{ cluster_name }}
+  ignore_errors: true
