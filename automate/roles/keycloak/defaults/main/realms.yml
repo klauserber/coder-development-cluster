@@ -36,3 +36,10 @@ keycloak_realms:
         redirectUris:
           - "https://coder.{{ cluster_public_domain }}/*"
         secret: "{{ coder_client_secret }}"
+      - clientId: "grafana"
+        rootUrl: "https://grafana.{{ cluster_public_domain }}"
+        adminUrl: "https://grafana.{{ cluster_public_domain }}"
+        directAccessGrantsEnabled: true
+        redirectUris:
+          - "https://grafana.{{ cluster_public_domain }}/*"
+        secret: "{{ grafana_client_secret }}"

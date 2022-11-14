@@ -18,6 +18,23 @@ grafana:
       cpu: 100m
       memory: 250Mi
 
+  grafana.ini:
+    server:
+      root_url: https://grafana.{{ cluster_public_domain }}
+    auth.generic_oauth:
+      enabled: true
+      name: {{ keycloak_realm_name }}
+      allow_sign_up: true
+      # scopes: profile,email,groups
+      scopes: profile,email
+      client_id: grafana
+      client_secret: {{ grafana_client_secret }}
+      auth_url: https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/auth
+      token_url: https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/token
+      api_url: https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/userinfo
+      # role_attribute_path: contains(groups[*], 'grafana-admin') && 'Admin' || contains(groups[*], 'grafana-dev') && 'Editor' || 'Viewer'
+      role_attribute_path: Admin
+
   ingress:
     enabled: true
 
