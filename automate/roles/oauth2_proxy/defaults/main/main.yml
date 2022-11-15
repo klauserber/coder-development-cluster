@@ -1,0 +1,4 @@
+---
+auth_chart_version: 6.5.0
+keycloak_db_hostname: main-keycloak-db
+namespace: oauth2-proxy

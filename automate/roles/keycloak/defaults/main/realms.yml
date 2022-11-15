@@ -8,7 +8,7 @@ keycloak_realms:
       editUsernameAllowed: true
       resetPasswordAllowed: true
       rememberMe: true
-      verifyEmail: true
+      verifyEmail: "{{ keycloak_verify_email }}"
       bruteForceProtected: true
       ssoSessionIdleTimeout: 43200  # 12 hours
       ssoSessionIdleTimeoutRememberMe: 864000  # 10 days
@@ -43,3 +43,10 @@ keycloak_realms:
         redirectUris:
           - "https://grafana.{{ cluster_public_domain }}/*"
         secret: "{{ grafana_client_secret }}"
+      # - clientId: "oauth2-proxy"
+      #   rootUrl: "https://auth.{{ cluster_public_domain }}"
+      #   adminUrl: "https://auth.{{ cluster_public_domain }}"
+      #   directAccessGrantsEnabled: true
+      #   redirectUris:
+      #     - "https://auth.{{ cluster_public_domain }}/*"
+      #   secret: "{{ auth_client_secret }}"

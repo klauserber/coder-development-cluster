@@ -1,0 +1,34 @@
+---
+# https://github.com/oauth2-proxy/oauth2-proxy/blob/7c3efe4f42bc37ccab613fe5002c172e147e3195/docs/2_auth.md#keycloak-auth-provider
+config:
+  clientID: oauth2-proxy
+  clientSecret: {{ auth_client_secret }}
+  # cookieSecret: M3VGc3ExVjhPeFBwTU9MUVZ6WUFMdEI1aEV5a0ZlL2I=
+
+extraArgs:
+  provider: keycloak
+  set-xauthrequest: true
+  provider-display-name: {{ keycloak_realm_name }}
+  login-url: "https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/auth"
+  redeem-url: "https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/token" # Change REALM_NAME to your realm
+  validate-url: "https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/userinfo" # Change REALM_NAME to your realm
+  # keycloak-group: XXX # Change XXX by your group that shall have access to it
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 100Mi
+  requests:
+    cpu: 100m
+    memory: 25Mi
+
+ingress:
+  enabled: true
+  className: nginx-public
+  hosts:
+    - auth.{{ cluster_public_domain }}
+  tls:
+    - hosts:
+        - auth.{{ cluster_public_domain }}

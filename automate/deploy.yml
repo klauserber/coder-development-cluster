@@ -24,6 +24,7 @@
           - user: "keycloak"
             db_name: "keycloak"
     - role: keycloak
+    # - role: oauth2_proxy
     - role: postgres_instance
       vars:
         pg_namespace: coder

@@ -1,0 +1,18 @@
+---
+- name: Add chart repo
+  kubernetes.core.helm_repository:
+    name: oauth2-proxy
+    repo_url: "https://oauth2-proxy.github.io/manifests"
+
+- name: helm chart
+  kubernetes.core.helm:
+    chart_ref: oauth2-proxy/oauth2-proxy
+    chart_version: "{{ auth_chart_version }}"
+    create_namespace: true
+    kubeconfig: "{{ kubeconfig }}"
+    release_name: main
+    release_namespace: "{{ namespace }}"
+    update_repo_cache: true
+    wait: true
+    state: "{{ component_state }}"
+    values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"
