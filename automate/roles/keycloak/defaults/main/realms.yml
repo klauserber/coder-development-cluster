@@ -43,6 +43,34 @@ keycloak_realms:
         redirectUris:
           - "https://grafana.{{ cluster_public_domain }}/*"
         secret: "{{ grafana_client_secret }}"
+      - clientId: "prometheus"
+        rootUrl: "https://prometheus.{{ cluster_public_domain }}"
+        adminUrl: "https://prometheus.{{ cluster_public_domain }}"
+        directAccessGrantsEnabled: true
+        redirectUris:
+          - "https://prometheus.{{ cluster_public_domain }}/*"
+        secret: "{{ prometheus_client_secret }}"
+        protocolMappers:
+          - name: "audience"
+            protocol: "openid-connect"
+            protocolMapper: "oidc-audience-mapper"
+            consentRequired: false
+            config:
+              included.client.audience: "prometheus"
+              id.token.claim: false
+              access.token.claim: true
+              included.custom.audience: "prometheus"
+          - name: "groups"
+            protocol: "openid-connect"
+            protocolMapper: "oidc-group-membership-mapper"
+            consentRequired: false
+            config:
+              full.path: true
+              id.token.claim: true
+              access.token.claim: true
+              claim.name: "groups"
+              userinfo.token.claim: true
+
       # - clientId: "oauth2-proxy"
       #   rootUrl: "https://auth.{{ cluster_public_domain }}"
       #   adminUrl: "https://auth.{{ cluster_public_domain }}"

@@ -11,3 +11,6 @@ controller:
   service:
     type: LoadBalancer
     loadBalancerIP: "{{ ip_address }}"
+
+  config:
+    proxy-buffer-size: "16k"
