@@ -131,6 +131,57 @@ resource "kubernetes_job" "config" {
   wait_for_completion = true
 }
 
+resource "kubernetes_secret" "alertmanager_config_secret" {
+  metadata {
+    name = "alertmanager-config-secret"
+    namespace = kubernetes_namespace.work-ns.metadata.0.name
+  }
+  data = {
+    email-auth-password = var.smtp_password
+  }
+}
+
+resource "kubernetes_manifest" "alertmanager_config" {
+  manifest = {
+    "apiVersion" = "monitoring.coreos.com/v1alpha1"
+    "kind" = "AlertmanagerConfig"
+    "metadata" = {
+      "name" = "alertmanager-config"
+      "namespace" = kubernetes_namespace.work-ns.metadata.0.name
+    }
+    "spec" = {
+      "receivers" = [
+        {
+          "emailConfigs" = [
+            {
+              "authPassword" = {
+                "key" = "email-auth-password"
+                "name" = "alertmanager-config-secret"
+              }
+              "authUsername" = var.smtp_user
+              "from" = var.smtp_from
+              "sendResolved" = true
+              "smarthost" = "${var.smtp_host}:${var.smtp_port}"
+              "to" = data.coder_workspace.me.owner_email
+            },
+          ]
+          "name" = "email"
+        },
+      ]
+      "route" = {
+        "groupBy" = [
+          "alertname"
+        ]
+        "groupInterval" = "30s"
+        "groupWait" = "5m"
+        "receiver" = "email"
+        "repeatInterval" = "1h"
+      }
+    }
+  }
+}
+
+
 resource "kubernetes_stateful_set" "main" {
   depends_on = [
     kubernetes_job.config

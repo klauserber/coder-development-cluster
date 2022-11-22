@@ -210,6 +210,20 @@
         name: view
         apiGroup: rbac.authorization.k8s.io
 
+- name: alert manager config secret
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "{{ component_state }}"
+    namespace: "{{ namespace }}"
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: alertmanager-config-secret
+      type: Opaque
+      stringData:
+        email-auth-password: "{{ smtp.password }}"
+
 - name: setup
   when: component_state == "present"
   include_tasks: setup.yml

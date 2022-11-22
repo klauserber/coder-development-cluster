@@ -160,3 +160,24 @@ variable "cert_expiration_seconds" {
   type      = number
   sensitive = true
 }
+
+variable "smtp_user" {
+  type      = string
+  sensitive = true
+}
+variable "smtp_password" {
+  type      = string
+  sensitive = true
+}
+variable "smtp_port" {
+  type      = string
+  sensitive = true
+}
+variable "smtp_host" {
+  type      = string
+  sensitive = true
+}
+variable "smtp_from" {
+  type      = string
+  sensitive = true
+}

@@ -14,6 +14,12 @@ k8s_ca_cert: "{{ coder_k8s_ca_cert }}"
 k8s_cluster_name: "{{ coder_k8s_cluster_name }}"
 cert_expiration_seconds: "{{ coder_cert_expiration_seconds }}"
 
+smtp_user: "{{ smtp.user }}"
+smtp_password: "{{ smtp.password }}"
+smtp_port: "{{ smtp.port }}"
+smtp_host: "{{ smtp.host }}"
+smtp_from: "{{ smtp.from }}"
+
 devbox_image: "{{ item.devbox_image}}"
 homedir_disk_size: "{{ item.homedir_disk_size }}"
 devbox_mem_limit: "{{ item.devbox_mem_limit }}"

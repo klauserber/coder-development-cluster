@@ -1,7 +1,44 @@
 ---
 alertmanager:
-  enabled: false
+  enabled: true
 
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx-public
+      nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+      nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+
+    hosts:
+      - alert.{{ cluster_public_domain }}
+
+    paths:
+      - /
+
+    pathType: Prefix
+
+    tls:
+      - hosts:
+          - alert.{{ cluster_public_domain }}
+
+  config:
+    receivers:
+      - name: email
+        emailConfigs:
+          - to: "{{ coder_admin_email }}"
+            from: "{{ smtp.from }}"
+            smarthost: "{{ smtp.host }}:{{ smtp.port }}"
+            authUsername: "{{ smtp.user }}"
+            authPassword:
+              key: email-auth-password
+              name: alertmanager-config-admin-secret
+            sendResolved: true
+    route:
+      groupBy: ["namespace"]
+      groupWait: 5m
+      groupInterval: 30s
+      repeatInterval: 1h
+      receiver: email
 
 grafana:
   adminPassword: "{{ grafana_password }}"
