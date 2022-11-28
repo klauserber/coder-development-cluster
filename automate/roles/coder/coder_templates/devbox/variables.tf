@@ -161,6 +161,11 @@ variable "cert_expiration_seconds" {
   sensitive = true
 }
 
+variable "smtp_enabled" {
+  type      = bool
+  sensitive = true
+}
+
 variable "smtp_user" {
   type      = string
   sensitive = true

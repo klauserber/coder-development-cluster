@@ -132,6 +132,7 @@ resource "kubernetes_job" "config" {
 }
 
 resource "kubernetes_secret" "alertmanager_config_secret" {
+  for_each = toset( var.smtp_enabled ? ["1"] : [])
   metadata {
     name = "alertmanager-config-secret"
     namespace = kubernetes_namespace.work-ns.metadata.0.name
@@ -142,6 +143,7 @@ resource "kubernetes_secret" "alertmanager_config_secret" {
 }
 
 resource "kubernetes_manifest" "alertmanager_config" {
+  for_each = toset( var.smtp_enabled ? ["1"] : [])
   manifest = {
     "apiVersion" = "monitoring.coreos.com/v1alpha1"
     "kind" = "AlertmanagerConfig"
