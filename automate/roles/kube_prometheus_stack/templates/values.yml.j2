@@ -6,9 +6,10 @@ alertmanager:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx-public
+{% if prometheus_oauth_proxies  %}
       nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
       nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-
+{% endif %}
     hosts:
       - alert.{{ cluster_public_domain }}
 
@@ -22,23 +23,60 @@ alertmanager:
           - alert.{{ cluster_public_domain }}
 
   config:
-    receivers:
-      - name: email
-        emailConfigs:
-          - to: "{{ coder_admin_email }}"
-            from: "{{ smtp.from }}"
-            smarthost: "{{ smtp.host }}:{{ smtp.port }}"
-            authUsername: "{{ smtp.user }}"
-            authPassword:
-              key: email-auth-password
-              name: alertmanager-config-admin-secret
-            sendResolved: true
+    global:
+      resolve_timeout: 5m
+      http_config:
+        follow_redirects: true
+      smtp_hello: localhost
+      smtp_require_tls: true
     route:
-      groupBy: ["namespace"]
-      groupWait: 5m
-      groupInterval: 30s
-      repeatInterval: 1h
-      receiver: email
+      receiver: "null"
+      group_by:
+      - namespace
+      continue: false
+      routes:
+      - receiver: "null"
+        matchers:
+        - alertname=~"InfoInhibitor|Watchdog"
+        continue: false
+      - receiver: email
+        continue: true
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+    inhibit_rules:
+    - source_matchers:
+      - severity="critical"
+      target_matchers:
+      - severity=~"warning|info"
+      equal:
+      - namespace
+      - alertname
+    - source_matchers:
+      - severity="warning"
+      target_matchers:
+      - severity="info"
+      equal:
+      - namespace
+      - alertname
+    - source_matchers:
+      - alertname="InfoInhibitor"
+      target_matchers:
+      - severity="info"
+      equal:
+      - namespace
+    receivers:
+    - name: "null"
+    - name: email
+      email_configs:
+        - to: "{{ coder_admin_email }}"
+          from: "{{ smtp.from }}"
+          smarthost: "{{ smtp.host }}:{{ smtp.port }}"
+          auth_username: "{{ smtp.user }}"
+          auth_password: "{{ smtp.password }}"
+          send_resolved: true
+    templates:
+    - /etc/alertmanager/config/*.tmpl
 
 grafana:
   adminPassword: "{{ grafana_password }}"
@@ -103,9 +141,10 @@ prometheus:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx-public
+{% if prometheus_oauth_proxies  %}
       nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
       nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-
+{% endif %}
     hosts:
       - prometheus.{{ cluster_public_domain }}
 

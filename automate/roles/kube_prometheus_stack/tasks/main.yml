@@ -23,11 +23,13 @@
     values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"
 
 - name: Add chart repo
+  when: prometheus_oauth_proxies
   kubernetes.core.helm_repository:
     name: oauth2-proxy
     repo_url: "https://oauth2-proxy.github.io/manifests"
 
 - name: prometheus oauth proxy chart
+  when: prometheus_oauth_proxies
   kubernetes.core.helm:
     chart_ref: oauth2-proxy/oauth2-proxy
     chart_version: "{{ auth_chart_version }}"
@@ -40,6 +42,7 @@
     values: "{{ lookup('template', 'oauth_promethues_values.yml.j2') | from_yaml }}"
 
 - name: alertmanager oauth proxy chart
+  when: prometheus_oauth_proxies
   kubernetes.core.helm:
     chart_ref: oauth2-proxy/oauth2-proxy
     chart_version: "{{ auth_chart_version }}"
@@ -51,16 +54,3 @@
     state: "{{ component_state }}"
     values: "{{ lookup('template', 'oauth_alert_values.yml.j2') | from_yaml }}"
 
-- name: alert manager config secret for admin
-  k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    state: "{{ component_state }}"
-    namespace: "{{ namespace }}"
-    definition:
-      apiVersion: v1
-      kind: Secret
-      metadata:
-        name: alertmanager-config-admin-secret
-      type: Opaque
-      stringData:
-        email-auth-password: "{{ smtp.password }}"
