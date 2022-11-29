@@ -12,8 +12,6 @@ trap chown_on_exit ERR INT
 
 . ${SCRIPT_DIR}/script_init.inc.sh
 
-${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
-
 ${SCRIPT_DIR}/secrets_get.sh ${GCLOUD_PROJECT} ${CLUSTER_NAME}
 
 ${SCRIPT_DIR}/run_infra.sh

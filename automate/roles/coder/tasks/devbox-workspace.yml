@@ -1,4 +1,9 @@
 ---
+- name: tmp dir
+  file:
+    path: "{{ role_path }}/tmp"
+    state: directory
+
 - name: coder template param file
   template:
     src: "params-devbox.yml.j2"

@@ -6,11 +6,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 UNINSTALL_APPS=${3:-true}
 REMOVE_BACKUPS=${4:-false}
 
-
-${SCRIPT_DIR}/activate_service_account.sh ${GCLOUD_PROJECT}
-
 ${SCRIPT_DIR}/secrets_get.sh ${GCLOUD_PROJECT} ${CLUSTER_NAME}
-
 
 ansible-playbook -i inventory ${SCRIPT_DIR}/automate/tf_vars.yml
 

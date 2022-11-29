@@ -65,7 +65,7 @@ COPY --from=binxio/gcp-get-secret:v0.4.6 /gcp-get-secret /usr/local/bin/
 
 COPY automate /app/automate
 COPY infrastructure /app/infrastructure
-COPY run* script_init.inc.sh secrets_get.sh activate_service_account.sh get_kubeconfig.sh /app/
+COPY *.sh /app/
 
 ARG IMAGE_VERSION=latest
 ARG IMAGE_NAME=coder-development-cluster
@@ -76,4 +76,4 @@ ENV PATH=${HOME}/.local/bin:${HOME}/bin:/usr/local/google-cloud-sdk/bin:${PATH}
 
 WORKDIR /app
 
-ENTRYPOINT ["/app/run.sh"]
+ENTRYPOINT ["/app/run_create.sh"]
