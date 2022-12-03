@@ -15,7 +15,7 @@
         pg_team_id: "main"
         pg_instance_name: "keycloak-db"
         pg_disk_size: "5Gi"
-        pg_instances: 1
+        pg_instances: 2
         pg_backup: true
         pg_clone: true
         pg_storage_provider: gs
@@ -31,7 +31,7 @@
         pg_team_id: "main"
         pg_instance_name: "coder-db"
         pg_disk_size: "5Gi"
-        pg_instances: 1
+        pg_instances: 2
         pg_backup: true
         pg_clone: true
         pg_storage_provider: gs

@@ -2,6 +2,8 @@
 image:
   tag: {{ keycloak_version }}
 
+replicaCount: 2
+
 auth:
   adminUser: admin
   adminPassword: "{{ keycloak_admin_password }}"
