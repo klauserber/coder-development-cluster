@@ -1,7 +1,9 @@
 
 locals {
-  k8s_username = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
-  is_admin = (data.coder_workspace.me.owner == "admin")
+  workspace_name = lower(data.coder_workspace.me.name)
+  workspace_owner = lower(data.coder_workspace.me.owner)
+  k8s_username = "coder-${local.workspace_owner}-${local.workspace_name}"
+  is_admin = (local.workspace_owner == "admin")
 }
 
 data "coder_workspace" "me" {}
@@ -18,7 +20,7 @@ resource "coder_agent" "devbox" {
 
 resource "kubernetes_namespace" "work-ns" {
   metadata {
-    name = "${var.workspaces_namespace}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    name = "${var.workspaces_namespace}-${local.workspace_owner}-${local.workspace_name}"
   }
 }
 
@@ -43,7 +45,7 @@ resource "kubernetes_role_binding" "namespace_admin" {
 resource "kubernetes_cluster_role_binding" "cluster_admin" {
   count = local.is_admin ? 1 : 0
   metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-cluster-admin"
+    name      = "coder-${local.workspace_owner}-cluster-admin"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -58,7 +60,7 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
 
 resource "kubernetes_persistent_volume_claim" "pvc" {
   metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    name      = "coder-${local.workspace_owner}-${local.workspace_name}"
     namespace = var.workspaces_namespace
   }
   spec {
@@ -74,7 +76,7 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
 
 resource "kubernetes_job" "config" {
   metadata {
-    name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    name = "coder-${local.workspace_owner}-${local.workspace_name}"
     namespace = var.workspaces_namespace
   }
   spec {
@@ -190,17 +192,17 @@ resource "kubernetes_stateful_set" "main" {
   ]
   count = data.coder_workspace.me.start_count
   metadata {
-    name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    name      = "coder-${local.workspace_owner}-${local.workspace_name}"
     namespace = var.workspaces_namespace
   }
   spec {
     replicas = 1
-    service_name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    service_name = "coder-${local.workspace_owner}-${local.workspace_name}"
     selector {
       match_labels = {
         app = "coder"
-        owner = "${data.coder_workspace.me.owner}"
-        workspace = "${data.coder_workspace.me.name}"
+        owner = "${local.workspace_owner}"
+        workspace = "${local.workspace_name}"
       }
     }
 
@@ -208,8 +210,8 @@ resource "kubernetes_stateful_set" "main" {
       metadata {
         labels = {
           app = "coder"
-          owner = "${data.coder_workspace.me.owner}"
-          workspace = "${data.coder_workspace.me.name}"
+          owner = "${local.workspace_owner}"
+          workspace = "${local.workspace_name}"
         }
       }
       spec {
@@ -262,7 +264,7 @@ resource "kubernetes_stateful_set" "main" {
             }
             env {
               name  = "RESTIC_REPOSITORY"
-              value = "${var.restic_repo_prefix}/coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+              value = "${var.restic_repo_prefix}/coder-${local.workspace_owner}-${local.workspace_name}"
             }
             env {
               name  = "RESTIC_PASSWORD"
@@ -278,7 +280,7 @@ resource "kubernetes_stateful_set" "main" {
             }
             env {
               name  = "RESTIC_HOST"
-              value = "${var.workspaces_namespace}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+              value = "${var.workspaces_namespace}-${local.workspace_owner}-${local.workspace_name}"
             }
             resources {
               limits = {
@@ -418,7 +420,7 @@ resource "kubernetes_stateful_set" "main" {
             }
             env {
               name  = "RESTIC_REPOSITORY"
-              value = "${var.restic_repo_prefix}/coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+              value = "${var.restic_repo_prefix}/coder-${local.workspace_owner}-${local.workspace_name}"
             }
             env {
               name  = "RESTIC_PASSWORD"
@@ -434,7 +436,7 @@ resource "kubernetes_stateful_set" "main" {
             }
             env {
               name  = "RESTIC_HOST"
-              value = "${var.workspaces_namespace}-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+              value = "${var.workspaces_namespace}-${local.workspace_owner}-${local.workspace_name}"
             }
             resources {
               limits = {
