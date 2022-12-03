@@ -2,7 +2,3 @@
 namespace: monitoring
 prometheus_stack_chart_version: 42.1.1
 prometheus_stack_release_name: main
-
-auth_chart_version: 6.5.0
-
-prometheus_oauth_proxies: false

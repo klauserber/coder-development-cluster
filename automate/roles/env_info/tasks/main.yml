@@ -12,5 +12,6 @@
       User administration     : https://keycloak.{{ cluster_public_domain }}
       Grafana                 : https://grafana.{{ cluster_public_domain }}
       Prometheus              : https://prometheus.{{ cluster_public_domain }}
+      Alertmanager            : https://alert.{{ cluster_public_domain }}
 
       ==============================================================================================================

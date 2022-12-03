@@ -6,10 +6,8 @@ alertmanager:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx-public
-{% if prometheus_oauth_proxies  %}
-      nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
-      nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-{% endif %}
+      nginx.ingress.kubernetes.io/auth-signin: "https://auth.{{ cluster_public_domain }}/oauth2/start"
+      nginx.ingress.kubernetes.io/auth-url: "http://main-oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
     hosts:
       - alert.{{ cluster_public_domain }}
 
@@ -141,10 +139,8 @@ prometheus:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx-public
-{% if prometheus_oauth_proxies  %}
-      nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
-      nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-{% endif %}
+      nginx.ingress.kubernetes.io/auth-signin: "https://auth.{{ cluster_public_domain }}/oauth2/start"
+      nginx.ingress.kubernetes.io/auth-url: "http://main-oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
     hosts:
       - prometheus.{{ cluster_public_domain }}
 

@@ -43,23 +43,23 @@ keycloak_realms:
         redirectUris:
           - "https://grafana.{{ cluster_public_domain }}/*"
         secret: "{{ grafana_client_secret }}"
-      - clientId: "prometheus"
-        rootUrl: "https://prometheus.{{ cluster_public_domain }}"
-        adminUrl: "https://prometheus.{{ cluster_public_domain }}"
+      - clientId: "auth"
+        rootUrl: "https://auth.{{ cluster_public_domain }}"
+        adminUrl: "https://auth.{{ cluster_public_domain }}"
         directAccessGrantsEnabled: true
         redirectUris:
-          - "https://prometheus.{{ cluster_public_domain }}/*"
-        secret: "{{ prometheus_client_secret }}"
+          - "https://auth.{{ cluster_public_domain }}/*"
+        secret: "{{ auth_client_secret }}"
         protocolMappers:
           - name: "audience"
             protocol: "openid-connect"
             protocolMapper: "oidc-audience-mapper"
             consentRequired: false
             config:
-              included.client.audience: "prometheus"
+              included.client.audience: "auth"
               id.token.claim: false
               access.token.claim: true
-              included.custom.audience: "prometheus"
+              included.custom.audience: "auth"
           - name: "groups"
             protocol: "openid-connect"
             protocolMapper: "oidc-group-membership-mapper"
@@ -70,38 +70,3 @@ keycloak_realms:
               access.token.claim: true
               claim.name: "groups"
               userinfo.token.claim: true
-      - clientId: "alertmanager"
-        rootUrl: "https://alert.{{ cluster_public_domain }}"
-        adminUrl: "https://alert.{{ cluster_public_domain }}"
-        directAccessGrantsEnabled: true
-        redirectUris:
-          - "https://alert.{{ cluster_public_domain }}/*"
-        secret: "{{ alert_client_secret }}"
-        protocolMappers:
-          - name: "audience"
-            protocol: "openid-connect"
-            protocolMapper: "oidc-audience-mapper"
-            consentRequired: false
-            config:
-              included.client.audience: "alertmanager"
-              id.token.claim: false
-              access.token.claim: true
-              included.custom.audience: "alertmanager"
-          - name: "groups"
-            protocol: "openid-connect"
-            protocolMapper: "oidc-group-membership-mapper"
-            consentRequired: false
-            config:
-              full.path: true
-              id.token.claim: true
-              access.token.claim: true
-              claim.name: "groups"
-              userinfo.token.claim: true
-
-      # - clientId: "oauth2-proxy"
-      #   rootUrl: "https://auth.{{ cluster_public_domain }}"
-      #   adminUrl: "https://auth.{{ cluster_public_domain }}"
-      #   directAccessGrantsEnabled: true
-      #   redirectUris:
-      #     - "https://auth.{{ cluster_public_domain }}/*"
-      #   secret: "{{ auth_client_secret }}"
