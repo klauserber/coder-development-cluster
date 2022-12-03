@@ -101,7 +101,7 @@ grafana:
       name: {{ keycloak_realm_name }}
       allow_sign_up: true
       # scopes: profile,email,groups
-      scopes: profile,email
+      scopes: profile,email,openid
       client_id: grafana
       client_secret: {{ grafana_client_secret }}
       auth_url: https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/auth
