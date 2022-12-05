@@ -15,3 +15,6 @@ config_dir: "{{ playbook_dir }}/../config"
 cluster_backup_dir: "{{ config_dir }}/cache/{{ cluster_name }}"
 
 google_credentials_path: "{{ config_dir }}/google-cloud.json"
+
+nginx_backup_remote_storage_provider: "{{ storage_provider }}"
+nginx_backup_remote_storage_bucket: "{{ bucket_name }}"

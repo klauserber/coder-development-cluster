@@ -1,0 +1,20 @@
+---
+- name: backup dir for certs
+  file:
+    path: "{{ cluster_backup_dir_certs }}"
+    state: directory
+
+- name: get cert resources from gs if present
+  when:
+    - "nginx_backup_remote_storage_provider == 'gs'"
+  shell: gcloud storage cp -r gs://{{ nginx_backup_remote_storage_bucket }}/certs-cache/{{ cluster_name }}/* {{ cluster_backup_dir_certs }} || true
+  changed_when: false
+
+- name: restore cert resources
+  when: "{{ (cluster_backup_dir_certs + '/' + item.filename) | path_exists }}"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    namespace: "{{ namespace }}"
+    apply: true
+    definition: "{{ lookup('file', cluster_backup_dir_certs + '/' + item.filename) | from_json }}"
+  loop: "{{ cluster_cert_resources }}"

@@ -9,21 +9,10 @@
       metadata:
         name: "{{ namespace }}"
 
-- name: backup dir for certs
-  stat:
-    path: "{{ cluster_backup_dir_certs }}"
-  register: backup_dir
-
-- name: restore cert resources
+- name: include restore certs
   when:
-    - "backup_dir.stat.exists"
     - "component_state == 'present'"
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    namespace: "{{ namespace }}"
-    apply: true
-    definition: "{{ lookup('file', cluster_backup_dir_certs + '/' + item.filename) | from_json }}"
-  loop: "{{ cluster_cert_resources }}"
+  include_tasks: restore_certs.yml
 
 - name: google secret
   kubernetes.core.k8s:
@@ -50,25 +39,10 @@
   when: "component_state == 'present'"
   command: kubectl --kubeconfig {{ kubeconfig }} wait --for=condition=ready certificate cluster-cert --timeout=180s -n {{ namespace }}
 
-- name: backup dir
-  when: "component_state == 'present'"
-  file:
-    path: "{{ cluster_backup_dir_certs }}"
-    state: directory
-
-- name: backup cluster cert resources
-  when: "component_state == 'present'"
-  shell: |
-    kubectl --kubeconfig {{ kubeconfig }} get {{ item.kind }} {{ item.name }} -o json -n {{ namespace }} | jq --sort-keys \
-      'del(.metadata.annotations."kubectl.kubernetes.io/last-applied-configuration",
-      .metadata.annotations."control-plane.alpha.kubernetes.io/leader",
-      .metadata.uid,
-      .metadata.selfLink,
-      .metadata.resourceVersion,
-      .metadata.creationTimestamp,
-      .metadata.generation)' \
-      > {{ cluster_backup_dir_certs }}/{{ item.filename }}
-  loop: "{{ cluster_cert_resources }}"
+- name: include backup certs
+  when:
+    - "component_state == 'present'"
+  include_tasks: backup_certs.yml
 
 - name: Add chart repo
   kubernetes.core.helm_repository:

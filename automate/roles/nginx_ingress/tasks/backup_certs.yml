@@ -1,0 +1,19 @@
+---
+- name: backup cluster cert resources
+  shell: |
+    kubectl --kubeconfig {{ kubeconfig }} get {{ item.kind }} {{ item.name }} -o json -n {{ namespace }} | jq --sort-keys \
+      'del(.metadata.annotations."kubectl.kubernetes.io/last-applied-configuration",
+      .metadata.annotations."control-plane.alpha.kubernetes.io/leader",
+      .metadata.uid,
+      .metadata.selfLink,
+      .metadata.resourceVersion,
+      .metadata.creationTimestamp,
+      .metadata.generation)' \
+      > {{ cluster_backup_dir_certs }}/{{ item.filename }}
+  loop: "{{ cluster_cert_resources }}"
+
+- name: store cert resources in gs
+  when:
+    - "nginx_backup_remote_storage_provider == 'gs'"
+  shell: gcloud storage cp -r {{ cluster_backup_dir_certs }}/* gs://{{ nginx_backup_remote_storage_bucket }}/certs-cache/{{ cluster_name }}/
+  changed_when: false
