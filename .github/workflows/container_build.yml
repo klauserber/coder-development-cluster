@@ -30,6 +30,7 @@ jobs:
         with:
           user: ${{ secrets.DOCKERHUB_USERNAME }}
           pass: ${{ secrets.DOCKERHUB_TOKEN }}
+          slug: isi006/coder-development-cluster
           description: true
 
       # https://github.com/docker/setup-qemu-action
