@@ -71,14 +71,15 @@
   vars:
     http_node_port: 30080
     https_node_port: 30443
-    default_ingress: false
+    default_ingress: true
     ingress_class: nginx-public
+    release_name: nginx-ingress-public
   kubernetes.core.helm:
     chart_ref: k8s-nginx/ingress-nginx
     chart_version: "{{ nginx_controller_chart_version }}"
     create_namespace: true
     kubeconfig: "{{ kubeconfig }}"
-    release_name: nginx-ingress-public
+    release_name: "{{ release_name }}"
     release_namespace: "{{ namespace }}"
     release_values: "{{ lookup('template', role_path + '/templates/values.yml') | from_yaml }}"
     update_repo_cache: true

@@ -1,4 +1,17 @@
 controller:
+  replicaCount: 3
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ release_name }}
+          topologyKey: kubernetes.io/hostname
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
   ingressClassResource:
     name: "{{ ingress_class }}"
     enabled: true
