@@ -1,0 +1,28 @@
+---
+- name: remove user namespaces
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: absent
+    label_selectors:
+      - "user-namespace=1"
+    kind: Namespace
+    wait: true
+    wait_timeout: 300
+
+- name: remove namespaces
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: absent
+    name: "{{ item }}"
+    kind: Namespace
+  loop: "{{ namespaces_to_remove }}"
+
+- name: remove namespaces and wait
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: absent
+    name: "{{ item }}"
+    kind: Namespace
+    wait: true
+    wait_timeout: 300
+  loop: "{{ namespaces_to_remove }}"

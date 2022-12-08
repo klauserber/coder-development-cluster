@@ -1,0 +1,9 @@
+---
+namespaces_to_remove:
+  - coder
+  - keycloak
+  - postgres
+  - monitoring
+  - oauth2-proxy
+  - cert-manager
+  - nginx-ingress
