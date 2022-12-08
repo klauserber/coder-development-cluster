@@ -4,4 +4,4 @@ pg_operator_chart_version: "1.8.2"
 pg_operator_chart_ref: "postgres-operator-charts/postgres-operator"
 
 pg_operator_resync_period: "5m"
-
+pg_operator_anti_affinity: true

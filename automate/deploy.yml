@@ -11,11 +11,11 @@
     - role: postgres_base
     - role: postgres_instance
       vars:
-        pg_namespace: keycloak
+        pg_namespace: postgres
         pg_team_id: "main"
-        pg_instance_name: "keycloak-db"
+        pg_instance_name: "postgres-db"
         pg_disk_size: "5Gi"
-        pg_instances: 2
+        pg_instances: 3
         pg_backup: true
         pg_clone: true
         pg_storage_provider: gs
@@ -23,22 +23,10 @@
         pg_dbs:
           - user: "keycloak"
             db_name: "keycloak"
-    - role: keycloak
-    - role: oauth2_proxy
-    - role: postgres_instance
-      vars:
-        pg_namespace: coder
-        pg_team_id: "main"
-        pg_instance_name: "coder-db"
-        pg_disk_size: "5Gi"
-        pg_instances: 2
-        pg_backup: true
-        pg_clone: true
-        pg_storage_provider: gs
-        pg_bucket_backup_prefix: "{{ cluster_name }}/"
-        pg_dbs:
           - user: "coder"
             db_name: "coder"
+    - role: keycloak
+    - role: oauth2_proxy
     - role: coder
     - role: kube_prometheus_stack
     - role: env_info

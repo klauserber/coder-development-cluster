@@ -1,4 +1,10 @@
 ---
+- name: query db password
+  shell: "kubectl --kubeconfig {{ kubeconfig }} -n postgres
+    get secret keycloak.main-postgres-db.credentials.postgresql.acid.zalan.do
+    -o 'jsonpath={.data.password}' | base64 -d"
+  register: "keycloak_db_password"
+
 - name: Add chart repo
   kubernetes.core.helm_repository:
     name: bitnami

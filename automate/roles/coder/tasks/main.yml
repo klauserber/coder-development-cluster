@@ -1,7 +1,17 @@
 ---
+- name: namespace
+  k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: "present"
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ namespace }}"
+
 - name: query db password
-  shell: "kubectl --kubeconfig {{ kubeconfig }} -n {{ namespace }}
-    get secret {{ coder_pg_user }}.{{ coder_db_hostname }}.credentials.postgresql.acid.zalan.do
+  shell: "kubectl --kubeconfig {{ kubeconfig }} -n postgres
+    get secret {{ coder_pg_user }}.main-postgres-db.credentials.postgresql.acid.zalan.do
     -o 'jsonpath={.data.password}' | base64 -d"
   register: "coder_pg_password"
 

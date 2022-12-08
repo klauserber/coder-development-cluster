@@ -1,6 +1,6 @@
 ---
 keycloak_version: 20.0.1-debian-11-r8
 keycloak_chart_version: 12.1.5
-keycloak_db_hostname: main-keycloak-db
+keycloak_db_hostname: "main-postgres-db.postgres"
 namespace: keycloak
 keycloak_hostname: keycloak.{{ cluster_public_domain }}

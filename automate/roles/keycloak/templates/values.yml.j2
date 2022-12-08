@@ -2,7 +2,8 @@
 image:
   tag: {{ keycloak_version }}
 
-replicaCount: 2
+replicaCount: 3
+podAntiAffinityPreset: hard
 
 auth:
   adminUser: admin
@@ -25,5 +26,4 @@ externalDatabase:
   port: 5432
   user: "keycloak"
   database: "keycloak"
-  existingSecret: "keycloak.{{ keycloak_db_hostname }}.credentials.postgresql.acid.zalan.do"
-  existingSecretPasswordKey: "password"
+  password: {{ keycloak_db_password }}

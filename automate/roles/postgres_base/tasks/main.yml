@@ -29,6 +29,8 @@
     values:
       configGeneral:
         resync_period: "{{ pg_operator_resync_period }}"
+      configKubernetes:
+        enable_pod_antiaffinity: "{{ pg_operator_anti_affinity }}"
 
 - name: "cluster role"
   kubernetes.core.k8s:
