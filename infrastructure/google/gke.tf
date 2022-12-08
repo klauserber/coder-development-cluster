@@ -63,7 +63,7 @@ resource "google_container_node_pool" "secondary_nodes" {
     location_policy = "ANY"
   }
 
-  initial_node_count = 0
+  initial_node_count = var.min_node_count
 
   node_config {
     oauth_scopes = [
