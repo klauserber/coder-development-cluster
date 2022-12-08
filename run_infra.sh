@@ -13,7 +13,7 @@ terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
     -backend-config="bucket=${BUCKET_NAME}" \
     -backend-config="prefix=tf-state/${CLUSTER_NAME}" \
 
-terraform -chdir=${SCRIPT_DIR}/infrastructure/${INFRASTRUCTURE_PROVIDER} apply -auto-approve \
+terraform -chdir=${SCRIPT_DIR}/infrastructure/${INFRASTRUCTURE_PROVIDER} apply ${TERRAFORM_OPTIONS} \
   -var-file="${SCRIPT_DIR}/config/variables.tfvars" \
 
 ${SCRIPT_DIR}/get_kubeconfig.sh

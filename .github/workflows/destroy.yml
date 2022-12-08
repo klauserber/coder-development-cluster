@@ -37,6 +37,7 @@ jobs:
       GOOGLE_CLOUD_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
       GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
       CLUSTER_NAME: ${{ github.event.inputs.environment }}
+      TERRAFORM_OPTIONS: "-auto-approve"
       UNINSTALL_APPS: ${{ github.event.inputs.uninstall_apps }}
       REMOVE_BACKUPS: ${{ github.event.inputs.remove_backups }}
     environment:

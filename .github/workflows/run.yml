@@ -21,6 +21,7 @@ jobs:
       GOOGLE_CLOUD_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
       GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
       CLUSTER_NAME: ${{ github.event.inputs.environment }}
+      TERRAFORM_OPTIONS: "-auto-approve"
     environment:
       name: ${{ github.event.inputs.environment }}
       url: https://coder.${{ github.event.inputs.environment }}.gke.isium.de
