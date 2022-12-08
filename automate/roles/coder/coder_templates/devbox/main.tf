@@ -288,7 +288,6 @@ resource "kubernetes_stateful_set" "main" {
               }
               requests = {
                 memory = "${var.backup_mem_limit * 0.25}M"
-                cpu = "250m"
               }
             }
             volume_mount {
@@ -358,7 +357,6 @@ resource "kubernetes_stateful_set" "main" {
             }
             requests = {
               memory = "${var.devbox_mem_limit * 0.25}M"
-              cpu = "250m"
             }
           }
           volume_mount {
@@ -388,7 +386,6 @@ resource "kubernetes_stateful_set" "main" {
               }
               requests = {
                 memory = "${var.docker_mem_limit * 0.25}M"
-                cpu = "250m"
               }
             }
             volume_mount {
@@ -444,7 +441,6 @@ resource "kubernetes_stateful_set" "main" {
               }
               requests = {
                 memory = "${var.backup_mem_limit * 0.25}M"
-                cpu = "250m"
               }
             }
             volume_mount {
@@ -478,7 +474,6 @@ resource "kubernetes_stateful_set" "main" {
               }
               requests = {
                 memory = "16M"
-                cpu = "50m"
               }
             }
             volume_mount {
