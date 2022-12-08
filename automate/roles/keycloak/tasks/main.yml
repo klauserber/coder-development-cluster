@@ -3,7 +3,11 @@
   shell: "kubectl --kubeconfig {{ kubeconfig }} -n postgres
     get secret keycloak.main-postgres-db.credentials.postgresql.acid.zalan.do
     -o 'jsonpath={.data.password}' | base64 -d"
-  register: "keycloak_db_password"
+  register: "keycloak_db_password_result"
+
+- name: set db password
+  set_fact:
+    keycloak_db_password: "{{ keycloak_db_password_result.stdout }}"
 
 - name: Add chart repo
   kubernetes.core.helm_repository:
