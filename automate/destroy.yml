@@ -6,4 +6,7 @@
   vars_files:
     - "{{ config_dir }}/app_config.yml"
   roles:
+    - role: kube_prometheus_stack
+      vars:
+        component_state: absent
     - role: remove_all_apps
