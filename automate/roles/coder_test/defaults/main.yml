@@ -1,0 +1,7 @@
+---
+coder_version: 0.13.1
+coder_access_host: "coder.{{ cluster_public_domain }}"
+
+coder_test_state: present
+
+coder_test_accounts: 12

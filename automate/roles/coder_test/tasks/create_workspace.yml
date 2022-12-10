@@ -1,0 +1,33 @@
+---
+- name: create user
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/users"
+    method: POST
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    body_format: json
+    status_code: [ 201 ]
+    body:
+      username: "testuser-{{ item }}"
+      organization_id: "{{ orga_id }}"
+      password: "lookup('community.general.random_string', length=16)"
+      email: "testuser-{{ item }}@{{ cluster_public_domain }}"
+  register: result
+
+- name: set user id
+  set_fact:
+    user_id: "{{ result.json.id }}"
+
+- name: create workspace
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/organizations/{{ orga_id }}/members/{{ user_id }}/workspaces"
+    method: POST
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    body_format: json
+    status_code: [ 201 ]
+    body:
+      name: "testworkspace"
+      organization_id: "{{ orga_id }}"
+      template_id: "{{ template_id }}"
+

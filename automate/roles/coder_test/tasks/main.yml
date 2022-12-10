@@ -1,0 +1,62 @@
+---
+- name: api login
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/users/login"
+    method: POST
+    body_format: json
+    status_code: [ 201 ]
+    body:
+      email: "{{ coder_admin_email }}"
+      password: "{{ coder_admin_password }}"
+  register: result
+
+- name: set token fact
+  set_fact:
+    token: "{{ result.json.session_token }}"
+
+- name: get me
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/users/me"
+    method: GET
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    status_code: [ 200 ]
+  register: result
+
+- name: set orga id
+  set_fact:
+    orga_id: "{{ result.json.organization_ids[0] }}"
+
+- name: get templates
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/organizations/{{ orga_id }}/templates"
+    method: GET
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    status_code: [ 200 ]
+  register: result
+
+- name: set template id
+  set_fact:
+    template_id: "{{ result.json[0].id }}"
+
+- name: devbox workspaces
+  when: coder_test_state == "present"
+  include_tasks: "create_workspace.yml"
+  with_sequence: start=0 count="{{ coder_test_accounts }}"
+
+- name: wait for workspaces to be startet
+  when: coder_test_state == "present"
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/workspaces"
+    method: GET
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    status_code: [ 200 ]
+  register: result
+  until: result.json.workspaces | selectattr('latest_build.status', '==', 'starting') | list | length == 0
+  retries: "{{ 25 * coder_test_accounts }}"
+
+- name: delete
+  when: coder_test_state == "absent"
+  include_tasks: "delete_data.yml"

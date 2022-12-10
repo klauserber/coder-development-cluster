@@ -1,0 +1,54 @@
+---
+- name: list workspaces
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/workspaces"
+    method: GET
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    status_code: [ 200 ]
+  register: result
+
+- name: delete workspaces
+  when: item.owner_name.startswith("testuser")
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/workspaces/{{ item.id }}/builds"
+    method: POST
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    body_format: json
+    status_code: [ 201 ]
+    body:
+      transition: "delete"
+  loop: "{{ result.json.workspaces }}"
+  loop_control:
+    label: "{{ item.name }} - {{ item.owner_name }}"
+
+- name: wait for workspaces to be deleted
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/workspaces"
+    method: GET
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    status_code: [ 200 ]
+  register: result
+  until: result.json.workspaces | selectattr('latest_build.status', '==', 'deleting') | list | length == 0
+  retries: "{{ 10 * coder_test_accounts }}"
+
+- name: list users
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/users"
+    method: GET
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    status_code: [ 200 ]
+  register: result
+
+- name: delete users
+  when: item.username.startswith("testuser")
+  uri:
+    url: "https://{{ coder_access_host }}/api/v2/users/{{ item.id }}"
+    method: DELETE
+    headers:
+      Coder-Session-Token: "{{ token }}"
+    status_code: [ 200 ]
+  loop: "{{ result.json.users }}"
