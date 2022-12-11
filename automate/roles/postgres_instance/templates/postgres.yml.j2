@@ -9,6 +9,9 @@ metadata:
     team: "{{ pg_team_id }}"
 
 spec:
+  enableConnectionPooler: {{ masterConnectionPooler }}
+  enableReplicaConnectionPooler: {{ replicaConnectionPooler }}
+
 {% if pg_gs_storage %}
   additionalVolumes:
     - name: "google-credentials"

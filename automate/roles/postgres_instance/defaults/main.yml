@@ -44,6 +44,9 @@ pg_resources:
     cpu: "2000m"
     memory: "1000Mi"
 
+masterConnectionPooler: false
+replicaConnectionPooler: false
+
 ### ########################################
 ### BACKUP
 ### ########################################
