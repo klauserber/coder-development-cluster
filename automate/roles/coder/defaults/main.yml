@@ -1,6 +1,6 @@
 ---
 namespace: coder
-coder_version: 0.13.1
+coder_version: 0.13.3
 
 coder_pg_dbname: coder
 coder_pg_user: coder
@@ -9,7 +9,8 @@ coder_admin_email: "k.erber@erber-freelance.de"
 coder_organization: "{{ keycloak_realm_name }}"
 coder_admin_username: "admin"
 
-coder_db_hostname: main-postgres-db-pooler.postgres
+coder_db_hostname: main-postgres-db.postgres
+# coder_db_hostname: main-postgres-db-pooler.postgres
 coder_access_host: "coder.{{ cluster_public_domain }}"
 coder_oidc_issuer_url: "https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}"
 coder_oidc_client_id: "coder"
