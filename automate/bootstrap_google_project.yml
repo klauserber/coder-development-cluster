@@ -1,0 +1,7 @@
+- name: Bootstrap google project
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "{{ config_dir }}/app_config.yml"
+  roles:
+    - role: bootstrap_google_project
