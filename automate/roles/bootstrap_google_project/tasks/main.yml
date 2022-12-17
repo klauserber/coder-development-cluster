@@ -1,4 +1,13 @@
 ---
+- name: Enable APIs
+  shell: gcloud services enable {{ item }} --project {{ project_id }}
+  loop:
+    - compute.googleapis.com
+    - container.googleapis.com
+    - dns.googleapis.com
+    - secretmanager.googleapis.com
+    # - cloudresourcemanager.googleapis.com
+
 - name: get project number
   shell: gcloud projects describe {{ project_id }} --format='value(projectNumber)'
   register: project_number_result
@@ -7,52 +16,26 @@
   set_fact:
     project_number: "{{ project_number_result.stdout }}"
 
-- name: Enable APIs
-  google.cloud.gcp_serviceusage_service:
-    name: "{{ item }}"
-    project: "{{ project_id }}"
-    auth_kind: "application"
-    state: present
-  loop:
-    - compute.googleapis.com
-    - container.googleapis.com
-    - dns.googleapis.com
-    - secretmanager.googleapis.com
-    # - cloudresourcemanager.googleapis.com
+- name: create service account
+  shell: |
+    gcloud iam service-accounts create {{ serviceAccountName }} \
+    --description="Coder project automation service account" \
+    --display-name="Coder project automation service account" \
+    --project {{ project_id }} || true
+  register: serviceaccount_result
 
-- name: get info on service accounts
-  gcp_iam_service_account_info:
-    project: "{{ project_id }}"
-    auth_kind: application
-  register: serviceaccounts
-
-- name: select account
-  set_fact:
-    serviceaccount: "{{ serviceaccounts | json_query('resources[?email==`automate@' + project_id + '.iam.gserviceaccount.com`] | [0]') }}"
-
-- name: when service account is missing
-  when: not serviceaccount
-  block:
-    - name: delete key file if service account is missing
-      file:
-        path: "{{ config_dir }}/google-cloud.json"
-        state: absent
-
-    - name: create service account
-      google.cloud.gcp_iam_service_account:
-        name: "{{ serviceAccountName }}"
-        display_name: "Project automation service account"
-        project: "{{ project_id }}"
-        auth_kind: application
-        state: present
-      register: serviceaccount
+- name: delete key file if service account is new
+  when: serviceaccount_result.rc == 0
+  file:
+    path: "{{ config_dir }}/google-cloud.json"
+    state: absent
 
 - name: list roles
   shell: |
     gcloud projects get-iam-policy {{ project_id }} \
       --flatten="bindings[].members" \
       --format='table(bindings.role)' \
-      --filter="bindings.members:{{ serviceAccountName }}"
+      --filter="bindings.members:{{ serviceAccountFullName }}"
   register: roles
 
 - pause:
@@ -60,7 +43,7 @@
     seconds: 1
 
 - name: Assign roles
-  shell: "gcloud projects add-iam-policy-binding {{ project_id }} --member=serviceAccount:{{ serviceAccountName }} --role {{ item }}"
+  shell: "gcloud projects add-iam-policy-binding {{ project_id }} --member=serviceAccount:{{ serviceAccountFullName }} --role {{ item }}"
   loop:
     - roles/compute.networkAdmin
     - roles/compute.publicIpAdmin
@@ -73,9 +56,9 @@
 
 - name: grant access for compute engine
   shell: |
-    gcloud iam service-accounts add-iam-policy-binding \
+    gcloud iam service-accounts add-iam-policy-binding --project {{ project_id }} \
     {{ project_number }}-compute@developer.gserviceaccount.com \
-    --member='serviceAccount:{{ serviceAccountName }}' --role='roles/editor'
+    --member='serviceAccount:{{ serviceAccountFullName }}' --role='roles/editor'
 
 - name: check key file
   stat:
@@ -83,24 +66,12 @@
   register: keyfile
 
 - name: create a service account key
+  shell: |
+    gcloud iam service-accounts keys create {{ config_dir }}/google-cloud.json \
+    --iam-account {{ serviceAccountFullName }} \
+    --project {{ project_id }}
   when: not keyfile.stat.exists
-  google.cloud.gcp_iam_service_account_key:
-    service_account: "{{ serviceaccount }}"
-    private_key_type: TYPE_GOOGLE_CREDENTIALS_FILE
-    path: "{{ config_dir }}/google-cloud.json"
-    project: "{{ project_id }}"
-    auth_kind: application
-    state: present
 
-- name: create a managed zone
-  google.cloud.gcp_dns_managed_zone:
-    name: "{{ managed_zone }}"
-    dns_name: "{{ domain_name }}."
-    description: "Managed zone for {{ domain_name }}"
-    project: "{{ project_id }}"
-    auth_kind: application
-    state: present
-  register: managed_zone
 
 - name: list bucket
   shell: gsutil ls -p {{ project_id }} gs://{{ bucket_name }} || true
@@ -115,13 +86,29 @@
   when: not bucket_exists
   shell: gsutil mb -p {{ project_id }} -l {{ region }} gs://{{ bucket_name }}
 
+- name: create managed zone
+  shell: |
+    gcloud dns managed-zones create {{ managed_zone }} \
+    --dns-name {{ domain_name }}. \
+    --description "Managed zone for {{ domain_name }}" \
+    --project {{ project_id }} || true
+
+- name: get zone info
+  shell: |
+    gcloud dns managed-zones describe {{ managed_zone }} \
+    --project {{ project_id }}
+  register: managed_zone_info
+
 - name: print zone info
   pause:
     prompt: |
-      ====================================================================================
+
       Your google project {{ project_id }} is prepared für coder development clusters.
-      DNS info for {{ domain_name }}:
-      Point or delegate your domain to these nameservers:
-      {{ managed_zone.nameServers | join(' ') }}
-      ====================================================================================
+
+      DNS zone info:
+      {{ managed_zone_info.stdout }}
+
+      *******************************************************************
+      ** Point or delegate your domain to the nameservers of the zone. **
+      *******************************************************************
     seconds: 1

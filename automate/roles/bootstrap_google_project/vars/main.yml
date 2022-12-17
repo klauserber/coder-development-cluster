@@ -1,5 +1,6 @@
 ---
-serviceAccountName: automate@{{ project_id }}.iam.gserviceaccount.com
+serviceAccountName: automate
+serviceAccountFullName: "{{ serviceAccountName }}@{{ project_id }}.iam.gserviceaccount.com"
 
 scopes:
   - https://www.googleapis.com/auth/compute
