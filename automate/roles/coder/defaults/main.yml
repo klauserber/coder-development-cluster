@@ -1,6 +1,6 @@
 ---
 namespace: coder
-coder_version: 0.13.3
+coder_version: 0.13.4
 
 coder_pg_dbname: coder
 coder_pg_user: coder

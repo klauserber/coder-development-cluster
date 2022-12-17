@@ -16,8 +16,6 @@ coder:
         secretKeyRef:
           name: coder-db-url
           key: db_url
-    - name: CODER_ADDRESS
-      value: 0.0.0.0:8080
     - name: CODER_ACCESS_URL
       value: "https://{{ coder_access_host }}"
     - name: CODER_OIDC_ISSUER_URL
