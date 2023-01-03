@@ -1,6 +1,6 @@
 # coder-development-cluster
 
-This piece of infrastructure code lets you create a kubernetes cluster with all components needed to run the coder platform. Follow this link for more informations about the coder platform:
+This piece of infrastructure code lets you create a kubernetes cluster with all components needed to run the coder platform on the Google Cloud Platform. Follow this link for more informations about the coder platform:
 
   https://coder.com
 
@@ -17,17 +17,9 @@ The core features are:
 - Single YAML file to configure everything.
 - and more...
 
-## Artchitecture
+## Dokumentation
 
-![](docs/Architecture.excalidraw.png)
-
-## What you need
-
-- Google Account
-- Google Cloud Project
-- Service Account with ... *TODO list the permissions*
-- DNS Zone, can be a delegated subdomain
-- Storage Bucket for backups and Terraform state
+Artchitecture: [docs/Architecture.md](docs/Architecture.md)
 
 
 
