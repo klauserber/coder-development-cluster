@@ -22,4 +22,4 @@ The core features are:
 * [Architecture](docs/Architecture.md)
 * [Bootstrap a Google Cloud Project](docs/bootstrap.md)
 * [Deploy the cluster](docs/deploy.md)
-
+* [Development](docs/development.md)
