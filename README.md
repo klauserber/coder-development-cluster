@@ -23,3 +23,4 @@ The core features are:
 * [Bootstrap a Google Cloud Project](docs/bootstrap.md)
 * [Deploy the cluster](docs/deploy.md)
 * [Development](docs/development.md)
+* [Integration](docs/integration.md) (Github Actions)
