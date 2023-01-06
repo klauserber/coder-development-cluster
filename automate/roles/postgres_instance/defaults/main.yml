@@ -76,6 +76,8 @@ pg_storage_bucket: "{{ bucket_name }}"
 pg_s3_region: "eu-central-2"
 pg_s3_endpoint: "https://s3.eu-central-2.wasabisys.com"
 
+pg_google_credentials_path: ""
+
 ### ########################################
 ### RESTORE / CLONE
 ### ########################################

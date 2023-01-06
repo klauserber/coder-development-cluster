@@ -9,4 +9,4 @@ if [ -z "${GCLOUD_PROJECT}" ]; then
   exit 1
 fi
 
-gcloud auth activate-service-account --project ${GCLOUD_PROJECT} --key-file=${SCRIPT_DIR}/config/google-cloud.json
+gcloud auth activate-service-account --project ${GCLOUD_PROJECT} --key-file=${SCRIPT_DIR}/config/google-coder-automation.json

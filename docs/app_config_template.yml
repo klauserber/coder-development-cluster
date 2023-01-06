@@ -1,0 +1,106 @@
+---
+# This values will be used on google cloud project bootstrap and cluster creation
+
+# Name of a existing Google Cloud project
+# For bootstraping you must be the owner or editor of the project
+project_id: spaces-example-com
+
+# Domain name under which the clusters will be available
+# Pattern: <cluster_name>.<domain_name>
+domain_name: spaces.examle.com
+
+# Name of the managed zone in Google Cloud DNS
+# Will be used for creating the DNS records and for DNS challenges to generate certificates.
+# Will be created on bootstraping if not exists
+managed_zone: spaces-example.com
+
+# Name of the bucket in Google Cloud Storage
+# Will be used for storing the Terraform state, certificates cache, database and user directory backups.
+# Will be created on bootstraping if not exists
+bucket_name: coder-storage-spaces-example-com
+
+# Google Cloud region for the storage bucket
+region: europe-west3
+
+# This values are for cluster creation
+# You can create multible clusters in one project, this is the name of the cluster
+cluster_name: dev
+
+# Google Cloud region and zone for the cluster
+cluster_location: europe-west3-c
+
+# Email address for Let's Encrypt certificate generation
+acme_email: my.name@example.com
+
+# If true, the cluster will be created with preemptible nodes
+# see: https://cloud.google.com/compute/docs/instances/preemptible
+preemptible: false
+
+# The infrastructure provider to use, currently only google is supported
+infrastructure_provider: google
+
+# The storage provider to use, currently only gs is supported
+storage_provider: gs
+
+# We create a cluster with two node pools, one with one fixed node and a second one with autoscaling
+# Machine type for the cluster nodes
+# see: https://cloud.google.com/compute/docs/machine-types
+machine_type: e2-standard-2
+
+# min and max number of nodes in the autoscaling node pool for the second node pool
+min_node_count: 2
+max_node_count: 15
+
+# Password for the grafana admin user
+# Generate one with: pwgen -s 32 1
+grafana_password: << provide_your_own_password >>
+
+# Realm name in keycloak
+keycloak_realm_name: example-com
+
+# Password for the keycloak admin user
+keycloak_admin_password: << provide_your_own_password >>
+
+# Set this to true if you want to use the keycloak email verification
+keycloak_verify_email: true
+
+# Generate client secrets with: pwgen -sA 32 1
+# Client secrets for the different oauth clients
+coder_client_secret: << provide_your_own_secret >>
+grafana_client_secret: << provide_your_own_secret >>
+auth_client_secret: << provide_your_own_secret >>
+
+# Secret to encrypt the session cookie of the oauth2 proxy
+# Generate one with: openssl rand -base64 32 | tr -- '+/' '-_'
+auth_cookie_secret: << provide_your_own_secret >>
+
+coder_admin_email: my.name@example.com
+coder_admin_password: << provide_your_own_password >>
+
+# Section to configure smtp for sending emails
+smtp:
+  user: << your smtp user >>
+  password: << your smtp password >>
+  starttls: "true"
+  port: "465"
+  host: << your smtp host >>
+  replyTo: << your replyTo address >>
+  from: << your from address >>
+  ssl: "true"
+
+# Values for coder devbox workspace templates
+# it is possible to create multiple instances of the 'devbox' template in coder with different configurations
+# use different container images, disk sizes, memory limits, etc.
+coder_devbox_workspace_templates:
+  - name: "Docker-Kubernetes"
+    devbox_image: isi006/docker-k8s-training:latest
+    homedir_disk_size: 2Gi
+    devbox_mem_limit: 2000
+    docker_service: true
+    docker_mem_limit: 1000
+    openvpn_service: false
+    backup_service: true
+    backup_mem_limit: 500
+    backup_cron: "15 * * * *"
+    restic_forget_args: "--keep-last 12 --keep-daily 7 --keep-weekly 4 --keep-monthly 3 --keep-yearly 100 --prune"
+    max_ttl: 5h0m0s

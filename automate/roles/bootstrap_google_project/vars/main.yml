@@ -1,6 +1,23 @@
 ---
-serviceAccountName: automate
-serviceAccountFullName: "{{ serviceAccountName }}@{{ project_id }}.iam.gserviceaccount.com"
+coder_automation_fullname: "coder-automation@{{ project_id }}.iam.gserviceaccount.com"
+
+serviceAccounts:
+  - name: coder-automation
+    roles:
+      - roles/compute.networkAdmin
+      - roles/compute.publicIpAdmin
+      - roles/compute.securityAdmin
+      - roles/container.admin
+      - roles/container.clusterAdmin
+      - roles/dns.admin
+      - roles/secretmanager.admin
+      - roles/storage.objectAdmin
+  - name: coder-dns
+    roles:
+      - roles/dns.admin
+  - name: coder-storage
+    roles:
+      - roles/storage.objectAdmin
 
 scopes:
   - https://www.googleapis.com/auth/compute

@@ -18,7 +18,6 @@
         pg_instances: 1
         pg_backup: true
         pg_clone: true
-        # masterConnectionPooler: true
         pg_storage_provider: gs
         pg_bucket_backup_prefix: "{{ cluster_name }}/"
         pg_dbs:

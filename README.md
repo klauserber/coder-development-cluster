@@ -19,7 +19,7 @@ The core features are:
 
 ## Dokumentation
 
-Artchitecture: [docs/Architecture.md](docs/Architecture.md)
-
-
+* [Architecture](docs/Architecture.md)
+* [Bootstrap a Google Cloud Project](docs/bootstrap.md)
+* [Deploy the cluster](docs/deploy.md)
 

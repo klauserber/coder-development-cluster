@@ -30,7 +30,7 @@
         db_url: "postgres://coder:{{ coder_pg_password.stdout }}@{{ coder_db_hostname }}:5432/coder"
 
 - name: google secret
-  when: google_credentials_path is defined
+  when: coder_google_credentials_path is defined
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     namespace: "{{ namespace }}"

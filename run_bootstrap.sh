@@ -11,15 +11,15 @@ function chown_on_exit() {
 
 trap chown_on_exit ERR INT
 
-GCLOUD_LOGIN=${1}
+GCLOUD_LOGIN=${1:-true}
 
 if [ -z ${GCLOUD_LOGIN} ]; then
-  echo "Usage: $0 <GCLOUD_PROJECT> <GCLOUD_LOGIN:true|false>"
+  echo "Usage: $0 <GCLOUD_LOGIN:true|false>"
   exit 1
 fi
 
 if [ "${GCLOUD_LOGIN}" == "true" ]; then
-  gcloud auth application-default login
+  gcloud auth login
 fi
 
 ansible-playbook ${SCRIPT_DIR}/automate/bootstrap_google_project.yml

@@ -14,7 +14,13 @@ kubeconfig: "{{ playbook_dir }}/../config/{{ cluster_name }}_kubeconfig"
 config_dir: "{{ playbook_dir }}/../config"
 cluster_backup_dir: "{{ config_dir }}/cache/{{ cluster_name }}"
 
-google_credentials_path: "{{ config_dir }}/google-cloud.json"
+google_coder_dns_credentials_path: "{{ config_dir }}/google-coder-dns.json"
+google_coder_storage_credentials_path: "{{ config_dir }}/google-coder-storage.json"
 
 nginx_backup_remote_storage_provider: "{{ storage_provider }}"
 nginx_backup_remote_storage_bucket: "{{ bucket_name }}"
+
+pg_google_credentials_path: "{{ google_coder_storage_credentials_path }}"
+coder_google_credentials_path: "{{ google_coder_storage_credentials_path }}"
+cm_google_credentials_path: "{{ google_coder_dns_credentials_path }}"
+nginx_google_credentials_path: "{{ google_coder_dns_credentials_path }}"

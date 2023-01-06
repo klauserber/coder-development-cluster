@@ -25,6 +25,8 @@ coder_aws_access_key: NONE
 coder_aws_secret_key: NONE
 coder_cert_expiration_seconds: 864000 # 10 days
 
+coder_google_credentials_path: ""
+
 coder_smtp_enabled: false
 
 coder_devbox_workspace_templates: []

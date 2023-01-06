@@ -16,62 +16,18 @@
   set_fact:
     project_number: "{{ project_number_result.stdout }}"
 
-- name: create service account
-  shell: |
-    gcloud iam service-accounts create {{ serviceAccountName }} \
-    --description="Coder project automation service account" \
-    --display-name="Coder project automation service account" \
-    --project {{ project_id }} || true
-  register: serviceaccount_result
-
-- name: delete key file if service account is new
-  when: serviceaccount_result.rc == 0
-  file:
-    path: "{{ config_dir }}/google-cloud.json"
-    state: absent
-
-- name: list roles
-  shell: |
-    gcloud projects get-iam-policy {{ project_id }} \
-      --flatten="bindings[].members" \
-      --format='table(bindings.role)' \
-      --filter="bindings.members:{{ serviceAccountFullName }}"
-  register: roles
-
-- pause:
-    prompt: "{{ roles.stdout }}"
-    seconds: 1
-
-- name: Assign roles
-  shell: "gcloud projects add-iam-policy-binding {{ project_id }} --member=serviceAccount:{{ serviceAccountFullName }} --role {{ item }}"
-  loop:
-    - roles/compute.networkAdmin
-    - roles/compute.publicIpAdmin
-    - roles/compute.securityAdmin
-    - roles/container.admin
-    - roles/container.clusterAdmin
-    - roles/dns.admin
-    - roles/secretmanager.admin
-    - roles/storage.objectAdmin
+- name: create service accounts
+  include_tasks: create_service_account.yml
+  loop: "{{ serviceAccounts }}"
+  loop_control:
+    loop_var: item
+    label: "{{ item.name }}"
 
 - name: grant access for compute engine
   shell: |
     gcloud iam service-accounts add-iam-policy-binding --project {{ project_id }} \
     {{ project_number }}-compute@developer.gserviceaccount.com \
-    --member='serviceAccount:{{ serviceAccountFullName }}' --role='roles/editor'
-
-- name: check key file
-  stat:
-    path: "{{ config_dir }}/google-cloud.json"
-  register: keyfile
-
-- name: create a service account key
-  shell: |
-    gcloud iam service-accounts keys create {{ config_dir }}/google-cloud.json \
-    --iam-account {{ serviceAccountFullName }} \
-    --project {{ project_id }}
-  when: not keyfile.stat.exists
-
+    --member='serviceAccount:{{ coder_automation_fullname }}' --role='roles/editor'
 
 - name: list bucket
   shell: gsutil ls -p {{ project_id }} gs://{{ bucket_name }} || true
