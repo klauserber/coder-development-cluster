@@ -1,6 +1,7 @@
 ---
 namespace: coder
-coder_version: 0.13.4
+coder_version: 0.17.1
+coder_chart_version: "{{ coder_version }}"
 
 coder_pg_dbname: coder
 coder_pg_user: coder

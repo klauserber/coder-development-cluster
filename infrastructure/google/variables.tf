@@ -25,7 +25,7 @@ variable "domain_name" {
 
 variable "cluster_version_prefix" {
   description = "Version prefix of the cluster"
-  default     = "1.24."
+  default     = "1.25."
 }
 
 variable "system_name" {

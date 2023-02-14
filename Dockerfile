@@ -29,7 +29,7 @@ RUN set -e; \
   rm /tmp/requirements.txt
 
 
-ARG TERRAFORM_VERSION=1.3.2
+ARG TERRAFORM_VERSION=1.3.8
 RUN set -e; \
   cd /tmp; \
   curl -Ss -o terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TARGETOS}_${TARGETARCH}.zip; \
@@ -38,14 +38,14 @@ RUN set -e; \
   chmod +x /usr/local/bin/terraform; \
   rm terraform.zip
 
-ARG KUBECTL_VERSION=1.24.6
+ARG KUBECTL_VERSION=1.25.6
 RUN set -e; \
     cd /tmp; \
     curl -sLO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/kubectl"; \
     mv kubectl /usr/local/bin/; \
     chmod +x /usr/local/bin/kubectl
 
-ARG HELM_VERSION=3.10.1
+ARG HELM_VERSION=3.11.1
 RUN set -e; \
   cd /tmp; \
   curl -Ss -o helm.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz; \
@@ -54,7 +54,7 @@ RUN set -e; \
   chmod +x /usr/local/bin/helm; \
   rm -rf ${TARGETOS}-${TARGETARCH} helm.tar.gz
 
-ARG CODER_VERSION=0.11.0
+ARG CODER_VERSION=0.17.1
 RUN  set -e; \
   cd /tmp; \
   curl -sSL -o coder.deb -C - https://github.com/coder/coder/releases/download/v${CODER_VERSION}/coder_${CODER_VERSION}_${TARGETOS}_${TARGETARCH}.deb; \

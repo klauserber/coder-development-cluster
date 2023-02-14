@@ -83,6 +83,7 @@ resource "kubernetes_job" "config" {
     namespace = var.workspaces_namespace
   }
   spec {
+    ttl_seconds_after_finished = 300
     template {
       metadata {}
       spec {
@@ -371,7 +372,7 @@ resource "kubernetes_stateful_set" "main" {
           for_each = toset( var.docker_service ? ["1"] : [])
           content {
             name    = "docker-dind"
-            image   = "docker:20.10-dind"
+            image   = "docker:23.0.1-dind"
             args = [ "--mtu=1320" ]
             security_context {
               privileged = true
