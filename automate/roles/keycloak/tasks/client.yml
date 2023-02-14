@@ -7,6 +7,9 @@
       Authorization: "bearer {{ token }}"
     status_code: [ 200 ]
   register: get_result
+  until: get_result.status == 200
+  delay: 5
+  retries: 5
 
 - debug:
     var: get_result
@@ -27,6 +30,9 @@
     status_code: [ 201 ]
     body: "{{ item_client }}"
   register: result
+  until: result.status == 201
+  delay: 5
+  retries: 5
 
 - debug:
     var: result
@@ -43,6 +49,9 @@
     status_code: [ 204 ]
     body: "{{ item_client }}"
   register: update_result
+  until: update_result.status == 204
+  delay: 5
+  retries: 5
 
 - debug:
     var: update_result

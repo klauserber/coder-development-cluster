@@ -37,7 +37,7 @@
   register: result
   until: result.status == 200
   delay: 5
-  retries: 60
+  retries: 30
 
 - name: setup
   when: component_state == "present"

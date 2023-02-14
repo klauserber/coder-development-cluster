@@ -9,6 +9,9 @@
     status_code: [ 204, 404 ]
     body: "{{ item.realm_data }}"
   register: update_result
+  until: update_result.status == 204 or update_result.status == 404
+  delay: 5
+  retries: 5
 
 - debug:
     var: update_result
@@ -24,6 +27,9 @@
     status_code: [ 201 ]
     body: "{{ item.realm_data }}"
   register: result
+  until: result.status == 201
+  delay: 5
+  retries: 5
 
 - debug:
     var: result

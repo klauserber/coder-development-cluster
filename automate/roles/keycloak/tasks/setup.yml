@@ -11,6 +11,9 @@
       client_id: "admin-cli"
       grant_type: "password"
   register: result
+  until: result.status == 200
+  delay: 5
+  retries: 5
 
 - name: set token fact
   set_fact:
