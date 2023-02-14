@@ -64,6 +64,9 @@
       password: "{{ coder_admin_password }}"
       username: "{{ coder_admin_username }}"
   register: result
+  until: result.status == 200 or result.status == 201 or result.status == 409
+  delay: 5
+  retries: 5
 
 - name: api login
   uri:
@@ -75,6 +78,9 @@
       email: "{{ coder_admin_email }}"
       password: "{{ coder_admin_password }}"
   register: result
+  until: result.status == 201
+  delay: 5
+  retries: 5
 
 - name: set token fact
   set_fact:

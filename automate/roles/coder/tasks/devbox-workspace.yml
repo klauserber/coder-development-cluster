@@ -18,3 +18,7 @@
 - name: create template
   when: "result.rc != 0"
   command: "{{ bin_dir }}/coder template create '{{ item.name }}' --default-ttl {{ item.max_ttl }} --parameter-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
+  register: result
+  until: result.rc == 0
+  delay: 5
+  retries: 5

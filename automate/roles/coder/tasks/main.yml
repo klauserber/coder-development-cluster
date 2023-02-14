@@ -57,12 +57,19 @@
       reclaimPolicy: Delete
       volumeBindingMode: Immediate
 
+- name: Add chart repo
+  kubernetes.core.helm_repository:
+    name: coder-v2
+    repo_url: "https://helm.coder.com/v2"
+
+
 - name: helm
   kubernetes.core.helm:
     kubeconfig: "{{ kubeconfig }}"
-    name: coder
+    chart_version: "{{ coder_chart_version }}"
+    chart_ref: "coder-v2/coder"
     namespace: "{{ namespace }}"
-    chart_ref: "{{ role_path }}/helm"
+    name: "coder"
     state: "{{ component_state }}"
     wait: true
     values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"
