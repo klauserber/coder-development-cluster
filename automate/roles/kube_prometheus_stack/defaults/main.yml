@@ -1,4 +1,4 @@
 ---
 namespace: monitoring
-prometheus_stack_chart_version: 45.0.0
+prometheus_stack_chart_version: 45.23.0
 prometheus_stack_release_name: main

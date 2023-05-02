@@ -1,6 +1,6 @@
 ---
 pg_operator_namespace: "postgres"
-pg_operator_chart_version: "1.9.0"
+pg_operator_chart_version: "1.10.0"
 pg_operator_chart_ref: "postgres-operator-charts/postgres-operator"
 
 pg_operator_resync_period: "5m"

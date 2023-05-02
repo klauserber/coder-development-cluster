@@ -1,4 +1,4 @@
 ---
 namespace: cert-manager
-cert_manager_version: v1.11.0
+cert_manager_version: v1.11.1
 cm_google_credentials_path: ""

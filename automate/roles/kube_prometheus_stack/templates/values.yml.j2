@@ -1,4 +1,7 @@
 ---
+
+fullnameOverride: {{ prometheus_stack_release_name }}
+
 alertmanager:
   enabled: true
 
@@ -105,8 +108,7 @@ grafana:
       auth_url: https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/auth
       token_url: https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/token
       api_url: https://keycloak.{{ cluster_public_domain }}/realms/{{ keycloak_realm_name }}/protocol/openid-connect/userinfo
-      # role_attribute_path: contains(groups[*], 'grafana-admin') && 'Admin' || contains(groups[*], 'grafana-dev') && 'Editor' || 'Viewer'
-      role_attribute_path: Admin
+      role_attribute_path: contains(groups[*], 'grafana-admin') && 'Admin' || contains(groups[*], 'grafana-dev') && 'Editor' || 'Admin'
 
   ingress:
     enabled: true

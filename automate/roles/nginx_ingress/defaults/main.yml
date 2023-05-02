@@ -2,6 +2,6 @@
 namespace: nginx-ingress
 nginx_google_credentials_path: ""
 
-nginx_controller_chart_version: 4.5.0
+nginx_controller_chart_version: 4.6.0
 nginx_backup_remote_storage_provider: none
 nginx_backup_remote_storage_bucket: ""
