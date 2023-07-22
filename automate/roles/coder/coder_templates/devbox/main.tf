@@ -245,7 +245,7 @@ resource "kubernetes_stateful_set" "main" {
           for_each = toset( var.backup_service ? ["1"] : [])
           content {
             name    = "restic-restore"
-            image   = "isi006/restic-kubernetes:2.0.0"
+            image   = "isi006/restic-kubernetes:2.2.0"
             env {
               name  = "RESTIC_RESTORE"
               value = "1"
@@ -372,7 +372,7 @@ resource "kubernetes_stateful_set" "main" {
           for_each = toset( var.docker_service ? ["1"] : [])
           content {
             name    = "docker-dind"
-            image   = "docker:23.0.1-dind"
+            image   = "docker:23.0.6-dind"
             args = [ "--mtu=1320" ]
             security_context {
               privileged = true
@@ -402,7 +402,7 @@ resource "kubernetes_stateful_set" "main" {
           for_each = toset( var.backup_service ? ["1"] : [])
           content {
             name    = "restic-backup"
-            image   = "isi006/restic-kubernetes:2.0.0"
+            image   = "isi006/restic-kubernetes:2.2.0"
             env {
               name  = "AWS_ACCESS_KEY_ID"
               value = var.aws_access_key
@@ -494,7 +494,7 @@ resource "kubernetes_stateful_set" "main" {
 
 resource "coder_app" "code-server" {
   agent_id = coder_agent.devbox.id
-  name     = "code-server"
+  slug     = "code-server"
   url      = "http://localhost:13337/?folder=/home/coder"
   icon     = "/icon/code.svg"
 }
