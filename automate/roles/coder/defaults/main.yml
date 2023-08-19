@@ -1,13 +1,13 @@
 ---
 namespace: coder
 # https://github.com/coder/coder/releases
-coder_version: 0.27.1
+coder_version: 2.1.0
 coder_chart_version: "{{ coder_version }}"
 
 coder_pg_dbname: coder
 coder_pg_user: coder
 
-coder_admin_email: "k.erber@erber-freelance.de"
+coder_admin_email: "info@example.com"
 coder_organization: "{{ keycloak_realm_name }}"
 coder_admin_username: "admin"
 

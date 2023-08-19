@@ -30,7 +30,7 @@ RUN set -e; \
 
 
 # https://github.com/hashicorp/terraform/releases
-ARG TERRAFORM_VERSION=1.5.3
+ARG TERRAFORM_VERSION=1.5.5
 RUN set -e; \
   cd /tmp; \
   curl -Ss -o terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TARGETOS}_${TARGETARCH}.zip; \
@@ -40,7 +40,7 @@ RUN set -e; \
   rm terraform.zip
 
 # https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION=1.27.3
+ARG KUBECTL_VERSION=1.27.4
 RUN set -e; \
     cd /tmp; \
     curl -sLO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/kubectl"; \
@@ -48,7 +48,7 @@ RUN set -e; \
     chmod +x /usr/local/bin/kubectl
 
 # https://github.com/helm/helm/releases
-ARG HELM_VERSION=3.12.2
+ARG HELM_VERSION=3.12.3
 RUN set -e; \
   cd /tmp; \
   curl -Ss -o helm.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz; \
@@ -65,6 +65,7 @@ RUN  set -e; \
   dpkg --force-confdef --force-confold -i coder.deb; \
   rm -rf coder.deb
 
+# https://github.com/binxio/gcp-get-secret
 COPY --from=binxio/gcp-get-secret:v0.4.6 /gcp-get-secret /usr/local/bin/
 
 COPY automate /app/automate

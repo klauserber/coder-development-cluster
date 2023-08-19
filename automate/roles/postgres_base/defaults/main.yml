@@ -1,5 +1,6 @@
 ---
 pg_operator_namespace: "postgres"
+# https://github.com/zalando/postgres-operator/releases
 pg_operator_chart_version: "1.10.0"
 pg_operator_chart_ref: "postgres-operator-charts/postgres-operator"
 
