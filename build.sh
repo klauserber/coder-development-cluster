@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 
-REGISTRY_NAME=isi006
-IMAGE_NAME=coder-development-cluster
+. ./VERSION
 
 ARCH=${1:-$(uname -m)}
 if [ "$ARCH" = "x86_64" ]; then
@@ -17,4 +16,5 @@ docker build . \
     --build-arg IMAGE_VERSION=${VERSION} \
     --build-arg TARGETARCH=${ARCH} \
     -t ${REGISTRY_NAME}/${IMAGE_NAME}:latest \
+    -t ${REGISTRY_NAME}/${IMAGE_NAME}:${TAG} \
     --platform=linux/${ARCH}

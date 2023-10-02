@@ -333,8 +333,16 @@ resource "kubernetes_stateful_set" "main" {
           name    = "devbox"
           image   = var.devbox_image
           command = ["sh", "-c", var.devmode ? "sleep infinity" : coder_agent.devbox.init_script]
+          lifecycle {
+            post_start {
+              exec {
+                command = [ "/bin/sh", "-c", "sudo mount --make-rshared /" ]
+              }
+            }
+          }
           security_context {
             run_as_user = "1000"
+            privileged  = true
           }
           env {
             name  = "CODER_AGENT_TOKEN"

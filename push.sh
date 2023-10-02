@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-REGISTRY_NAME=isi006
-IMAGE_NAME=coder-development-cluster
+. VERSION
 
 docker push \
     ${REGISTRY_NAME}/${IMAGE_NAME}:latest
+
+docker push \
+    ${REGISTRY_NAME}/${IMAGE_NAME}:${TAG}

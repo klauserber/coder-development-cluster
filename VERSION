@@ -1,0 +1,3 @@
+REGISTRY_NAME=isi006
+IMAGE_NAME=coder-development-cluster
+TAG=dev

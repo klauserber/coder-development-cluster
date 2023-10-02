@@ -12,9 +12,6 @@ RUN set -e; \
 
 RUN apt-get update && DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin" apt-get install -y \
     ca-certificates \
-    ansible \
-    google-cloud-cli \
-    google-cloud-sdk-gke-gcloud-auth-plugin \
     python3 \
     python3-pip \
     python3-kubernetes \
@@ -27,6 +24,15 @@ COPY requirements.txt /tmp/
 RUN set -e; \
   pip3 install --default-timeout=180 -r /tmp/requirements.txt --ignore-installed PyYAML; \
   rm /tmp/requirements.txt
+
+# https://cloud.google.com/sdk/docs/release-notes
+ARG GCLOUD_CLI_VERSION=446.0.0
+RUN set -e; \
+  curl -sSL -o /tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_CLI_VERSION}-${TARGETOS}-$(uname -m).tar.gz; \
+  tar -C /usr/local -xzf /tmp/google-cloud-sdk.tar.gz; \
+  rm /tmp/google-cloud-sdk.tar.gz; \
+  /usr/local/google-cloud-sdk/install.sh --quiet; \
+  /usr/local/google-cloud-sdk/bin/gcloud components install gke-gcloud-auth-plugin --quiet
 
 
 # https://github.com/hashicorp/terraform/releases
@@ -66,7 +72,7 @@ RUN  set -e; \
   rm -rf coder.deb
 
 # https://github.com/binxio/gcp-get-secret
-COPY --from=binxio/gcp-get-secret:v0.4.6 /gcp-get-secret /usr/local/bin/
+COPY --from=docker.io/binxio/gcp-get-secret:v0.4.6 /gcp-get-secret /usr/local/bin/
 
 COPY automate /app/automate
 COPY infrastructure /app/infrastructure
