@@ -323,6 +323,7 @@ resource "kubernetes_stateful_set" "main" {
           volume_mount {
             mount_path = "/home/coder"
             name       = "data"
+            sub_path   = "home"
           }
           volume_mount {
             mount_path = "/kubeconfig"
@@ -374,6 +375,7 @@ resource "kubernetes_stateful_set" "main" {
           volume_mount {
             mount_path = "/home/coder"
             name       = "data"
+            sub_path   = "home"
           }
         }
         dynamic "container" {
@@ -403,6 +405,12 @@ resource "kubernetes_stateful_set" "main" {
             volume_mount {
               mount_path = "/home/coder"
               name       = "data"
+              sub_path   = "home"
+            }
+            volume_mount {
+              mount_path = "/var/lib/docker"
+              name       = "data"
+              sub_path   = "docker"
             }
           }
         }
