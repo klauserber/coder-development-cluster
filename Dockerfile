@@ -28,12 +28,12 @@ RUN set -e; \
 # https://cloud.google.com/sdk/docs/release-notes
 ARG GCLOUD_CLI_VERSION=450.0.0
 RUN set -e; \
-  curl -sSL -o /tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_CLI_VERSION}-${TARGETOS}-$(uname -m).tar.gz; \
+  if [ "${TARGETARCH}" = "arm64" ]; then TARGETARCH=arm; else TARGETARCH=x86_64; fi; \
+  curl -sSL -o /tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_CLI_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz; \
   tar -C /usr/local -xzf /tmp/google-cloud-sdk.tar.gz; \
   rm /tmp/google-cloud-sdk.tar.gz; \
   /usr/local/google-cloud-sdk/install.sh --quiet; \
   /usr/local/google-cloud-sdk/bin/gcloud components install gke-gcloud-auth-plugin --quiet
-
 
 # https://github.com/hashicorp/terraform/releases
 ARG TERRAFORM_VERSION=1.6.1
