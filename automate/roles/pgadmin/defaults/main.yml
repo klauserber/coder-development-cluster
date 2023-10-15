@@ -1,5 +1,5 @@
 ---
 namespace: "pgadmin"
 # https://artifacthub.io/packages/helm/runix/pgadmin4
-pg_admin_chart_version: "1.15.5"
+pg_admin_chart_version: "1.18.2"
 pg_admin_chart_ref: "runix/pgadmin4"

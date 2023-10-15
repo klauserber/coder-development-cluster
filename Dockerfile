@@ -26,7 +26,7 @@ RUN set -e; \
   rm /tmp/requirements.txt
 
 # https://cloud.google.com/sdk/docs/release-notes
-ARG GCLOUD_CLI_VERSION=446.0.0
+ARG GCLOUD_CLI_VERSION=450.0.0
 RUN set -e; \
   curl -sSL -o /tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_CLI_VERSION}-${TARGETOS}-$(uname -m).tar.gz; \
   tar -C /usr/local -xzf /tmp/google-cloud-sdk.tar.gz; \
@@ -36,7 +36,7 @@ RUN set -e; \
 
 
 # https://github.com/hashicorp/terraform/releases
-ARG TERRAFORM_VERSION=1.5.5
+ARG TERRAFORM_VERSION=1.6.1
 RUN set -e; \
   cd /tmp; \
   curl -Ss -o terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TARGETOS}_${TARGETARCH}.zip; \
@@ -46,7 +46,7 @@ RUN set -e; \
   rm terraform.zip
 
 # https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION=1.27.4
+ARG KUBECTL_VERSION=1.28.2
 RUN set -e; \
     cd /tmp; \
     curl -sLO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/kubectl"; \
@@ -54,7 +54,7 @@ RUN set -e; \
     chmod +x /usr/local/bin/kubectl
 
 # https://github.com/helm/helm/releases
-ARG HELM_VERSION=3.12.3
+ARG HELM_VERSION=3.13.1
 RUN set -e; \
   cd /tmp; \
   curl -Ss -o helm.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz; \
@@ -64,7 +64,7 @@ RUN set -e; \
   rm -rf ${TARGETOS}-${TARGETARCH} helm.tar.gz
 
 # https://github.com/coder/coder/releases
-ARG CODER_VERSION=0.27.1
+ARG CODER_VERSION=2.3.0
 RUN  set -e; \
   cd /tmp; \
   curl -sSL -o coder.deb -C - https://github.com/coder/coder/releases/download/v${CODER_VERSION}/coder_${CODER_VERSION}_${TARGETOS}_${TARGETARCH}.deb; \

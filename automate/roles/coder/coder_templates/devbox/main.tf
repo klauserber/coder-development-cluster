@@ -382,7 +382,8 @@ resource "kubernetes_stateful_set" "main" {
           for_each = toset( var.docker_service ? ["1"] : [])
           content {
             name    = "docker-dind"
-            image   = "docker:24.0.5-dind"
+            # https://hub.docker.com/_/docker/tags
+            image   = "docker:24.0.6-dind"
             args = [ "--mtu=1320" ]
             security_context {
               privileged = true
