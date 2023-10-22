@@ -10,7 +10,7 @@ ansible-playbook -i inventory ${SCRIPT_DIR}/automate/tf_vars.yml
 export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-coder-automation.json
 
 terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
-    -upgrade \
+    -upgrade -migrate-state \
     -backend-config="bucket=${BUCKET_NAME}" \
     -backend-config="prefix=tf-state/${CLUSTER_NAME}" \
 
