@@ -1,6 +1,6 @@
 ---
 # https://artifacthub.io/packages/helm/bitnami/keycloak
-keycloak_chart_version: 17.0.4
+keycloak_chart_version: 16.0.4
 keycloak_db_hostname: "main-postgres-db.postgres"
 namespace: keycloak
 keycloak_hostname: keycloak.{{ cluster_public_domain }}
