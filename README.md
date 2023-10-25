@@ -9,6 +9,7 @@ The core features are:
 - Web based IDEs for developers (VSCode, see https://github.com/coder/code-server), no need to install anything on local machines
 - Integration of local installations of different IDEs like VSCode, IntelliJ etc.
 - Self registration via OIDC and Keycloak with email verification.
+- Integrated file browser for the developer home directories to exchange data with the local machine.
 - Fully functional development environment with plugin installations, docker builds, ports forwarding etc.
 - Use es many images for different developer environments as you want.
 - Out of the box Backup and Restore to and from Google Storage via continues WAL archiving for Postgres and Restic Backup of developer home directories.

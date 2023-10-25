@@ -4,6 +4,7 @@ workspaces_namespace: "{{ namespace }}"
 
 storage_class: "{{ coder_storage_class }}"
 cluster_name: "{{ cluster_name }}"
+cluster_public_domain: "{{ cluster_public_domain }}"
 restic_password_prefix: "{{ coder_restic_password_prefix }}"
 restic_repo_prefix: "{{ coder_restic_repo_prefix }}"
 aws_default_region: "{{ coder_aws_default_region }}"
@@ -33,3 +34,5 @@ backup_mem_limit: "{{ item.backup_mem_limit }}"
 backup_cron: "{{ item.backup_cron }}"
 restic_forget_args: "{{ item.restic_forget_args }}"
 restic_storage_type: "gs"
+filebrowser_service: {{ 'true' if item.filebrowser_service else 'false' }}
+jetbrains_module: "{{ true if item.jetbrains_module else false }}"

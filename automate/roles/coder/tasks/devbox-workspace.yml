@@ -10,6 +10,12 @@
     dest: "{{ role_path }}/tmp/params-{{ item.name }}.yml"
     mode: 0600
 
+- name: coder template readme file
+  template:
+    src: "{{ role_path }}/coder_templates/devbox/README.j2.md"
+    dest: "{{ role_path }}/coder_templates/devbox/README.md"
+    mode: 0644
+
 - name: push template
   command: "{{ bin_dir }}/coder template push '{{ item.name }}' --ignore-lockfile --variables-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
   ignore_errors: true
