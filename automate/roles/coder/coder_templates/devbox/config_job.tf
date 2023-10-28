@@ -1,3 +1,7 @@
+resource "coder_metadata" "job_hide" {
+  resource_id = kubernetes_job.config.id
+  hide = true
+}
 
 resource "kubernetes_job" "config" {
   metadata {

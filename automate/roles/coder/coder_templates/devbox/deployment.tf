@@ -1,3 +1,16 @@
+resource "coder_metadata" "deployment_info" {
+  count = data.coder_workspace.me.start_count
+  resource_id = kubernetes_deployment.main.0.id
+  item {
+    key = "username"
+    value = local.workspace_owner
+  }
+  item {
+    key = "clustername"
+    value = var.cluster_name
+  }
+}
+
 resource "kubernetes_deployment" "main" {
   depends_on = [
     kubernetes_job.config

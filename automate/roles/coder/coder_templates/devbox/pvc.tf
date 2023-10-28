@@ -1,3 +1,8 @@
+resource "coder_metadata" "pvc_hide" {
+  resource_id = kubernetes_persistent_volume_claim.pvc.id
+  hide = true
+}
+
 resource "kubernetes_persistent_volume_claim" "pvc" {
   metadata {
     name      = "coder-${local.workspace_owner}-${local.workspace_name}"
