@@ -1,15 +1,15 @@
 name: Build
 
 on:
+  push:
+    tags:
+      - '*.*.*'
   workflow_dispatch:
     push:
       branches:
         - 'main'
       tags:
         - '*.*.*'
-    pull_request:
-      branches:
-        - 'main'
 
 jobs:
   build:
