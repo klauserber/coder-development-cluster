@@ -1,10 +1,6 @@
 
 data "coder_workspace" "me" {}
 
-# Encountered an error running "coder stat cpu"
-# get total cpu: 2 errors occurred:
-# 	* get cpu period: read /sys/fs/cgroup/cpu,cpuacct/cpu.cfs_period_us: open /sys/fs/cgroup/cpu,cpuacct/cpu.cfs_period_us: no such file or directory
-# 	* get cpu period: read /sys/fs/cgroup/cpu/cpu.cfs_period_us: open /sys/fs/cgroup/cpu/cpu.cfs_period_us: no such file or directory
 
 resource "coder_agent" "devbox" {
   os             = "linux"
