@@ -1,8 +1,5 @@
-# from: https://dev.to/cloudx/multi-arch-docker-images-the-easy-way-with-github-actions-4k54
-
 name: Build
 
-# Controls when the workflow will run
 on:
   workflow_dispatch:
     push:
@@ -14,48 +11,33 @@ on:
       branches:
         - 'main'
 
-# permissions are needed if pushing to ghcr.io
-# permissions:
-#   packages: write
-
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      # Get the repository's code
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - uses: meeDamian/sync-readme@v1.0.6
-        with:
-          user: ${{ secrets.DOCKERHUB_USERNAME }}
-          pass: ${{ secrets.DOCKERHUB_TOKEN }}
-          slug: isi006/coder-development-cluster
-          description: true
-
-      # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      # https://github.com/docker/setup-buildx-action
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Docker meta
         id: tag_names
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v5
         with:
-          # list of Docker images to use as base name for tags
           images: |
             isi006/coder-development-cluster
-          # Docker tags based on the following events/attributes
           tags: |
             type=schedule
             type=ref,event=branch
@@ -64,12 +46,15 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64  # ,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.tag_names.outputs.tags }}
           labels: ${{ steps.tag_names.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
