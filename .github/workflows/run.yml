@@ -25,7 +25,7 @@ jobs:
       CLUSTER_NAME: ${{ github.event.inputs.environment }}
     environment:
       name: ${{ github.event.inputs.environment }}
-      url: https://coder.${{ github.event.inputs.environment }}.gke.isium.de
+      url: https://coder.${{ github.event.inputs.environment }}.${{ vars.ENV_BASE_URL }}
     steps:
       - name: credentials
         run: >
