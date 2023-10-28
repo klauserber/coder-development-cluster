@@ -165,10 +165,6 @@ resource "kubernetes_deployment" "main" {
             name  = "CODER_USERNAME"
             value = local.k8s_username
           }
-          env {
-            name  = "PS1"
-            value = "devbox > "
-          }
           port {
             container_port = 13337
           }
