@@ -9,6 +9,10 @@ resource "coder_metadata" "deployment_info" {
     key = "clustername"
     value = var.cluster_name
   }
+  item {
+    key = "working namespace"
+    value = kubernetes_namespace.work-ns.metadata.0.name
+  }
 }
 
 resource "kubernetes_deployment" "main" {
