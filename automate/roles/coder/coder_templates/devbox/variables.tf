@@ -137,3 +137,7 @@ variable "cert_expiration_seconds" {
 variable "jetbrains_module" {
   type = bool
 }
+
+variable "desktop_setup" {
+  type = bool
+}

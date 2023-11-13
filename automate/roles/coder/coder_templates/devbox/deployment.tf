@@ -57,6 +57,16 @@ resource "kubernetes_deployment" "main" {
             }
           }
         }
+        dynamic "volume" {
+          for_each = toset( var.desktop_setup ? ["1"] : [])
+          content {
+            name = "dshm"
+            empty_dir {
+              medium = "Memory"
+            }
+
+          }
+        }
         volume {
           name = "k8s-config"
           secret {
@@ -73,7 +83,7 @@ resource "kubernetes_deployment" "main" {
           for_each = toset( var.backup_service ? ["1"] : [])
           content {
             name    = "restic-restore"
-            image   = "isi006/restic-kubernetes:2.2.0"
+            image   = "isi006/restic-kubernetes:2.2.1"
             env {
               name  = "RESTIC_RESTORE"
               value = "1"
@@ -164,7 +174,7 @@ resource "kubernetes_deployment" "main" {
           command = ["sh", "-c", var.devmode ? "sleep infinity" : coder_agent.devbox.init_script]
           security_context {
             run_as_user = "1000"
-            privileged  = false
+            privileged  = true
           }
           env {
             name  = "CODER_AGENT_TOKEN"
@@ -197,6 +207,13 @@ resource "kubernetes_deployment" "main" {
             mount_path = "/home/coder"
             name       = "data"
             sub_path   = "home"
+          }
+          dynamic "volume_mount" {
+            for_each = toset( var.desktop_setup ? ["1"] : [])
+            content {
+              mount_path = "/dev/shm"
+              name       = "dshm"
+            }
           }
         }
         dynamic "container" {
@@ -240,7 +257,7 @@ resource "kubernetes_deployment" "main" {
           for_each = toset( var.backup_service ? ["1"] : [])
           content {
             name    = "restic-backup"
-            image   = "isi006/restic-kubernetes:2.2.0"
+            image   = "isi006/restic-kubernetes:2.2.1"
             env {
               name  = "AWS_ACCESS_KEY_ID"
               value = var.aws_access_key

@@ -36,3 +36,4 @@ restic_forget_args: "{{ item.restic_forget_args }}"
 restic_storage_type: "gs"
 filebrowser_service: {{ 'true' if item.filebrowser_service else 'false' }}
 jetbrains_module: "{{ 'true' if item.jetbrains_module else 'false' }}"
+desktop_setup: "{{ 'true' if item.desktop_setup else 'false' }}"
