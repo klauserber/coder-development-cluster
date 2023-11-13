@@ -73,7 +73,7 @@ resource "kubernetes_deployment" "main" {
           for_each = toset( var.backup_service ? ["1"] : [])
           content {
             name    = "restic-restore"
-            image   = "isi006/restic-kubernetes:2.2.0"
+            image   = "isi006/restic-kubernetes:2.2.1"
             env {
               name  = "RESTIC_RESTORE"
               value = "1"
@@ -240,7 +240,7 @@ resource "kubernetes_deployment" "main" {
           for_each = toset( var.backup_service ? ["1"] : [])
           content {
             name    = "restic-backup"
-            image   = "isi006/restic-kubernetes:2.2.0"
+            image   = "isi006/restic-kubernetes:2.2.1"
             env {
               name  = "AWS_ACCESS_KEY_ID"
               value = var.aws_access_key
