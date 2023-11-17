@@ -6,15 +6,6 @@ module "filebrowser" {
   database_path = ".config/filebrowser.db"
 }
 
-module "code-server" {
-  source          = "https://registry.coder.com/modules/code-server"
-  agent_id        = coder_agent.devbox.id
-  install_version = "4.18.0"
-   extensions = [
-        "vmware.vscode-boot-dev-pack"
-    ]
-}
-
 module "jetbrains_gateway" {
   count          = var.jetbrains_module ? 1 : 0
   source         = "https://registry.coder.com/modules/jetbrains-gateway"
