@@ -16,13 +16,14 @@ resource "coder_app" "kasmvnc" {
 }
 
 resource "coder_script" "desktop_setup" {
-  count = var.desktop_setup ? 1 : 0
-  agent_id = coder_agent.devbox.id
+  count        = var.desktop_setup ? 1 : 0
+  agent_id     = coder_agent.devbox.id
   run_on_start = true
   display_name = "kasm vnc setup"
-  script = <<-EOF
+  icon         = "/icon/kasmvnc.svg"
+  script       = <<-EOF
   #!/bin/bash
   echo "Setup kasm vnc"
-  run_kasmvnc.sh
+  run_kasmvnc.sh 2>&1
   EOF
 }

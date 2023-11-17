@@ -174,7 +174,10 @@ resource "kubernetes_deployment" "main" {
           command = ["sh", "-c", var.devmode ? "sleep infinity" : coder_agent.devbox.init_script]
           security_context {
             run_as_user = "1000"
-            privileged  = true
+            # privileged  = true
+            capabilities {
+              add = ["SYS_ADMIN"]
+            }
           }
           env {
             name  = "CODER_AGENT_TOKEN"
