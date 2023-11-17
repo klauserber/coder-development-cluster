@@ -2,10 +2,10 @@
 resource "coder_app" "kasmvnc" {
   count        = var.desktop_setup ? 1 : 0
   agent_id     = coder_agent.devbox.id
-  slug         = "kasmvnc"
-  display_name = "KasmVNC"
+  slug         = "desktop"
+  display_name = "Desktop"
   url          = "http://localhost:6901"
-  icon         = "https://avatars.githubusercontent.com/u/44181855?s=280&v=4"
+  icon         = "/icon/kasmvnc.svg"
   subdomain    = true
   share        = "owner"
   healthcheck {
