@@ -47,6 +47,34 @@ resource "kubernetes_deployment" "main" {
         }
       }
       spec {
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key      = "workshops.de/workspace"
+                  operator = "In"
+                  values   = [ "true" ]
+                }
+              }
+            }
+            preferred_during_scheduling_ignored_during_execution {
+              weight = 1
+              preference {
+                match_expressions {
+                  key      = "cloud.google.com/gke-spot"
+                  operator = "In"
+                  values   = [ "true" ]
+                }
+              }
+            }
+          }
+        }
+        toleration {
+          key      = "workshops.de/workspace"
+          operator = "Exists"
+          effect   = "NoSchedule"
+        }
         dynamic "volume" {
           for_each = toset( var.restic_storage_type == "gs" ? ["1"] : [])
           content {
@@ -203,7 +231,7 @@ resource "kubernetes_deployment" "main" {
               memory = "${var.devbox_mem_limit}M"
             }
             requests = {
-              memory = "${var.devbox_mem_limit * 0.25}M"
+              memory = "${var.devbox_mem_limit * 0.75}M"
             }
           }
           volume_mount {
@@ -241,7 +269,7 @@ resource "kubernetes_deployment" "main" {
                 memory = "${var.docker_mem_limit}M"
               }
               requests = {
-                memory = "${var.docker_mem_limit * 0.25}M"
+                memory = "${var.docker_mem_limit * 0.5}M"
               }
             }
             volume_mount {
@@ -302,7 +330,7 @@ resource "kubernetes_deployment" "main" {
                 memory = "${var.backup_mem_limit}M"
               }
               requests = {
-                memory = "${var.backup_mem_limit * 0.25}M"
+                memory = "${var.backup_mem_limit * 0.5}M"
               }
             }
             volume_mount {

@@ -28,13 +28,13 @@ docker pull ${REGISTRY_NAME}/${IMAGE_NAME}:${TAG} > /dev/null
 COMMAND=run_bootstrap
 
 docker run -it \
-  -v $(pwd)/config:/app/config \
+  -v $(pwd)/config_default:/app/config_default \
   --rm \
   --entrypoint=/app/${COMMAND}.sh \
   ${REGISTRY_NAME}/${IMAGE_NAME}:${TAG} ${@}
 ```
 
-4. Create a directory called `config` and put a file called `app_config.yml` in it. The file should look like this:
+4. Create a directory called `config_default` and put a file called `app_config.yml` in it. The file should look like this:
 
 ```yaml
 # This values will be used on google cloud project bootstrap and cluster creation
@@ -61,7 +61,7 @@ bucket_name: coder-storage-spaces-example-com
 region: europe-west3
 ```
 
-5. Change the values in the `config/app_config.yml` file to match your project.
+5. Change the values in the `config_default/app_config.yml` file to match your project.
 
 6. Run the `run_container_bootstrap.sh` script. It will create the required resources on google cloud.
 
@@ -72,7 +72,7 @@ region: europe-west3
 7. After the script has finished you have the 3 json authentications keys (`google-coder-*.json`) in your config directory, **keep them safe**.
 
 ```bash
-ls -l config/
+ls -l config_default/
 total 40
 -rw-r--r-- 1 coder coder 1706 Jan  4 09:08 app_config.yml
 -rw------- 1 coder coder 2332 Jan  5 08:42 google-coder-automation.json
@@ -82,7 +82,7 @@ total 40
 
 8. Point or delegate your domain to the nameservers of the created zone.
 
-9. It could be a good idea to push the code to a git repository and add the `config` directory to your `.gitignore` file to prevent the keys from being pushed to a public repository.
+9. It could be a good idea to push the code to a git repository and add the `config_default` directory to your `.gitignore` file to prevent the keys from being pushed to a public repository.
 
 ## Manual project configuration
 

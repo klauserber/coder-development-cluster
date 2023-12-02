@@ -11,7 +11,7 @@ data "coder_parameter" "intellij_u" {
 
 # https://www.jetbrains.com/idea/download/#section=linux
 resource "coder_script" "intellij_u" {
-  count = var.desktop_setup && data.coder_parameter.intellij_u.0.value ? 1 : 0
+  count = var.desktop_setup && try(data.coder_parameter.intellij_u.0.value, false) ? 1 : 0
   agent_id = coder_agent.devbox.id
   run_on_start = true
   display_name = "Intellij Ultimate"
@@ -57,7 +57,7 @@ resource "coder_script" "intellij_u" {
 }
 
 resource "coder_script" "intellij_u_uninstall" {
-  count = var.desktop_setup && data.coder_parameter.intellij_u.0.value ? 0 : 1
+  count = var.desktop_setup && try(data.coder_parameter.intellij_u.0.value, false) ? 0 : 1
   agent_id = coder_agent.devbox.id
   run_on_start = true
   display_name = "Intellij Ultimate Uninstall"

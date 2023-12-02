@@ -38,7 +38,7 @@ pg_instances: 1
 # k8s resources to use
 pg_resources:
   requests:
-    cpu: "100m"
+    cpu: "20m"
     memory: "500Mi"
   limits:
     cpu: "2000m"

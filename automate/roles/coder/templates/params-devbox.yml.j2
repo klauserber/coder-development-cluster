@@ -23,17 +23,16 @@ smtp_port: "{{ smtp.port }}"
 smtp_host: "{{ smtp.host }}"
 smtp_from: "{{ smtp.from }}"
 
-devbox_image: "{{ item.devbox_image}}"
-homedir_disk_size: "{{ item.homedir_disk_size }}"
-devbox_mem_limit: "{{ item.devbox_mem_limit }}"
-docker_service: {{ 'true' if item.docker_service else 'false' }}
-docker_mem_limit: "{{ item.docker_mem_limit }}"
-openvpn_service: {{ 'true' if item.openvpn_service else 'false' }}
-backup_service: {{ 'true' if item.backup_service else 'false' }}
-backup_mem_limit: "{{ item.backup_mem_limit }}"
-backup_cron: "{{ item.backup_cron }}"
-restic_forget_args: "{{ item.restic_forget_args }}"
+devbox_image: "{{ item.devbox_image }}"
+homedir_disk_size: "{{ item.homedir_disk_size | default(coder_devbox_workspace_defaults.homedir_disk_size) }}"
+devbox_mem_limit: "{{ item.devbox_mem_limit | default(coder_devbox_workspace_defaults.devbox_mem_limit) }}"
+docker_service: {{ 'true' if (item.docker_service | default(coder_devbox_workspace_defaults.docker_service)) else 'false' }}
+docker_mem_limit: "{{ item.docker_mem_limit | default(coder_devbox_workspace_defaults.docker_mem_limit) }}"
+backup_service: {{ 'true' if (item.backup_service | default(coder_devbox_workspace_defaults.backup_service)) else 'false' }}
+backup_mem_limit: "{{ item.backup_mem_limit | default(coder_devbox_workspace_defaults.backup_mem_limit) }}"
+backup_cron: "{{ item.backup_cron | default(coder_devbox_workspace_defaults.backup_cron) }}"
+restic_forget_args: "{{ item.restic_forget_args | default(coder_devbox_workspace_defaults.restic_forget_args) }}"
 restic_storage_type: "gs"
-filebrowser_service: {{ 'true' if item.filebrowser_service else 'false' }}
-jetbrains_module: "{{ 'true' if item.jetbrains_module else 'false' }}"
-desktop_setup: "{{ 'true' if item.desktop_setup else 'false' }}"
+filebrowser_service: {{ 'true' if (item.filebrowser_service | default(coder_devbox_workspace_defaults.filebrowser_service)) else 'false' }}
+jetbrains_module: "{{ 'true' if (item.jetbrains_module | default(coder_devbox_workspace_defaults.jetbrains_module)) else 'false' }}"
+desktop_setup: "{{ 'true' if (item.desktop_setup | default(coder_devbox_workspace_defaults.desktop_setup)) else 'false' }}"

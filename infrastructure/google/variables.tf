@@ -42,28 +42,37 @@ variable "gke_password" {
   description = "gke password"
 }
 
-variable "gke_num_nodes" {
-  default     = 1
-  description = "number of gke nodes"
-}
-
-variable "preemptible" {
+variable "base_spot" {
   default     = false
   type        = bool
-  description = "number of gke nodes"
+  description = "Use spot instances on the base system"
 }
 
-variable "machine_type" {
-  default     = "n1-standard-1"
-  description = "machine type"
+variable "base_machine_type" {
+  default     = "e2-medium"
+  description = "machine type for the base system"
+}
+variable "base_min_node_count" {
+  default     = 3
+  description = "minimum number of nodes on base node pool"
 }
 
-variable "min_node_count" {
+variable "base_max_node_count" {
+  default     = 6
+  description = "maximum number of nodes on base node pool"
+}
+
+variable "workspace_machine_type" {
+  default     = "t2d-standard-2"
+  description = "machine type for the workspace nodes"
+}
+
+variable "workspace_min_node_count" {
   default     = 0
-  description = "minimum number of nodes on secondary node pool"
+  description = "minimum number of nodes on workspace node pool"
 }
 
-variable "max_node_count" {
+variable "workspace_max_node_count" {
   default     = 4
-  description = "maximum number of nodes on secondary node pool"
+  description = "maximum number of nodes on workspace node pool"
 }

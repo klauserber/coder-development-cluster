@@ -12,10 +12,11 @@ cluster_public_domain: "{{ cluster_name }}.{{ domain_name }}"
 kubeconfig: "{{ playbook_dir }}/../config/{{ cluster_name }}_kubeconfig"
 
 config_dir: "{{ playbook_dir }}/../config"
+default_config_dir: "{{ playbook_dir }}/../config_default"
 cluster_backup_dir: "{{ config_dir }}/cache/{{ cluster_name }}"
 
-google_coder_dns_credentials_path: "{{ config_dir }}/google-coder-dns.json"
-google_coder_storage_credentials_path: "{{ config_dir }}/google-coder-storage.json"
+google_coder_dns_credentials_path: "{{ default_config_dir }}/google-coder-dns.json"
+google_coder_storage_credentials_path: "{{ default_config_dir }}/google-coder-storage.json"
 
 nginx_backup_remote_storage_provider: "{{ storage_provider }}"
 nginx_backup_remote_storage_bucket: "{{ bucket_name }}"

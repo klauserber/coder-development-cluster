@@ -11,7 +11,7 @@ data "coder_parameter" "sts" {
 
 # https://spring.io/tools
 resource "coder_script" "sts" {
-  count = var.desktop_setup && data.coder_parameter.sts.0.value ? 1 : 0
+  count = var.desktop_setup && try(data.coder_parameter.sts.0.value, false) ? 1 : 0
   agent_id = coder_agent.devbox.id
   run_on_start = true
   display_name = "Spring Tool Suite"
@@ -56,7 +56,7 @@ resource "coder_script" "sts" {
 }
 
 resource "coder_script" "sts_uninstall" {
-  count = var.desktop_setup && data.coder_parameter.sts.0.value ? 0 : 1
+  count = var.desktop_setup && try(data.coder_parameter.sts.0.value, false) ? 0 : 1
   agent_id = coder_agent.devbox.id
   run_on_start = true
   display_name = "Spring Tool Suite"

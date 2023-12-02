@@ -23,7 +23,7 @@
 
 - name: create template
   when: "result.rc != 0"
-  command: "{{ bin_dir }}/coder template create '{{ item.name }}' --default-ttl {{ item.max_ttl }} --ignore-lockfile --variables-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
+  command: "{{ bin_dir }}/coder template create '{{ item.name }}' --default-ttl {{ item.max_ttl | default(coder_devbox_workspace_defaults.max_ttl) }} --ignore-lockfile --variables-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
   register: result
   until: result.rc == 0
   delay: 5

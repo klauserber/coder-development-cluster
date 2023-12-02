@@ -2,8 +2,8 @@
 
 . VERSION
 
-echo "pull image ${REGISTRY_NAME}/${IMAGE_NAME}:${TAG}"
-docker pull ${REGISTRY_NAME}/${IMAGE_NAME}:${TAG} > /dev/null
+# echo "pull image ${REGISTRY_NAME}/${IMAGE_NAME}:${TAG}"
+# docker pull ${REGISTRY_NAME}/${IMAGE_NAME}:${TAG} > /dev/null
 
 COMMAND=${1}
 
@@ -22,6 +22,7 @@ fi
 
 
 docker run -it \
+  -v $(pwd)/config_default:/app/config_default \
   -v $(pwd)/config:/app/config \
   --rm \
   --entrypoint=/app/${COMMAND}.sh \

@@ -30,9 +30,9 @@ jobs:
       - name: credentials
         run: >
           mkdir -p config &&
-          echo ${GOOGLE_CODER_AUTOMATION} > config/google-coder-automation.json &&
-          echo ${GOOGLE_CODER_DNS} > config/google-coder-dns.json &&
-          echo ${GOOGLE_CODER_STORAGE} > config/google-coder-storage.json
+          echo ${GOOGLE_CODER_AUTOMATION} > config_default/google-coder-automation.json &&
+          echo ${GOOGLE_CODER_DNS} > config_default/google-coder-dns.json &&
+          echo ${GOOGLE_CODER_STORAGE} > config_default/google-coder-storage.json
         shell: bash
       - name: run
         run: "docker run -v $(pwd)/config:/app/config -e TERRAFORM_OPTIONS=-auto-approve isi006/coder-development-cluster:latest ${GCLOUD_PROJECT} ${CLUSTER_NAME}"

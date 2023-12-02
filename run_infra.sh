@@ -7,7 +7,7 @@ ansible-playbook -i inventory ${SCRIPT_DIR}/automate/tf_vars.yml
 
 . ${SCRIPT_DIR}/config/env
 
-export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config/google-coder-automation.json
+export GOOGLE_APPLICATION_CREDENTIALS=${SCRIPT_DIR}/config_default/google-coder-automation.json
 
 terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
     -upgrade -migrate-state \

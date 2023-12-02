@@ -10,17 +10,19 @@ Coder is a platform for developers to run their development environment in the c
 
 ## Developer Workspace Pods
 
-The developer workspace pods are the actual development environment. They are created by Coder and run in the cluster. They are contain the development tools and the IDE. The pods are created on demand and destroyed after a certain time of inactivity. You can also create your own workspace images and run them in the cluster, an example for doing Kubernetes workshops is available at https://github.com/klauserber/docker-k8s-training-image. There nothing special to do in the image, just install the tools you need, create a non root user etc.
+The developer workspace pods are the actual development environment. They are created by Coder and run in the cluster. They are contain the development tools. The pods are created on demand and destroyed after a certain time of inactivity. You can also create your own workspace images and run them in the cluster, an example for doing Kubernetes workshops is available at https://github.com/klauserber/docker-k8s-training-image. There nothing special to do in the image, just install the tools you need, create a non root user etc.
 
-The is a docker in docker side car container in the workspace pods. This is used to build docker images. The side car container is configured to run as root and the docker socket is only accessible by root. The side car container is only accessible from the workspace pods.
+Another is https://github.com/klauserber/java-training-desktop-image which can be used to provide a desktop environment for Java training courses.
 
-The second side car container is for restic backups of the users home directory.
+There is a docker in docker side car container in the workspace pods. This is used to build docker images. The side car container is configured to run as root and the docker socket is only accessible by root. The side car container is only accessible from the workspace pods.
+
+The second side car container is for restic backups of the users home directory. There is also a init container which is used to initialize the restic repository and to restore the users home directory from a backup of the Volume is empty.
 
 ## Keycloak
 
 Keycloak is an open source identity and access management solution. It provides a web based user interface to manage users and groups. It can be used to authenticate users against an OIDC provider like Google or Azure AD. In this project we use to authenticate users against a local database.
 
-We use it to get a self registration form for users and to verify the email addresses of new users. Further we use it to provide a single sign on for the coder platform and other services e. g. Grafana.
+We use it to get a self registration form for users and to verify the email addresses of new users. Further we use it to provide a single sign on for the coder platform and other services e. g. Grafana. To protect workloads without a login form we use the oauth2-proxy.
 
 ## Postgres
 
@@ -72,6 +74,7 @@ Terraform creates the cluster and the infrastructure:
 * Subnets
 * Firewall rules
 * static IP address
+* GKE Kubernetes cluster and node pools
 * DNS records etc.
 
 ### Ansible
