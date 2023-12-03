@@ -8,6 +8,10 @@ controller:
   ingressClass: "{{ ingress_class }}"
   extraArgs:
     default-ssl-certificate: "nginx-ingress/ingress-isi-cert"
+  resources:
+    requests:
+      cpu: 10m
+      memory: 90Mi
 
   service:
     type: LoadBalancer

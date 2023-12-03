@@ -4,6 +4,7 @@
   gather_facts: false
   connection: local
   vars_files:
+    - "{{ default_config_dir }}/app_config.yml"
     - "{{ config_dir }}/app_config.yml"
   roles:
     - role: remove_backups

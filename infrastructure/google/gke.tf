@@ -11,8 +11,8 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
 
   initial_node_count = 1
+  remove_default_node_pool = true
   min_master_version = data.google_container_engine_versions.stable.latest_master_version
-  node_version       = data.google_container_engine_versions.stable.latest_node_version
 
   network    = google_compute_network.vpc.name
   subnetwork = google_compute_subnetwork.subnet.name
@@ -26,7 +26,25 @@ resource "google_container_cluster" "primary" {
     provider = "CALICO"
   }
 
+}
+
+# Base system node pool
+resource "google_container_node_pool" "base_system_nodes" {
+  name     = "base"
+  location = var.cluster_location
+  cluster  = google_container_cluster.primary.name
+  version = data.google_container_engine_versions.stable.latest_node_version
+
+  autoscaling {
+    min_node_count  = var.base_min_node_count
+    max_node_count  = var.base_max_node_count
+    location_policy = "ANY"
+  }
+
+  initial_node_count = var.base_min_node_count
+
   node_config {
+
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -36,8 +54,8 @@ resource "google_container_cluster" "primary" {
       env = var.system_name
     }
 
-    preemptible  = var.preemptible
-    machine_type = var.machine_type
+    spot  = var.base_spot
+    machine_type = var.base_machine_type
     disk_size_gb = 50
     tags         = ["gke-node", "${var.system_name}-gke"]
     metadata = {
@@ -47,21 +65,21 @@ resource "google_container_cluster" "primary" {
 
 }
 
-# Separately Managed Node Pool
-resource "google_container_node_pool" "secondary_nodes" {
-  name     = "${google_container_cluster.primary.name}-node-pool"
+# Node spot pool for workspaces
+resource "google_container_node_pool" "workspace_spot_nodes" {
+  name     = "workspace-spot"
   location = var.cluster_location
   cluster  = google_container_cluster.primary.name
   # node_count = var.gke_num_nodes
   version = data.google_container_engine_versions.stable.latest_node_version
 
   autoscaling {
-    min_node_count = var.min_node_count
-    max_node_count = var.max_node_count
+    min_node_count  = var.workspace_min_node_count
+    max_node_count  = var.workspace_max_node_count
     location_policy = "ANY"
   }
 
-  initial_node_count = var.min_node_count
+  initial_node_count = var.workspace_min_node_count
 
   node_config {
     oauth_scopes = [
@@ -70,11 +88,60 @@ resource "google_container_node_pool" "secondary_nodes" {
     ]
 
     labels = {
-      env = var.system_name
+      "coder-development-cluster/env" = var.system_name
+      "coder-development-cluster/workspace" = "true"
     }
 
-    preemptible  = var.preemptible
-    machine_type = var.machine_type
+    taint {
+      key    = "coder-development-cluster/workspace"
+      value  = "true"
+      effect = "NO_SCHEDULE"
+    }
+
+    spot = true
+    machine_type = var.workspace_machine_type
+    disk_size_gb = 50
+    tags         = ["gke-node", "${var.system_name}-gke"]
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
+  }
+}
+
+# Node regular pool for workspaces
+resource "google_container_node_pool" "workspace_nodes" {
+  name     = "workspace"
+  location = var.cluster_location
+  cluster  = google_container_cluster.primary.name
+  # node_count = var.gke_num_nodes
+  version = data.google_container_engine_versions.stable.latest_node_version
+
+  autoscaling {
+    min_node_count  = var.workspace_min_node_count
+    max_node_count  = var.workspace_max_node_count
+    location_policy = "ANY"
+  }
+
+  initial_node_count = var.workspace_min_node_count
+
+  node_config {
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
+
+    labels = {
+      "coder-development-cluster/env" = var.system_name
+      "coder-development-cluster/workspace" = "true"
+    }
+
+    taint {
+      key    = "coder-development-cluster/workspace"
+      value  = "true"
+      effect = "NO_SCHEDULE"
+    }
+
+    machine_type = var.workspace_machine_type
     disk_size_gb = 50
     tags         = ["gke-node", "${var.system_name}-gke"]
     metadata = {

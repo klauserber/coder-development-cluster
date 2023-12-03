@@ -47,6 +47,34 @@ resource "kubernetes_deployment" "main" {
         }
       }
       spec {
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key      = "coder-development-cluster/workspace"
+                  operator = "In"
+                  values   = [ "true" ]
+                }
+              }
+            }
+            preferred_during_scheduling_ignored_during_execution {
+              weight = 1
+              preference {
+                match_expressions {
+                  key      = "cloud.google.com/gke-spot"
+                  operator = "In"
+                  values   = [ "true" ]
+                }
+              }
+            }
+          }
+        }
+        toleration {
+          key      = "coder-development-cluster/workspace"
+          operator = "Exists"
+          effect   = "NoSchedule"
+        }
         dynamic "volume" {
           for_each = toset( var.restic_storage_type == "gs" ? ["1"] : [])
           content {
@@ -55,6 +83,16 @@ resource "kubernetes_deployment" "main" {
             secret {
               secret_name = "google-credentials-secret"
             }
+          }
+        }
+        dynamic "volume" {
+          for_each = toset( var.desktop_setup ? ["1"] : [])
+          content {
+            name = "dshm"
+            empty_dir {
+              medium = "Memory"
+            }
+
           }
         }
         volume {
@@ -164,7 +202,10 @@ resource "kubernetes_deployment" "main" {
           command = ["sh", "-c", var.devmode ? "sleep infinity" : coder_agent.devbox.init_script]
           security_context {
             run_as_user = "1000"
-            privileged  = false
+            # privileged  = true
+            capabilities {
+              add = ["SYS_ADMIN"]
+            }
           }
           env {
             name  = "CODER_AGENT_TOKEN"
@@ -190,13 +231,20 @@ resource "kubernetes_deployment" "main" {
               memory = "${var.devbox_mem_limit}M"
             }
             requests = {
-              memory = "${var.devbox_mem_limit * 0.25}M"
+              memory = "${var.devbox_mem_limit * 0.75}M"
             }
           }
           volume_mount {
             mount_path = "/home/coder"
             name       = "data"
             sub_path   = "home"
+          }
+          dynamic "volume_mount" {
+            for_each = toset( var.desktop_setup ? ["1"] : [])
+            content {
+              mount_path = "/dev/shm"
+              name       = "dshm"
+            }
           }
         }
         dynamic "container" {
@@ -221,7 +269,7 @@ resource "kubernetes_deployment" "main" {
                 memory = "${var.docker_mem_limit}M"
               }
               requests = {
-                memory = "${var.docker_mem_limit * 0.25}M"
+                memory = "${var.docker_mem_limit * 0.5}M"
               }
             }
             volume_mount {
@@ -282,7 +330,7 @@ resource "kubernetes_deployment" "main" {
                 memory = "${var.backup_mem_limit}M"
               }
               requests = {
-                memory = "${var.backup_mem_limit * 0.25}M"
+                memory = "${var.backup_mem_limit * 0.5}M"
               }
             }
             volume_mount {

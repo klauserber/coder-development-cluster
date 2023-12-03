@@ -1,6 +1,6 @@
 ---
-replicaCount: 3
-podAntiAffinityPreset: hard
+replicaCount: 2
+podAntiAffinityPreset: soft
 
 proxy: edge
 
@@ -10,6 +10,14 @@ auth:
 
 service:
   type: ClusterIP
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 300Mi
+  limits:
+    cpu: 1000m
+    memory: 1000Mi
 
 ingress:
   enabled: true

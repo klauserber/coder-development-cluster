@@ -1,6 +1,6 @@
 
 provider "google" {
-  credentials = file("../../config/google-coder-automation.json")
+  credentials = file("../../config_default/google-coder-automation.json")
   project     = var.project_id
   region      = var.region
 }

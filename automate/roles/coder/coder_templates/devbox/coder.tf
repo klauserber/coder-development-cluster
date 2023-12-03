@@ -12,6 +12,9 @@ resource "coder_agent" "devbox" {
   # if you don't want to display any information.
   # For basic resources, you can use the `coder stat` command.
   # If you need more control, you can write your own script.
+
+  # Theses two metadata blocks are not working when running in privileged mode?
+  #
   metadata {
     display_name = "CPU Usage"
     key          = "0_cpu_usage"

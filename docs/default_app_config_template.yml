@@ -1,0 +1,125 @@
+---
+###########
+# This values will be used on google cloud project bootstrap and cluster creation
+###########
+
+# Name of a existing Google Cloud project
+# For bootstraping you must be the owner or editor of the project
+project_id: spaces-example-com
+
+# Domain name under which the clusters will be available
+# Pattern: <cluster_name>.<domain_name>
+domain_name: spaces.examle.com
+
+# Name of the managed zone in Google Cloud DNS
+# Will be used for creating the DNS records and for DNS challenges to generate certificates.
+# Will be created on bootstraping if not exists
+managed_zone: spaces-example.com
+
+# Name of the bucket in Google Cloud Storage
+# Will be used for storing the Terraform state, certificates cache, database and user directory backups.
+# Will be created on bootstraping if not exists
+bucket_name: coder-storage-spaces-example-com
+
+# Google Cloud region for the storage bucket
+region: europe-west3
+
+###########
+# This values are the defaults to create clusters, they can be overriden in the cluster config
+###########
+
+# You can create multible clusters in one project, this is the name of the cluster, should be unique per cluster and configured in the cluster config
+# cluster_name: dev
+
+# Google Cloud region and zone for the cluster
+cluster_location: europe-west3-c
+
+# If true, the cluster nodes for the base system will be created with spot nodes
+# see: https://cloud.google.com/spot-vms
+base_spot: false
+
+# The infrastructure provider to use, currently only google is supported
+infrastructure_provider: google
+
+# The storage provider to use, currently only gs is supported
+storage_provider: gs
+
+# We create a cluster with three node pools, one for base system (coder, postgres, nginx, etc.) and two for the workspaces (spot and non-spot nodes)
+
+# Machine type for the base cluster nodes
+# see: https://cloud.google.com/compute/docs/machine-types
+base_machine_type: e2-medium  # (2 vCPUs, 4 GB memory)
+
+# min and max number of nodes in the autoscaling base node pool
+base_min_node_count: 3
+base_max_node_count: 6
+
+# Machine type for the workspace cluster nodes
+workspace_machine_type: t2d-standard-2  # (2 vCPUs, 8 GB memory)
+
+# min and max number of nodes in the autoscaling node pools (spot and non-spot) for worspaces
+workspace_min_node_count: 0
+workspace_max_node_count: 10
+
+# Password for the grafana admin user
+# Generate one with: pwgen -s 32 1
+grafana_password: << provide_your_own_password >>
+
+# Realm name in keycloak
+keycloak_realm_name: example-com
+
+# Password for the keycloak admin user
+keycloak_admin_password: << provide_your_own_password >>
+
+# Set this to true if you want to use the keycloak email verification
+keycloak_verify_email: true
+
+# Generate client secrets with: pwgen -sA 32 1
+# Client secrets for the different oauth clients
+coder_client_secret: << provide_your_own_secret >>
+grafana_client_secret: << provide_your_own_secret >>
+auth_client_secret: << provide_your_own_secret >>
+
+# Secret to encrypt the session cookie of the oauth2 proxy
+# Generate one with: openssl rand -base64 32 | tr -- '+/' '-_'
+auth_cookie_secret: << provide_your_own_secret >>
+
+coder_admin_email: my.name@example.com
+coder_admin_password: << provide_your_own_password >>
+
+# Section to configure smtp for sending emails
+smtp:
+  user: << your smtp user >>
+  password: << your smtp password >>
+  starttls: "true"
+  port: "465"
+  host: << your smtp host >>
+  replyTo: << your replyTo address >>
+  from: << your from address >>
+  ssl: "true"
+
+# default values for workspace templates
+coder_devbox_workspace_defaults:
+  homedir_disk_size: 10Gi
+  # memory limit for the main devbox container (75% will be requested)
+  devbox_mem_limit: 4000
+  # enable docker service sidecar in the workspace
+  docker_service: true
+  # memory limit for the docker service sidecar (50% will be requested)
+  docker_mem_limit: 1000
+  # enable restic backup service sidecar in the workspace to backup the user directory
+  backup_service: true
+  # memory limit for the restic backup service sidecar (50% will be requested)
+  backup_mem_limit: 500
+  # cron schedule for the backup service
+  backup_cron: "15 * * * *"
+  # restic forget args
+  restic_forget_args: "--keep-last 12 --keep-daily 7 --keep-weekly 4 --keep-monthly 3 --keep-yearly 100 --prune"
+  # max ttl for the workspace, the workspaces will be stopped after this time if they are idle
+  max_ttl: 1h0m0s
+  # enable filebrowser service in the workspace to browse the user directory
+  filebrowser_service: true
+  # enable jetbrains module in the workspace to use jetbrains ide (this functionality is not working yet, but you can still use the JetBrains Gateway directly)
+  jetbrains_module: false
+  # Set up a KasmVNC based desktop environment, your image have to support this, example: isi006/java-training-desktop:latest
+  desktop_setup: false
