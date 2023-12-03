@@ -22,6 +22,7 @@ The core features are:
 ## Dokumentation
 
 * [Architecture](docs/Architecture.md)
+* [Cloud cost optimization](docs/cloud_cost_optimization.md)
 * [Bootstrap a Google Cloud Project](docs/bootstrap.md)
 * [Deploy the cluster](docs/deploy.md)
 * [Development](docs/development.md)
