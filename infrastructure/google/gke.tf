@@ -88,12 +88,12 @@ resource "google_container_node_pool" "workspace_spot_nodes" {
     ]
 
     labels = {
-      "workshops.de/env" = var.system_name
-      "workshops.de/workspace" = "true"
+      "coder-development-cluster/env" = var.system_name
+      "coder-development-cluster/workspace" = "true"
     }
 
     taint {
-      key    = "workshops.de/workspace"
+      key    = "coder-development-cluster/workspace"
       value  = "true"
       effect = "NO_SCHEDULE"
     }
@@ -131,12 +131,12 @@ resource "google_container_node_pool" "workspace_nodes" {
     ]
 
     labels = {
-      "workshops.de/env" = var.system_name
-      "workshops.de/workspace" = "true"
+      "coder-development-cluster/env" = var.system_name
+      "coder-development-cluster/workspace" = "true"
     }
 
     taint {
-      key    = "workshops.de/workspace"
+      key    = "coder-development-cluster/workspace"
       value  = "true"
       effect = "NO_SCHEDULE"
     }

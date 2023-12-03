@@ -52,7 +52,7 @@ resource "kubernetes_deployment" "main" {
             required_during_scheduling_ignored_during_execution {
               node_selector_term {
                 match_expressions {
-                  key      = "workshops.de/workspace"
+                  key      = "coder-development-cluster/workspace"
                   operator = "In"
                   values   = [ "true" ]
                 }
@@ -71,7 +71,7 @@ resource "kubernetes_deployment" "main" {
           }
         }
         toleration {
-          key      = "workshops.de/workspace"
+          key      = "coder-development-cluster/workspace"
           operator = "Exists"
           effect   = "NoSchedule"
         }
