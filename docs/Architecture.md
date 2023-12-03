@@ -4,6 +4,16 @@ Here is the 'big picture' of the architecture of the coder development cluster:
 
 ![](Architecture.excalidraw.png)
 
+## Nodes pools
+
+The cluster is running on Google Kubernetes Engine (GKE). We are using 3 node pools:
+
+* base: This node pool is running on low cost instances. Here we are running all components expect the Workspaces.
+* workspaces-spot: This node pool is running performance optimized instances. It is the prefered node pool with spot instances at a much lower cost.
+* workspaces (on-demand): The second node pool for workspaces is running on-demand instances to provide a fallback in case the spot instances are not available.
+
+read more: [Cloud cost optimization](docs/cloud_cost_optimization.md)
+
 ## Coder
 
 Coder is a platform for developers to run their development environment in the cloud. It is based on Kubernetes and provides a web based IDE (VSCode) and a lot of other features. For more information see [https://coder.com](https://coder.com).
