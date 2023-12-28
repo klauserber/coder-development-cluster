@@ -13,6 +13,8 @@ controller:
       cpu: 10m
       memory: 90Mi
 
+  terminationGracePeriodSeconds: 30
+
   service:
     type: LoadBalancer
     loadBalancerIP: "{{ ip_address }}"
