@@ -10,9 +10,10 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "5.1.0"
+      # https://registry.terraform.io/providers/hashicorp/google/latest/docs
+      version = "5.10.0"
     }
   }
 
-  required_version = ">= 1.5.3"
+  required_version = ">= 1.5.7"
 }
