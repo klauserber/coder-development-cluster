@@ -1,7 +1,7 @@
 ---
 namespace: coder
 # https://github.com/coder/coder/releases
-coder_version: 2.3.2
+coder_version: 2.6.0
 coder_chart_version: "{{ coder_version }}"
 
 coder_pg_dbname: coder
