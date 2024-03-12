@@ -2,13 +2,13 @@ terraform {
   required_providers {
     coder = {
       source  = "coder/coder"
-      # https://registry.terraform.io/providers/coder/coder/latest/docs
-      version = "0.12.2"
+      # ##versions: https://registry.terraform.io/providers/coder/coder/latest/docs
+      version = "0.18.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      # https://registry.terraform.io/providers/hashicorp/kubernetes/latest
-      version = "2.23.0"
+      # ##versions: https://registry.terraform.io/providers/hashicorp/kubernetes/latest
+      version = "2.27.0"
     }
   }
 }

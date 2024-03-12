@@ -25,8 +25,8 @@ RUN set -e; \
   pip3 install --default-timeout=180 -r /tmp/requirements.txt --ignore-installed PyYAML; \
   rm /tmp/requirements.txt
 
-# https://cloud.google.com/sdk/docs/release-notes
-ARG GCLOUD_CLI_VERSION=450.0.0
+# ##versions: https://cloud.google.com/sdk/docs/release-notes
+ARG GCLOUD_CLI_VERSION=467.0.0
 RUN set -e; \
   if [ "${TARGETARCH}" = "arm64" ]; then TARGETARCH=arm; else TARGETARCH=x86_64; fi; \
   curl -sSL -o /tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_CLI_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz; \
@@ -35,7 +35,8 @@ RUN set -e; \
   /usr/local/google-cloud-sdk/install.sh --quiet; \
   /usr/local/google-cloud-sdk/bin/gcloud components install gke-gcloud-auth-plugin --quiet
 
-# https://github.com/hashicorp/terraform/releases
+# ##versions: https://github.com/hashicorp/terraform/releases
+# Do not update for the time being, switch to opentufo?  
 ARG TERRAFORM_VERSION=1.6.1
 RUN set -e; \
   cd /tmp; \
@@ -45,16 +46,16 @@ RUN set -e; \
   chmod +x /usr/local/bin/terraform; \
   rm terraform.zip
 
-# https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION=1.28.2
+# ##versions: https://github.com/kubernetes/kubernetes/releases
+ARG KUBECTL_VERSION=1.29.2
 RUN set -e; \
     cd /tmp; \
     curl -sLO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/kubectl"; \
     mv kubectl /usr/local/bin/; \
     chmod +x /usr/local/bin/kubectl
 
-# https://github.com/helm/helm/releases
-ARG HELM_VERSION=3.13.1
+# ##versions: https://github.com/helm/helm/releases
+ARG HELM_VERSION=3.14.2
 RUN set -e; \
   cd /tmp; \
   curl -Ss -o helm.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz; \
@@ -63,15 +64,15 @@ RUN set -e; \
   chmod +x /usr/local/bin/helm; \
   rm -rf ${TARGETOS}-${TARGETARCH} helm.tar.gz
 
-# https://github.com/coder/coder/releases
-ARG CODER_VERSION=2.3.0
+# ##versions: https://github.com/coder/coder/releases
+ARG CODER_VERSION=2.8.5
 RUN  set -e; \
   cd /tmp; \
   curl -sSL -o coder.deb -C - https://github.com/coder/coder/releases/download/v${CODER_VERSION}/coder_${CODER_VERSION}_${TARGETOS}_${TARGETARCH}.deb; \
   dpkg --force-confdef --force-confold -i coder.deb; \
   rm -rf coder.deb
 
-# https://github.com/binxio/gcp-get-secret
+# ##versions: https://github.com/binxio/gcp-get-secret
 COPY --from=docker.io/binxio/gcp-get-secret:v0.4.6 /gcp-get-secret /usr/local/bin/
 
 COPY automate /app/automate

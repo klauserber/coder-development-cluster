@@ -111,6 +111,7 @@ resource "kubernetes_deployment" "main" {
           for_each = toset( var.backup_service ? ["1"] : [])
           content {
             name    = "restic-restore"
+            # ##versions: https://hub.docker.com/r/isi006/restic-kubernetes/tags
             image   = "isi006/restic-kubernetes:2.2.1"
             env {
               name  = "RESTIC_RESTORE"
@@ -251,8 +252,8 @@ resource "kubernetes_deployment" "main" {
           for_each = toset( var.docker_service ? ["1"] : [])
           content {
             name    = "docker-dind"
-            # https://hub.docker.com/_/docker/tags
-            image   = "docker:24.0.6-dind"
+            # ##versions: https://hub.docker.com/_/docker/tags
+            image   = "docker:25.0.4-dind"
             args = [ "--mtu=1320" ]
             security_context {
               privileged = true

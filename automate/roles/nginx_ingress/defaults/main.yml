@@ -2,7 +2,7 @@
 namespace: nginx-ingress
 nginx_google_credentials_path: ""
 
-# https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx
-nginx_controller_chart_version: 4.9.0
+# ##versions: https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx
+nginx_controller_chart_version: 4.10.0 # ingress-nginx 1.10.0
 nginx_backup_remote_storage_provider: none
 nginx_backup_remote_storage_bucket: ""

@@ -10,10 +10,12 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      # https://registry.terraform.io/providers/hashicorp/google/latest/docs
-      version = "5.10.0"
+      # ##versions: https://registry.terraform.io/providers/hashicorp/google/latest/docs
+      version = "5.20.0"
     }
   }
 
+  # ##versions: https://github.com/hashicorp/terraform/releases
+  # Do not update for the time being, switch to opentufo?  
   required_version = ">= 1.5.7"
 }

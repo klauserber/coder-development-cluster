@@ -25,7 +25,8 @@ variable "domain_name" {
 
 variable "cluster_version_prefix" {
   description = "Version prefix of the cluster"
-  default     = "1.28."
+  ##versions: https://github.com/kubernetes/kubernetes/releases
+  default     = "1.29."
 }
 
 variable "system_name" {
