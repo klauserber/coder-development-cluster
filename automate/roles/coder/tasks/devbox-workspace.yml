@@ -16,14 +16,42 @@
     dest: "{{ role_path }}/coder_templates/devbox/README.md"
     mode: 0644
 
-- name: push template
-  command: "{{ bin_dir }}/coder template push '{{ item.name }}' --ignore-lockfile --variables-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
-  ignore_errors: true
+- name: query templates
+  command: "{{ bin_dir }}/coder template list -o json"
   register: result
+  changed_when: false
 
-- name: create template
-  when: "result.rc != 0"
+- name: templates json result
+  set_fact:
+    coder_templates: "{{ result.stdout | from_json }}"
+
+- name: default template present = false
+  set_fact:
+    coder_template_present: false
+
+- name: look for template
+  when: templ.Template.name == item.name
+  set_fact:
+    coder_template_present: true
+  loop: "{{ coder_templates }}"
+  loop_control:
+    loop_var: templ
+    label: "{{ templ.Template.name }}"
+
+- debug:
+    var: coder_template_present
+
+- name: create template if not present
+  when: not coder_template_present
   command: "{{ bin_dir }}/coder template create '{{ item.name }}' --default-ttl {{ item.max_ttl | default(coder_devbox_workspace_defaults.max_ttl) }} --ignore-lockfile --variables-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
+  register: result
+  until: result.rc == 0
+  delay: 5
+  retries: 5
+
+- name: push template if present
+  when: coder_template_present
+  command: "{{ bin_dir }}/coder template push '{{ item.name }}' --ignore-lockfile --variables-file '{{ role_path }}/tmp/params-{{ item.name }}.yml' -d {{ role_path }}/coder_templates/devbox -y"
   register: result
   until: result.rc == 0
   delay: 5
