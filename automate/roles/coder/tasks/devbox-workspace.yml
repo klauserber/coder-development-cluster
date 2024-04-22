@@ -21,22 +21,24 @@
   register: result
   changed_when: false
 
-- name: templates json result
-  set_fact:
-    coder_templates: "{{ result.stdout | from_json }}"
-
 - name: default template present = false
   set_fact:
     coder_template_present: false
 
-- name: look for template
-  when: templ.Template.name == item.name
-  set_fact:
-    coder_template_present: true
-  loop: "{{ coder_templates }}"
-  loop_control:
-    loop_var: templ
-    label: "{{ templ.Template.name }}"
+- name: template loop block
+  when: result.stdout
+  block:
+    - name: templates json result
+      set_fact:
+        coder_templates: "{{ result.stdout | from_json }}"
+    - name: look for template
+      when: templ.Template.name == item.name
+      set_fact:
+        coder_template_present: true
+      loop: "{{ coder_templates }}"
+      loop_control:
+        loop_var: templ
+        label: "{{ templ.Template.name }}"
 
 - debug:
     var: coder_template_present
