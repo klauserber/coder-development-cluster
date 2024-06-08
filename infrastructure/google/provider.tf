@@ -11,11 +11,11 @@ terraform {
     google = {
       source  = "hashicorp/google"
       # ##versions: https://registry.terraform.io/providers/hashicorp/google/latest/docs
-      version = "5.20.0"
+      version = "5.32.0"
     }
   }
 
   # ##versions: https://github.com/hashicorp/terraform/releases
-  # Do not update for the time being, switch to opentufo?  
+  # Do not update for the time being, switch to opentufo?
   required_version = ">= 1.5.7"
 }

@@ -3,12 +3,12 @@ terraform {
     coder = {
       source  = "coder/coder"
       # ##versions: https://registry.terraform.io/providers/coder/coder/latest/docs
-      version = "0.18.0"
+      version = "0.23.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
       # ##versions: https://registry.terraform.io/providers/hashicorp/kubernetes/latest
-      version = "2.27.0"
+      version = "2.30.0"
     }
   }
 }

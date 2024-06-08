@@ -1,5 +1,6 @@
 
 data "coder_workspace" "me" {}
+data "coder_workspace_owner" "owner" {}
 
 
 resource "coder_agent" "devbox" {

@@ -15,8 +15,8 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
       "com.coder.resource"       = "true"
       "com.coder.workspace.id"   = data.coder_workspace.me.id
       "com.coder.workspace.name" = data.coder_workspace.me.name
-      "com.coder.user.id"        = data.coder_workspace.me.owner_id
-      "com.coder.user.username"  = data.coder_workspace.me.owner
+      "com.coder.user.id"        = data.coder_workspace_owner.owner.id
+      "com.coder.user.username"  = data.coder_workspace_owner.owner.name
     }
   }
   spec {

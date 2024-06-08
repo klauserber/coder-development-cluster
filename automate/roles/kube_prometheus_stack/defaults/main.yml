@@ -1,5 +1,5 @@
 ---
 namespace: monitoring
 # ##versions: https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
-prometheus_stack_chart_version: 57.0.1 # kube-prometheus-stack v0.72.0
+prometheus_stack_chart_version: 60.0.1 # kube-prometheus-stack v0.74.0
 prometheus_stack_release_name: main

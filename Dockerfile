@@ -26,7 +26,7 @@ RUN set -e; \
   rm /tmp/requirements.txt
 
 # ##versions: https://cloud.google.com/sdk/docs/release-notes
-ARG GCLOUD_CLI_VERSION=467.0.0
+ARG GCLOUD_CLI_VERSION=479.0.0
 RUN set -e; \
   if [ "${TARGETARCH}" = "arm64" ]; then TARGETARCH=arm; else TARGETARCH=x86_64; fi; \
   curl -sSL -o /tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_CLI_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz; \
@@ -36,7 +36,7 @@ RUN set -e; \
   /usr/local/google-cloud-sdk/bin/gcloud components install gke-gcloud-auth-plugin --quiet
 
 # ##versions: https://github.com/hashicorp/terraform/releases
-# Do not update for the time being, switch to opentufo?  
+# Do not update for the time being, switch to opentufo?
 ARG TERRAFORM_VERSION=1.6.1
 RUN set -e; \
   cd /tmp; \
@@ -47,7 +47,7 @@ RUN set -e; \
   rm terraform.zip
 
 # ##versions: https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION=1.29.2
+ARG KUBECTL_VERSION=1.30.1
 RUN set -e; \
     cd /tmp; \
     curl -sLO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/${TARGETOS}/${TARGETARCH}/kubectl"; \
@@ -55,7 +55,7 @@ RUN set -e; \
     chmod +x /usr/local/bin/kubectl
 
 # ##versions: https://github.com/helm/helm/releases
-ARG HELM_VERSION=3.14.2
+ARG HELM_VERSION=3.15.1
 RUN set -e; \
   cd /tmp; \
   curl -Ss -o helm.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz; \
@@ -65,7 +65,7 @@ RUN set -e; \
   rm -rf ${TARGETOS}-${TARGETARCH} helm.tar.gz
 
 # ##versions: https://github.com/coder/coder/releases
-ARG CODER_VERSION=2.8.5
+ARG CODER_VERSION=2.12.1
 RUN  set -e; \
   cd /tmp; \
   curl -sSL -o coder.deb -C - https://github.com/coder/coder/releases/download/v${CODER_VERSION}/coder_${CODER_VERSION}_${TARGETOS}_${TARGETARCH}.deb; \
