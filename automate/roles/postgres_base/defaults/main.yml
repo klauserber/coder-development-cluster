@@ -2,7 +2,7 @@
 pg_operator_namespace: "postgres"
 # ##versions: https://github.com/zalando/postgres-operator/releases
 # https://github.com/zalando/postgres-operator/tree/master/charts/postgres-operator
-pg_operator_chart_version: "1.12.0"
+pg_operator_chart_version: "1.12.2"
 pg_operator_chart_ref: "postgres-operator-charts/postgres-operator"
 
 pg_operator_resync_period: "5m"
