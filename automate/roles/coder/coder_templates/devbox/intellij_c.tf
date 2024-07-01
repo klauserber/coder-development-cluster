@@ -25,7 +25,7 @@ resource "coder_script" "intellij_c" {
     mkdir -p /tmp/idea-c
     cd /tmp/idea-c
     echo "Downloading Intellij Community"
-    wget -qO idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2023.2.5.tar.gz
+    wget -qO idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2024.1.4.tar.gz
     echo "Extracting Intellij Community"
     tar xzf idea.tar.gz
     mv idea-* ~/apps/intellij-c; \

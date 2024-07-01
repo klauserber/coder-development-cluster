@@ -25,7 +25,7 @@ resource "coder_script" "intellij_u" {
     mkdir -p /tmp/idea-u
     cd /tmp/idea-u
     echo "Downloading Intellij Ultimate"
-    wget -qO idea.tar.gz https://download.jetbrains.com/idea/ideaIU-2023.2.4.tar.gz
+    wget -qO idea.tar.gz https://download.jetbrains.com/idea/ideaIU-2024.1.4.tar.gz
     echo "Extracting Intellij Ultimate"
     tar xzf idea.tar.gz
     mv idea-* ~/apps/intellij-u; \
