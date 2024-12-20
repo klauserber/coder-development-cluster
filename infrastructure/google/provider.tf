@@ -11,7 +11,7 @@ terraform {
     google = {
       source  = "hashicorp/google"
       # ##versions: https://registry.terraform.io/providers/hashicorp/google/latest/docs
-      version = "5.32.0"
+      version = "6.14.1"
     }
   }
 
