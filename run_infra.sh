@@ -15,6 +15,6 @@ terraform -chdir=${SCRIPT_DIR}/infrastructure/google init \
     -backend-config="prefix=tf-state/${CLUSTER_NAME}" \
 
 terraform -chdir=${SCRIPT_DIR}/infrastructure/${INFRASTRUCTURE_PROVIDER} apply ${TERRAFORM_OPTIONS} \
-  -var-file="${SCRIPT_DIR}/config/variables.tfvars" \
+  -var-file="${SCRIPT_DIR}/config/variables.tfvars"
 
 ${SCRIPT_DIR}/get_kubeconfig.sh
