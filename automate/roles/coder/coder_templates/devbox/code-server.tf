@@ -24,10 +24,10 @@ data "coder_parameter" "vscode_extension_docker" {
 }
 
 module "code-server" {
-  source          = "https://registry.coder.com/modules/code-server"
+  source          = "./modules/code-server"
   agent_id        = coder_agent.devbox.id
   # ##versions: https://github.com/coder/code-server/releases
-  install_version = "4.89.1"  # vscode v1.89.1
+  install_version = "4.96.1"  # vscode v1.96.1
   extensions = setunion(
     toset( data.coder_parameter.vscode_extension_docker.value ? ["ms-azuretools.vscode-docker"] : []),
     toset( data.coder_parameter.vscode_extension_spring.value ? ["vmware.vscode-boot-dev-pack"] : []),
