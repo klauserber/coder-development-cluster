@@ -24,7 +24,8 @@ if [[ ! ${UNINSTALL_APPS} == "false" ]]; then
   ansible-playbook -i inventory ${SCRIPT_DIR}/automate/destroy.yml -e ip_address=${IP_ADDRESS}
 fi
 
-terraform -chdir=${SCRIPT_DIR}/infrastructure/google destroy ${TERRAFORM_OPTIONS}
+terraform -chdir=${SCRIPT_DIR}/infrastructure/google destroy ${TERRAFORM_OPTIONS} \
+  -var-file="${SCRIPT_DIR}/config/variables.tfvars"
 
 if [[ ${REMOVE_BACKUPS} == "true" ]]; then
   ansible-playbook -i inventory ${SCRIPT_DIR}/automate/remove_backups.yml
