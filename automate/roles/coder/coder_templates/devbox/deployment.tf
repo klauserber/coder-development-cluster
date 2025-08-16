@@ -112,7 +112,7 @@ resource "kubernetes_deployment" "main" {
           content {
             name    = "restic-restore"
             # ##versions: https://hub.docker.com/r/isi006/restic-kubernetes/tags
-            image   = "isi006/restic-kubernetes:2.5.1"
+            image   = "isi006/restic-kubernetes:2.7.0"
             env {
               name  = "RESTIC_RESTORE"
               value = "1"
@@ -253,7 +253,7 @@ resource "kubernetes_deployment" "main" {
           content {
             name    = "docker-dind"
             # ##versions: https://hub.docker.com/_/docker/tags
-            image   = "docker:26.1.4-dind"
+            image   = "docker:28.3.3-dind"
             args = [ "--mtu=1320" ]
             security_context {
               privileged = true

@@ -21,3 +21,7 @@ controller:
 
   config:
     proxy-buffer-size: "16k"
+    proxy-buffers: "8 16k"
+    proxy-busy-buffers-size: "32k"
+    client-max-body-size: "50m"
+    proxy-body-size: "50m"
