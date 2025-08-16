@@ -7,27 +7,27 @@
     - "{{ default_config_dir }}/app_config.yml"
     - "{{ config_dir }}/app_config.yml"
   roles:
-    # - role: cert_manager
-    # - role: nginx_ingress
-    # - role: postgres_base
-    # - role: postgres_instance
-    #   vars:
-    #     pg_namespace: postgres
-    #     pg_team_id: "main"
-    #     pg_instance_name: "postgres-db"
-    #     pg_disk_size: "5Gi"
-    #     pg_instances: 1
-    #     pg_backup: true
-    #     pg_clone: true
-    #     pg_storage_provider: gs
-    #     pg_bucket_backup_prefix: "{{ cluster_name }}/"
-    #     pg_dbs:
-    #       - user: "keycloak"
-    #         db_name: "keycloak"
-    #       - user: "coder"
-    #         db_name: "coder"
-    # - role: keycloak
-    # - role: oauth2_proxy
+    - role: cert_manager
+    - role: nginx_ingress
+    - role: postgres_base
+    - role: postgres_instance
+      vars:
+        pg_namespace: postgres
+        pg_team_id: "main"
+        pg_instance_name: "postgres-db"
+        pg_disk_size: "5Gi"
+        pg_instances: 1
+        pg_backup: true
+        pg_clone: true
+        pg_storage_provider: gs
+        pg_bucket_backup_prefix: "{{ cluster_name }}/"
+        pg_dbs:
+          - user: "keycloak"
+            db_name: "keycloak"
+          - user: "coder"
+            db_name: "coder"
+    - role: keycloak
+    - role: oauth2_proxy
     - role: coder
-    # - role: kube_prometheus_stack
+    - role: kube_prometheus_stack
     - role: env_info

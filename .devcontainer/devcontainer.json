@@ -1,0 +1,29 @@
+{
+  "name": "rissc Devbox Container",
+  "image": "isi006/coder-devcontainer:1.0.0",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "coder",
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=cached",
+    "source=coder-devcontainer-home,target=/home/coder,type=volume"
+  ],
+  "runArgs": [
+    "--hostname=coder-devcontainer",
+    "--name=coder-devcontainer"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hediet.vscode-drawio"
+      ]
+    },
+    "jetbrains": {
+      "plugins": [
+        "org.intellij.plugins.hcl",
+        "ir.msdehghan.plugins.ansible",
+        "com.intellij.modules.json"
+      ]
+    }
+  }
+}

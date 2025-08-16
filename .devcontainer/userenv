@@ -1,0 +1,9 @@
+
+# kubectl setup
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+source <(kubectl completion bash)
+
+[ -f /usr/local/etc/.kubectl_aliases ] && source \
+   <(cat /usr/local/etc/.kubectl_aliases | sed -r 's/(kubectl.*) --watch/watch \1/g')
+
+source /etc/bash_completion
