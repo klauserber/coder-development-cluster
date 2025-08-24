@@ -16,6 +16,14 @@ There is also a Github Workflow ([container_build.yml](../.github/workflows/cont
 * `infrastructure` - Terraform code
 * `./*.sh` - Scripts to run and destroy clusters + helper scripts
 
-## Constributing
+## devcontainer
 
-Feel to send pull requests or open issues for any bugs or feature requests.
+The repository includes a devcontainer configuration (https://containers.dev/) for Visual Studio Code or other compatible IDEs like the JetBrains products or Cursor. This allows you to develop inside a container with all the necessary tools and dependencies pre-installed.
+
+To use the devcontainer, simply open the repository in Visual Studio Code and follow the prompts to reopen it in the container.
+
+There is a Dockerfile and a Makefile to rebuild the devcontainer image. It is based on the main container image in the root of the repository.
+
+## Contributing
+
+Feel free to send pull requests or open issues for any bugs or feature requests.
