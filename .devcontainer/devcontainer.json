@@ -1,5 +1,5 @@
 {
-  "name": "rissc Devbox Container",
+  "name": "coder development cluster",
   "image": "isi006/coder-devcontainer:1.0.0",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/workspace",
