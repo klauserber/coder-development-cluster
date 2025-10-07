@@ -19,12 +19,9 @@ sessionStorage:
 
 redis:
   enabled: true
-  master:
-    persistence:
-      enabled: false
-
-  replica:
-    replicaCount: 0
+  persistentVolume:
+    enabled: false
+  replicas: 1
 
 resources:
   limits:
