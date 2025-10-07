@@ -1,4 +1,11 @@
 ---
+global:
+  security:
+    allowInsecureImages: true
+
+image:
+  repository: bitnamilegacy/keycloak
+
 replicaCount: 2
 podAntiAffinityPreset: soft
 
