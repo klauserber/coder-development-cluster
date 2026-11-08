@@ -1,8 +1,3 @@
-data "google_container_engine_versions" "regular" {
-  location       = var.cluster_location
-  version_prefix = var.cluster_version_prefix
-}
-
 # GKE cluster
 resource "google_container_cluster" "primary" {
   name     = "${var.system_name}-gke"
@@ -10,12 +5,9 @@ resource "google_container_cluster" "primary" {
 
   deletion_protection = false
 
-  initial_node_count = 1
-  remove_default_node_pool = true
   release_channel {
     channel = "REGULAR"
   }
-  min_master_version = data.google_container_engine_versions.regular.latest_master_version
 
   network    = google_compute_network.vpc.name
   subnetwork = google_compute_subnetwork.subnet.name
@@ -36,7 +28,6 @@ resource "google_container_node_pool" "base_system_nodes" {
   name     = "base"
   location = var.cluster_location
   cluster  = google_container_cluster.primary.name
-  version = data.google_container_engine_versions.regular.latest_node_version
 
   autoscaling {
     min_node_count  = var.base_min_node_count
@@ -74,7 +65,6 @@ resource "google_container_node_pool" "workspace_spot_nodes" {
   location = var.cluster_location
   cluster  = google_container_cluster.primary.name
   # node_count = var.gke_num_nodes
-  version = data.google_container_engine_versions.regular.latest_node_version
 
   autoscaling {
     min_node_count  = var.workspace_min_node_count
@@ -117,7 +107,6 @@ resource "google_container_node_pool" "workspace_nodes" {
   location = var.cluster_location
   cluster  = google_container_cluster.primary.name
   # node_count = var.gke_num_nodes
-  version = data.google_container_engine_versions.regular.latest_node_version
 
   autoscaling {
     min_node_count  = var.workspace_min_node_count
