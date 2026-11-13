@@ -21,6 +21,10 @@ coder:
       value: "{{ coder_oidc_client_id }}"
     - name: CODER_OIDC_CLIENT_SECRET
       value: "{{ coder_client_secret }}"
+    # Keycloak liefert email_verified=false, solange verifyEmail im Realm aus ist
+    # (kein SMTP) und der User seine Mail nie bestätigt hat.
+    - name: CODER_OIDC_IGNORE_EMAIL_VERIFIED
+      value: "true"
     - name: CODER_WILDCARD_ACCESS_URL
       value: "*.{{ coder_access_host }}"
 

@@ -1,72 +1,71 @@
 ---
 keycloak_realms:
-  - realm_data:
-      realm: "{{ keycloak_realm_name }}"
-      enabled: true
-      registrationAllowed: true
-      registrationEmailAsUsername: true
-      editUsernameAllowed: true
-      resetPasswordAllowed: true
-      rememberMe: true
-      verifyEmail: "{{ keycloak_verify_email }}"
-      bruteForceProtected: true
-      ssoSessionIdleTimeout: 43200  # 12 hours
-      ssoSessionIdleTimeoutRememberMe: 864000  # 10 days
-      ssoSessionMaxLifespan: 43200  # 12 hours
-      ssoSessionMaxLifespanRememberMe: 864000  # 10 days
+- realm_data:
+    realm: "{{ keycloak_realm_name }}"
+    enabled: true
+    registrationAllowed: true
+    registrationEmailAsUsername: true
+    editUsernameAllowed: true
+    resetPasswordAllowed: true
+    rememberMe: true
+    verifyEmail: "{{ keycloak_verify_email }}"
+    bruteForceProtected: true
+    ssoSessionIdleTimeout: 43200 # 12 hours
+    ssoSessionIdleTimeoutRememberMe: 864000 # 10 days
+    ssoSessionMaxLifespan: 43200 # 12 hours
+    ssoSessionMaxLifespanRememberMe: 864000 # 10 days
+    # smtpServer:
+    #   user: "{{ smtp.user }}"
+    #   password: "{{ smtp.password }}"
+    #   replyToDisplayName: "{{ keycloak_realm_name }}"
+    #   starttls: "{{ smtp.starttls }}"
+    #   auth: "true"
+    #   port: "{{ smtp.port }}"
+    #   host: "{{ smtp.host }}"
+    #   replyTo: "{{ smtp.replyTo }}"
+    #   from: "{{ smtp.from }}"
+    #   fromDisplayName: "{{ keycloak_realm_name }}"
+    #   ssl: "{{ smtp.ssl }}"
 
-      smtpServer:
-        user: "{{ smtp.user }}"
-        password: "{{ smtp.password }}"
-        replyToDisplayName: "{{ keycloak_realm_name }}"
-        starttls: "{{ smtp.starttls }}"
-        auth: "true"
-        port: "{{ smtp.port }}"
-        host: "{{ smtp.host }}"
-        replyTo: "{{ smtp.replyTo }}"
-        from: "{{ smtp.from }}"
-        fromDisplayName: "{{ keycloak_realm_name }}"
-        ssl: "{{ smtp.ssl }}"
-
-    clients:
-      - clientId: "coder"
-        rootUrl: "https://coder.{{ cluster_public_domain }}"
-        adminUrl: "https://coder.{{ cluster_public_domain }}"
-        directAccessGrantsEnabled: true
-        redirectUris:
-          - "https://coder.{{ cluster_public_domain }}/*"
-        secret: "{{ coder_client_secret }}"
-      - clientId: "grafana"
-        rootUrl: "https://grafana.{{ cluster_public_domain }}"
-        adminUrl: "https://grafana.{{ cluster_public_domain }}"
-        directAccessGrantsEnabled: true
-        redirectUris:
-          - "https://grafana.{{ cluster_public_domain }}/*"
-        secret: "{{ grafana_client_secret }}"
-      - clientId: "auth"
-        rootUrl: "https://auth.{{ cluster_public_domain }}"
-        adminUrl: "https://auth.{{ cluster_public_domain }}"
-        directAccessGrantsEnabled: true
-        redirectUris:
-          - "https://auth.{{ cluster_public_domain }}/*"
-        secret: "{{ auth_client_secret }}"
-        protocolMappers:
-          - name: "audience"
-            protocol: "openid-connect"
-            protocolMapper: "oidc-audience-mapper"
-            consentRequired: false
-            config:
-              included.client.audience: "auth"
-              id.token.claim: false
-              access.token.claim: true
-              included.custom.audience: "auth"
-          - name: "groups"
-            protocol: "openid-connect"
-            protocolMapper: "oidc-group-membership-mapper"
-            consentRequired: false
-            config:
-              full.path: true
-              id.token.claim: true
-              access.token.claim: true
-              claim.name: "groups"
-              userinfo.token.claim: true
+  clients:
+  - clientId: "coder"
+    rootUrl: "https://coder.{{ cluster_public_domain }}"
+    adminUrl: "https://coder.{{ cluster_public_domain }}"
+    directAccessGrantsEnabled: true
+    redirectUris:
+    - "https://coder.{{ cluster_public_domain }}/*"
+    secret: "{{ coder_client_secret }}"
+  - clientId: "grafana"
+    rootUrl: "https://grafana.{{ cluster_public_domain }}"
+    adminUrl: "https://grafana.{{ cluster_public_domain }}"
+    directAccessGrantsEnabled: true
+    redirectUris:
+    - "https://grafana.{{ cluster_public_domain }}/*"
+    secret: "{{ grafana_client_secret }}"
+  - clientId: "auth"
+    rootUrl: "https://auth.{{ cluster_public_domain }}"
+    adminUrl: "https://auth.{{ cluster_public_domain }}"
+    directAccessGrantsEnabled: true
+    redirectUris:
+    - "https://auth.{{ cluster_public_domain }}/*"
+    secret: "{{ auth_client_secret }}"
+    protocolMappers:
+    - name: "audience"
+      protocol: "openid-connect"
+      protocolMapper: "oidc-audience-mapper"
+      consentRequired: false
+      config:
+        included.client.audience: "auth"
+        id.token.claim: false
+        access.token.claim: true
+        included.custom.audience: "auth"
+    - name: "groups"
+      protocol: "openid-connect"
+      protocolMapper: "oidc-group-membership-mapper"
+      consentRequired: false
+      config:
+        full.path: true
+        id.token.claim: true
+        access.token.claim: true
+        claim.name: "groups"
+        userinfo.token.claim: true
